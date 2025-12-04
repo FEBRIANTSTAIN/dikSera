@@ -240,6 +240,10 @@
                 <span class="dot"></span>
                 <span>Pelatihan</span>
             </a>
+            <a href="{{ route('perawat.organisasi.index') }}" class="nav-linkx">
+                <span class="dot"></span>
+                <span>Organisasi</span>
+            </a>
             <a href="#" class="nav-linkx">
                 <span class="dot"></span>
                 <span>Dokumen Lisensi & Sertifikat</span>

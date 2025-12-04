@@ -445,13 +445,13 @@ class PerawatDrhController extends Controller
             'nama_organisasi' => 'required|string|max:150',
             'jabatan'         => 'required|string|max:150',
             'tempat'          => 'nullable|string|max:100',
-            'tanggal_mulai'   => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date',
+            'tahun_mulai'   => 'nullable|date',
+            'tahun_selesai' => 'nullable|date',
             'pemimpin'        => 'nullable|string|max:150',
             'dokumen'         => 'nullable|mimes:pdf,jpg,jpeg,png|max:4096',
         ]);
 
-        $data = $request->only('nama_organisasi','jabatan','tempat','tanggal_mulai','tanggal_selesai','pemimpin');
+        $data = $request->only('nama_organisasi','jabatan','tempat','tahun_mulai','tahun_selesai','pemimpin');
         $data['user_id'] = $user->id;
 
         if ($request->hasFile('dokumen')) {
@@ -476,13 +476,13 @@ class PerawatDrhController extends Controller
             'nama_organisasi' => 'required|string|max:150',
             'jabatan'         => 'required|string|max:150',
             'tempat'          => 'nullable|string|max:100',
-            'tanggal_mulai'   => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date',
+            'tahun_mulai'   => 'nullable|date',
+            'tahun_selesai' => 'nullable|date',
             'pemimpin'        => 'nullable|string|max:150',
             'dokumen'         => 'nullable|mimes:pdf,jpg,jpeg,png|max:4096',
         ]);
 
-        $data = $request->only('nama_organisasi','jabatan','tempat','tanggal_mulai','tanggal_selesai','pemimpin');
+        $data = $request->only('nama_organisasi','jabatan','tempat','tahun_mulai','tahun_selesai','pemimpin');
         if ($request->hasFile('dokumen')) {
             $data['dokumen_path'] = $request->file('dokumen')->store('perawat/organisasi','public');
         }
