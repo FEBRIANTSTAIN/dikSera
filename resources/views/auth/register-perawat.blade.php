@@ -1,742 +1,1007 @@
-<!doctype html>
-<html lang="id">
-<head>
-    <meta charset="utf-8">
-    <title>Daftar Perawat - DIK SERA</title>
-    <link rel="icon" href="{{ asset('icon.png') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.auth', ['title' => 'Registrasi Perawat – DIKSERA'])
 
-    {{-- Bootstrap 5 --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    {{-- Bootstrap Icons --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-        :root{
-            --primary: #14b8a6;
-            --secondary: #6366f1;
-            --bg-base: #eef2ff;
-            --glass: rgba(255,255,255,.96);
-            --text-main: #0f172a;
-            --text-muted: #6b7280;
-            --radius: 18px;
-            --shadow: 0 18px 45px rgba(15,23,42,.12);
-        }
-
-        *{ box-sizing:border-box; }
-
-        body{
-            margin:0;
-            min-height:100vh;
-            font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-            color:var(--text-main);
-            background:
-              radial-gradient(circle at 0% 0%, rgba(20,184,166,.25), transparent 55%),
-              radial-gradient(circle at 100% 0%, rgba(99,102,241,.25), transparent 55%),
-              var(--bg-base);
-            background-size: 140% 140%;
-            animation: bgFloat 18s ease-in-out infinite;
-        }
-
-        @keyframes bgFloat{
-            0%{ background-position: 0% 0%, 100% 0%, 50% 50%; }
-            50%{ background-position: 20% 10%, 80% 5%, 50% 50%; }
-            100%{ background-position: 0% 0%, 100% 0%, 50% 50%; }
-        }
-
-        .page-shell{
-            max-width:1100px;
-            margin:2rem auto;
-            padding:0 1rem;
-        }
-
-        .card-auth{
-            background:var(--glass);
-            border-radius:var(--radius);
-            box-shadow:var(--shadow);
-            border:1px solid rgba(209,213,219,.9);
-            padding:2.2rem 2rem;
-            position:relative;
-            overflow:hidden;
-            animation: fadeZoomIn .5s ease-out;
-        }
-
-        .card-auth::before{
-            content:"";
-            position:absolute;
-            inset:-40%;
-            background: radial-gradient(circle at 0% 0%, rgba(20,184,166,.14), transparent 55%);
-            opacity:0;
-            transform:translate3d(-10px,-10px,0);
-            transition:opacity .5s ease, transform .5s ease;
-            pointer-events:none;
-        }
-
-        .card-auth:hover::before{
-            opacity:1;
-            transform:translate3d(0,0,0);
-        }
-
-        @keyframes fadeZoomIn{
-            from{ opacity:0; transform:translate3d(0,10px,0) scale(.97); }
-            to{ opacity:1; transform:translate3d(0,0,0) scale(1); }
-        }
-
-        .section-label{
-            font-size:.75rem;
-            letter-spacing:.18em;
-            text-transform:uppercase;
-            color:var(--text-muted);
-        }
-
-        .section-title{
-            font-size:1.05rem;
-            font-weight:600;
-            display:flex;
-            align-items:center;
-            gap:.5rem;
-            margin-bottom:.9rem;
-        }
-        .section-title::before{
-            content:"";
-            display:inline-block;
-            width:16px;
-            height:16px;
-            border-radius:999px;
-            background: conic-gradient(from 180deg, #22c1c3, #6366f1, #22c1c3);
-        }
-
-        .chip-role{
-            padding:3px 9px;
-            border-radius:999px;
-            font-size:.75rem;
-            text-transform:uppercase;
-            letter-spacing:.07em;
-            border:1px solid rgba(148,163,184,.8);
-            color:var(--text-muted);
-            background:#f9fafb;
-        }
-
-        .form-label{
-            font-size:.8rem;
-            color:#4b5563;
-        }
-
-        .form-control, .form-select{
-            border-radius:12px;
-            border:1px solid #e5e7eb;
-            font-size:.9rem;
-        }
-        .form-control:focus, .form-select:focus{
-            border-color:#14b8a6;
-            box-shadow:0 0 0 1px rgba(20,184,166,.35);
-        }
-        .form-control::placeholder{
-            color:#9ca3af;
-        }
-
-        .btn-primary-soft{
-            background: linear-gradient(135deg, #22c1c3, #14b8a6);
-            border:none;
-            color:#ffffff;
-            font-weight:600;
-            box-shadow:0 10px 30px rgba(34,193,195,.25);
-        }
-        .btn-primary-soft:hover{
-            filter:brightness(1.03);
-            box-shadow:0 14px 38px rgba(34,193,195,.35);
-        }
-
-        .logo-box{
-            height:60px;
-            width:60px;
-            border-radius:14px;
-            overflow:hidden;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            box-shadow:0 0 0 3px rgba(148,163,184,.4);
-        }
-        .logo-box img{
-            max-width:100%;
-            max-height:100%;
-            object-fit:cover;
-        }
-
-        .dynamic-table th, .dynamic-table td{
-            font-size:.8rem;
-            vertical-align:middle;
-        }
-
-        .btn-icon{
-            width:32px;
-            height:32px;
-            border-radius:999px;
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            padding:0;
-        }
-
-        .photo-box{
-            width:120px;
-            height:160px;
-            border-radius:12px;
-            border:1px dashed #d1d5db;
-            overflow:hidden;
-            background:#f9fafb;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-        }
-
-        .alert{
-            font-size:.8rem;
-        }
-
-        .input-group-text{
-            background:#f9fafb;
-            border-radius:12px;
-            border:1px solid #e5e7eb;
-        }
-
-        .btn-eye{
-            border-radius:0 12px 12px 0;
-        }
-
-        @media (max-width:768px){
-            .card-auth{
-                padding:1.6rem 1.3rem;
-            }
-        }
-    </style>
-</head>
-<body>
-
-<div class="page-shell">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="d-flex align-items-center gap-2">
-            <div class="logo-box">
-                <img src="{{ asset('icon.png') }}" alt="icon">
-            </div>
-            <div>
-                <div class="fw-semibold" style="font-size:.9rem;letter-spacing:.05em;">DIK SERA</div>
-                <div class="text-muted small">Digitalisasi Kompetensi, Sertifikasi & Evaluasi Perawat</div>
-            </div>
-        </div>
-        <div class="d-none d-md-block">
-            <a href="{{ route('auth.login') }}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-box-arrow-in-left me-1"></i> Kembali ke Login
-            </a>
-        </div>
+@section('content')
+<div class="text-center mb-3">
+    <div class="logo-big mx-auto">
+        <img src="{{ asset('icon.png') }}" alt="DIKSERA">
     </div>
-
-    <div class="card-auth">
-        @if(session('ok'))
-            <div class="alert alert-success py-2">{{ session('ok') }}</div>
-        @endif
-        @if(session('error'))
-            <div class="alert alert-danger py-2">{{ session('error') }}</div>
-        @endif
-        @if($errors->any())
-            <div class="alert alert-danger py-2">
-                <ul class="mb-0 ps-3">
-                    @foreach($errors->all() as $e)
-                        <li>{{ $e }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
-            <div>
-                <div class="section-label">Formulir Daftar Perawat</div>
-                <h4 class="mb-1">Daftar Akun & Daftar Riwayat Hidup Perawat</h4>
-                <p class="text-muted small mb-0">
-                    Data ini digunakan untuk proses <strong>kompetensi, sertifikasi & evaluasi perawat</strong>.
-                </p>
-            </div>
-            <div class="text-md-end text-start">
-                <span class="chip-role">Perawat</span>
-                <div class="text-muted small mt-2">
-                    Isi dengan data yang benar & dapat dipertanggungjawabkan.
-                </div>
-            </div>
-        </div>
-
-        <form action="{{ route('auth.register.perawat.process') }}" method="post" enctype="multipart/form-data">
-            @csrf
-
-            {{-- I. Identitas & Akun + Foto --}}
-            <div class="mb-4">
-                <div class="section-title">I. Identitas Diri & Akun</div>
-                <div class="row g-3">
-                    <div class="col-md-8">
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label class="form-label">Nama Lengkap (dengan gelar)</label>
-                                <input type="text" name="name" value="{{ old('name') }}"
-                                       class="form-control" required placeholder="Ns. Siti Aminah, S.Kep.">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Jenis Kelamin</label>
-                                <select name="gender" class="form-select">
-                                    <option value="">Pilih</option>
-                                    <option value="L" {{ old('gender')=='L'?'selected':'' }}>Laki-laki</option>
-                                    <option value="P" {{ old('gender')=='P'?'selected':'' }}>Perempuan</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">Tempat Lahir</label>
-                                <input type="text" name="birth_place" value="{{ old('birth_place') }}"
-                                       class="form-control" placeholder="Kediri">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Tanggal Lahir</label>
-                                <input type="date" name="birth_date" value="{{ old('birth_date') }}" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Agama</label>
-                                <select name="religion" class="form-select">
-                                    <option value="">Pilih</option>
-                                    @foreach(['Islam','Kristen','Katholik','Hindu','Budha','Konghucu','Lainnya'] as $rel)
-                                        <option {{ old('religion')==$rel?'selected':'' }}>{{ $rel }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">Telepon / HP</label>
-                                <input type="text" name="phone" value="{{ old('phone') }}"
-                                       class="form-control" placeholder="08xxxxxxxxxx">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Status Pernikahan</label>
-                                <select name="marital_status" class="form-select">
-                                    <option value="">Pilih</option>
-                                    <option {{ old('marital_status')=='Belum Menikah'?'selected':'' }}>Belum Menikah</option>
-                                    <option {{ old('marital_status')=='Menikah'?'selected':'' }}>Menikah</option>
-                                    <option {{ old('marital_status')=='Janda/Duda'?'selected':'' }}>Janda/Duda</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">NIP / NIRA (jika ada)</label>
-                                <input type="text" name="nip" value="{{ old('nip') }}" class="form-control">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Alamat Rumah</label>
-                                <textarea name="address" rows="2" class="form-control"
-                                          placeholder="Alamat tempat tinggal">{{ old('address') }}</textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Alamat Kantor / Unit Kerja</label>
-                                <textarea name="office_address" rows="2" class="form-control"
-                                          placeholder="RS / Unit / Ruangan">{{ old('office_address') }}</textarea>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">Jabatan Saat Ini</label>
-                                <input type="text" name="current_position" value="{{ old('current_position') }}"
-                                       class="form-control" placeholder="Perawat Pelaksana">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Unit Kerja / Ruangan</label>
-                                <input type="text" name="work_unit" value="{{ old('work_unit') }}"
-                                       class="form-control" placeholder="ICU, IGD, Ruang ...">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Email Aktif (Login)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-envelope"></i>
-                                    </span>
-                                    <input type="email" name="email" value="{{ old('email') }}"
-                                           class="form-control" required placeholder="perawat@rsudslg.go.id">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Password</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-lock"></i>
-                                    </span>
-                                    <input type="password" name="password" id="regPassword"
-                                           class="form-control" required placeholder="Minimal 6 karakter">
-                                    <button type="button" class="btn btn-outline-secondary btn-eye"
-                                            onclick="togglePassword('regPassword','regPasswordIcon')">
-                                        <i class="bi bi-eye" id="regPasswordIcon"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Konfirmasi Password</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-lock-fill"></i>
-                                    </span>
-                                    <input type="password" name="password_confirmation" id="regPasswordConfirm"
-                                           class="form-control" required placeholder="Ulangi password">
-                                    <button type="button" class="btn btn-outline-secondary btn-eye"
-                                            onclick="togglePassword('regPasswordConfirm','regPasswordConfirmIcon')">
-                                        <i class="bi bi-eye" id="regPasswordConfirmIcon"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Foto 3x4 --}}
-                    <div class="col-md-4 mt-3 mt-md-0">
-                        <label class="form-label d-flex justify-content-between align-items-center">
-                            Foto 3x4
-                            <span class="text-muted small">jpg / png · maks 2MB</span>
-                        </label>
-                        <div class="d-flex flex-column align-items-center gap-2">
-                            <div class="photo-box">
-                                <img id="photoPreview" src="" alt="Preview Foto"
-                                     style="max-width:100%;max-height:100%;display:none;object-fit:cover;">
-                                <span id="photoPlaceholder" class="text-muted small">
-                                    3x4
-                                </span>
-                            </div>
-                            <input type="file" name="profile_photo" class="form-control form-control-sm"
-                                   accept="image/*" onchange="previewPhoto(event)">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- II. Lingkungan Keluarga --}}
-            <div class="mb-4">
-                <div class="section-title">II. Lingkungan Keluarga</div>
-                <p class="text-muted small mb-2">
-                    Tambahkan anggota keluarga yang tinggal serumah / relevan.
-                </p>
-                <div class="table-responsive">
-                    <table class="table table-sm dynamic-table align-middle" id="familyTable">
-                        <thead>
-                        <tr>
-                            <th>Nama</th>
-                            <th>Hubungan</th>
-                            <th>Usia</th>
-                            <th>Pendidikan</th>
-                            <th>Pekerjaan</th>
-                            <th style="width:40px;"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><input type="text" name="family_name[]" class="form-control form-control-sm"></td>
-                            <td><input type="text" name="family_relationship[]" class="form-control form-control-sm" placeholder="Suami/Istri/Anak"></td>
-                            <td><input type="number" name="family_age[]" class="form-control form-control-sm" min="0"></td>
-                            <td><input type="text" name="family_education[]" class="form-control form-control-sm"></td>
-                            <td><input type="text" name="family_occupation[]" class="form-control form-control-sm"></td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">
-                                    &times;
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addFamilyRow()">
-                    + Tambah Anggota Keluarga
-                </button>
-            </div>
-
-            {{-- III. Riwayat Pendidikan --}}
-            <div class="mb-4">
-                <div class="section-title">III. Riwayat Pendidikan</div>
-                <div class="table-responsive">
-                    <table class="table table-sm dynamic-table align-middle" id="eduTable">
-                        <thead>
-                        <tr>
-                            <th>Jenjang</th>
-                            <th>Institusi</th>
-                            <th>Kota</th>
-                            <th>Tahun Mulai</th>
-                            <th>Tahun Selesai</th>
-                            <th style="width:40px;"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><input type="text" name="edu_level[]" class="form-control form-control-sm" placeholder="D3/S1/Profesi"></td>
-                            <td><input type="text" name="edu_institution[]" class="form-control form-control-sm"></td>
-                            <td><input type="text" name="edu_city[]" class="form-control form-control-sm"></td>
-                            <td><input type="text" name="edu_year_start[]" class="form-control form-control-sm" placeholder="2020"></td>
-                            <td><input type="text" name="edu_year_end[]" class="form-control form-control-sm" placeholder="2024"></td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">
-                                    &times;
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addEduRow()">
-                    + Tambah Riwayat Pendidikan
-                </button>
-            </div>
-
-            {{-- IV. Riwayat Pekerjaan --}}
-            <div class="mb-4">
-                <div class="section-title">IV. Riwayat Pekerjaan</div>
-                <div class="table-responsive">
-                    <table class="table table-sm dynamic-table align-middle" id="jobTable">
-                        <thead>
-                        <tr>
-                            <th>Jabatan</th>
-                            <th>Institusi</th>
-                            <th>Tahun Mulai</th>
-                            <th>Tahun Selesai</th>
-                            <th>Keterangan Singkat</th>
-                            <th style="width:40px;"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><input type="text" name="job_position[]" class="form-control form-control-sm" placeholder="Perawat Pelaksana"></td>
-                            <td><input type="text" name="job_institution[]" class="form-control form-control-sm"></td>
-                            <td><input type="text" name="job_year_start[]" class="form-control form-control-sm" placeholder="2020"></td>
-                            <td><input type="text" name="job_year_end[]" class="form-control form-control-sm" placeholder="2024 / Sekarang"></td>
-                            <td><input type="text" name="job_description[]" class="form-control form-control-sm"></td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">
-                                    &times;
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addJobRow()">
-                    + Tambah Riwayat Pekerjaan
-                </button>
-            </div>
-
-            {{-- V. Sertifikat Wajib --}}
-            <div class="mb-4">
-                <div class="section-title">V. Sertifikat Wajib</div>
-                <p class="text-muted small mb-2">
-                    Sertifikat yang diwajibkan rumah sakit (STR, BTCLS, PPGD, dll).  
-                    Jika <strong>Tanggal Habis</strong> kosong → dianggap <strong>lifetime</strong>.
-                </p>
-                <div class="table-responsive">
-                    <table class="table table-sm dynamic-table align-middle" id="certWajibTable">
-                        <thead>
-                        <tr>
-                            <th>Nama Sertifikat</th>
-                            <th>Keterangan</th>
-                            <th>Tanggal Aktif</th>
-                            <th>Tanggal Habis</th>
-                            <th>Upload Dokumen</th>
-                            <th style="width:40px;"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><input type="text" name="cert_wajib_name[]" class="form-control form-control-sm"></td>
-                            <td><input type="text" name="cert_wajib_desc[]" class="form-control form-control-sm"></td>
-                            <td><input type="date" name="cert_wajib_start[]" class="form-control form-control-sm"></td>
-                            <td><input type="date" name="cert_wajib_end[]" class="form-control form-control-sm"></td>
-                            <td><input type="file" name="cert_wajib_file[]" class="form-control form-control-sm" accept=".pdf,image/*"></td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">
-                                    &times;
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addCertWajibRow()">
-                    + Tambah Sertifikat Wajib
-                </button>
-            </div>
-
-            {{-- VI. Sertifikat Pengembangan --}}
-            <div class="mb-4">
-                <div class="section-title">VI. Sertifikat Pengembangan</div>
-                <p class="text-muted small mb-2">
-                    Sertifikat pelatihan / workshop / seminar untuk pengembangan kompetensi.
-                </p>
-                <div class="table-responsive">
-                    <table class="table table-sm dynamic-table align-middle" id="certDevTable">
-                        <thead>
-                        <tr>
-                            <th>Nama Sertifikat</th>
-                            <th>Keterangan</th>
-                            <th>Tanggal Aktif</th>
-                            <th>Tanggal Habis</th>
-                            <th>Upload Dokumen</th>
-                            <th style="width:40px;"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><input type="text" name="cert_dev_name[]" class="form-control form-control-sm"></td>
-                            <td><input type="text" name="cert_dev_desc[]" class="form-control form-control-sm"></td>
-                            <td><input type="date" name="cert_dev_start[]" class="form-control form-control-sm"></td>
-                            <td><input type="date" name="cert_dev_end[]" class="form-control form-control-sm"></td>
-                            <td><input type="file" name="cert_dev_file[]" class="form-control form-control-sm" accept=".pdf,image/*"></td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">
-                                    &times;
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addCertDevRow()">
-                    + Tambah Sertifikat Pengembangan
-                </button>
-            </div>
-
-            {{-- Submit --}}
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4">
-                <p class="text-muted small mb-0">
-                    Dengan menekan tombol <strong>Daftar & Simpan DRH</strong>, Anda menyatakan bahwa data yang diisi adalah benar.
-                </p>
-                <button class="btn btn-primary-soft px-4">
-                    <i class="bi bi-person-check me-1"></i> Daftar & Simpan DRH
-                </button>
-            </div>
-        </form>
-
-        <div class="text-center mt-3 d-md-none">
-            <small class="text-muted">
-                Sudah punya akun? <a href="{{ route('auth.login') }}">Kembali ke Login</a>
-            </small>
-        </div>
+    <div class="auth-title">Registrasi Perawat</div>
+    <div class="auth-subtitle">
+        Lengkapi akun dan Daftar Riwayat Hidup (DRH) sesuai format.
+    </div>
+    <div style="font-size:11px;margin-top:4px;">
+        <a href="{{ route('landing') }}">← Kembali ke halaman utama</a>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{{-- ALERT ERROR VALIDASI SERVER --}}
+@if ($errors->any())
+    <div class="alert alert-danger py-2 px-3 mb-3" style="font-size:12px;">
+        <strong>Terjadi kesalahan pada isian Anda:</strong>
+        <ul class="mb-0 mt-1" style="padding-left:18px;">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+<form method="POST"
+      action="{{ route('register.perawat.process') }}"
+      id="registerForm"
+      enctype="multipart/form-data">
+    @csrf
+
+    {{-- STEP INDICATOR --}}
+    <div class="mb-3">
+        <div class="step-dots-wrapper d-flex justify-content-between flex-wrap" style="font-size:11px;gap:6px;">
+            <div class="step-dot step-dot-active" data-step="1">1. Akun &amp; Identitas</div>
+            <div class="step-dot" data-step="2">2. Alamat &amp; Badan</div>
+            <div class="step-dot" data-step="3">3. Pendidikan &amp; Pekerjaan</div>
+            <div class="step-dot" data-step="4">4. Keluarga &amp; Organisasi</div>
+        </div>
+    </div>
+
+    {{-- STEP 1 – I. KETERANGAN PERORANGAN (IDENTITAS + JABATAN) --}}
+    <div class="step-pane" data-step="1">
+        <div class="step-title">I. Keterangan Perorangan – Akun &amp; Identitas</div>
+        <div class="row g-3">
+            <div class="col-lg-7">
+                {{-- 2. Nama --}}
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">Nama Lengkap *</label>
+                    <input type="text"
+                           name="name"
+                           value="{{ old('name') }}"
+                           data-required="true"
+                           class="form-control form-control-sm form-control-light @error('name') is-invalid @enderror">
+                </div>
+
+                {{-- 8. Email --}}
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">E-mail *</label>
+                    <input type="email"
+                           name="email"
+                           value="{{ old('email') }}"
+                           data-required="true"
+                           class="form-control form-control-sm form-control-light @error('email') is-invalid @enderror">
+                </div>
+
+                {{-- Password --}}
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">Password *</label>
+                    <div class="password-wrapper">
+                        <input id="password_reg"
+                               type="password"
+                               name="password"
+                               data-required="true"
+                               class="form-control form-control-sm form-control-light @error('password') is-invalid @enderror">
+                        <button type="button" class="toggle-password-btn" data-target="password_reg">Lihat</button>
+                    </div>
+                    <small class="text-muted" style="font-size:11px;">Min. 6 karakter.</small>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">Konfirmasi Password *</label>
+                    <div class="password-wrapper">
+                        <input id="password_reg_confirmation"
+                               type="password"
+                               name="password_confirmation"
+                               data-required="true"
+                               class="form-control form-control-sm form-control-light">
+                        <button type="button" class="toggle-password-btn" data-target="password_reg_confirmation">Lihat</button>
+                    </div>
+                </div>
+
+                {{-- 12. Kegemaran / Hobby --}}
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">Kegemaran / Hobby</label>
+                    <input type="text"
+                           name="hobby"
+                           value="{{ old('hobby') }}"
+                           class="form-control form-control-sm form-control-light @error('hobby') is-invalid @enderror">
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                {{-- 1. NIK --}}
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">Nomor Induk Kependudukan</label>
+                    <input type="text"
+                           name="nik"
+                           value="{{ old('nik') }}"
+                           class="form-control form-control-sm form-control-light @error('nik') is-invalid @enderror">
+                </div>
+
+                {{-- NIP & NIRP --}}
+                <div class="mb-2 row g-2">
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">NIP</label>
+                        <input type="text"
+                               name="nip"
+                               value="{{ old('nip') }}"
+                               class="form-control form-control-sm form-control-light @error('nip') is-invalid @enderror">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">NIRP</label>
+                        <input type="text"
+                               name="nirp"
+                               value="{{ old('nirp') }}"
+                               class="form-control form-control-sm form-control-light @error('nirp') is-invalid @enderror">
+                    </div>
+                </div>
+
+                {{-- 3 & 4. Kab/Kota Lahir + Tanggal Lahir --}}
+                <div class="mb-2 row g-2">
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Kabupaten / Kota Lahir</label>
+                        <input type="text"
+                               name="tempat_lahir"
+                               value="{{ old('tempat_lahir') }}"
+                               class="form-control form-control-sm form-control-light @error('tempat_lahir') is-invalid @enderror">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Tanggal Lahir</label>
+                        <input type="date"
+                               name="tanggal_lahir"
+                               value="{{ old('tanggal_lahir') }}"
+                               class="form-control form-control-sm form-control-light @error('tanggal_lahir') is-invalid @enderror">
+                    </div>
+                </div>
+
+                {{-- 5 / 6 / 7 – Jenis Kelamin, Agama, Status Kawin, Aliran Kepercayaan --}}
+                <div class="mb-2 row g-2">
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Jenis Kelamin</label>
+                        <select name="jenis_kelamin"
+                                class="form-select form-select-sm form-control-light @error('jenis_kelamin') is-invalid @enderror">
+                            <option value="">-- Pilih --</option>
+                            <option value="L" {{ old('jenis_kelamin')=='L'?'selected':'' }}>Laki-laki</option>
+                            <option value="P" {{ old('jenis_kelamin')=='P'?'selected':'' }}>Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Agama</label>
+                        <select name="agama"
+                                class="form-select form-select-sm form-control-light @error('agama') is-invalid @enderror">
+                            <option value="">-- Pilih --</option>
+                            @php
+                                $agamaList = ['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu','Lainnya'];
+                            @endphp
+                            @foreach($agamaList as $ag)
+                                <option value="{{ $ag }}" {{ old('agama')==$ag?'selected':'' }}>{{ $ag }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-2 row g-2">
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Aliran Kepercayaan</label>
+                        <select name="aliran_kepercayaan"
+                                class="form-select form-select-sm form-control-light @error('aliran_kepercayaan') is-invalid @enderror">
+                            <option value="">-- Pilih --</option>
+                            @php
+                                $kepercayaanList = [
+                                    'Tidak / Bukan Penghayat',
+                                    'Penghayat Kepercayaan terhadap Tuhan YME',
+                                    'Lainnya',
+                                ];
+                            @endphp
+                            @foreach($kepercayaanList as $kp)
+                                <option value="{{ $kp }}" {{ old('aliran_kepercayaan')==$kp?'selected':'' }}>
+                                    {{ $kp }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Status Perkawinan</label>
+                        <select name="status_perkawinan"
+                                class="form-select form-select-sm form-control-light @error('status_perkawinan') is-invalid @enderror">
+                            <option value="">-- Pilih --</option>
+                            @php
+                                $statusList = ['Belum Menikah','Menikah','Cerai Hidup','Cerai Mati'];
+                            @endphp
+                            @foreach($statusList as $st)
+                                <option value="{{ $st }}" {{ old('status_perkawinan')==$st?'selected':'' }}>{{ $st }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                {{-- Jabatan / Pangkat / Golongan --}}
+                <div class="mb-2 row g-2">
+                    <div class="col-6 col-md-6">
+                        <label class="form-label small text-muted mb-1">Jabatan</label>
+                        <input type="text"
+                               name="jabatan"
+                               value="{{ old('jabatan') }}"
+                               class="form-control form-control-sm form-control-light @error('jabatan') is-invalid @enderror">
+                    </div>
+                    <div class="col-3 col-md-3">
+                        <label class="form-label small text-muted mb-1">Pangkat</label>
+                        <input type="text"
+                               name="pangkat"
+                               value="{{ old('pangkat') }}"
+                               class="form-control form-control-sm form-control-light @error('pangkat') is-invalid @enderror">
+                    </div>
+                    <div class="col-3 col-md-3">
+                        <label class="form-label small text-muted mb-1">Golongan</label>
+                        <input type="text"
+                               name="golongan"
+                               value="{{ old('golongan') }}"
+                               class="form-control form-control-sm form-control-light @error('golongan') is-invalid @enderror">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- STEP 2 – ALAMAT, BADAN, FOTO --}}
+    <div class="step-pane d-none" data-step="2">
+        <div class="step-title">I. Keterangan Perorangan – Alamat &amp; Keterangan Badan</div>
+        <div class="row g-3">
+            <div class="col-lg-7">
+                {{-- 9. No HP (WA Aktif) --}}
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">Nomor Handphone (Aktif WA) *</label>
+                    <input type="text"
+                           name="no_hp"
+                           value="{{ old('no_hp') }}"
+                           data-required="true"
+                           class="form-control form-control-sm form-control-light @error('no_hp') is-invalid @enderror">
+                </div>
+
+                {{-- 10.a Jalan --}}
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">Alamat – Jalan *</label>
+                    <input type="text"
+                           name="alamat_jalan"
+                           value="{{ old('alamat_jalan') }}"
+                           data-required="true"
+                           class="form-control form-control-sm form-control-light @error('alamat_jalan') is-invalid @enderror">
+                </div>
+
+                {{-- 10.b & 10.c Kelurahan & Kecamatan --}}
+                <div class="mb-2 row g-2">
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Kelurahan *</label>
+                        <input type="text"
+                               name="alamat_kelurahan"
+                               value="{{ old('alamat_kelurahan') }}"
+                               data-required="true"
+                               class="form-control form-control-sm form-control-light @error('alamat_kelurahan') is-invalid @enderror">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Kecamatan *</label>
+                        <input type="text"
+                               name="alamat_kecamatan"
+                               value="{{ old('alamat_kecamatan') }}"
+                               data-required="true"
+                               class="form-control form-control-sm form-control-light @error('alamat_kecamatan') is-invalid @enderror">
+                    </div>
+                </div>
+
+                {{-- 10.d & 10.e Kab/Kota & Provinsi --}}
+                <div class="mb-2 row g-2">
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Kabupaten / Kota *</label>
+                        <input type="text"
+                               name="alamat_kabkota"
+                               value="{{ old('alamat_kabkota') }}"
+                               data-required="true"
+                               class="form-control form-control-sm form-control-light @error('alamat_kabkota') is-invalid @enderror">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Provinsi *</label>
+                        <input type="text"
+                               name="alamat_provinsi"
+                               value="{{ old('alamat_provinsi') }}"
+                               data-required="true"
+                               class="form-control form-control-sm form-control-light @error('alamat_provinsi') is-invalid @enderror">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                {{-- 11. Keterangan Badan --}}
+                <div class="mb-2 row g-2">
+                    <div class="col-4">
+                        <label class="form-label small text-muted mb-1">Tinggi (cm)</label>
+                        <input type="number"
+                               name="tinggi_badan"
+                               value="{{ old('tinggi_badan') }}"
+                               class="form-control form-control-sm form-control-light @error('tinggi_badan') is-invalid @enderror">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label small text-muted mb-1">Berat Badan</label>
+                        <input type="number"
+                               name="berat_badan"
+                               value="{{ old('berat_badan') }}"
+                               class="form-control form-control-sm form-control-light @error('berat_badan') is-invalid @enderror">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label small text-muted mb-1">Gol. Darah</label>
+                        <select name="golongan_darah"
+                                class="form-select form-select-sm form-control-light @error('golongan_darah') is-invalid @enderror">
+                            <option value="">-- Pilih --</option>
+                            @php
+                                $goldarList = ['A','B','AB','O','Tidak Tahu'];
+                            @endphp
+                            @foreach($goldarList as $gd)
+                                <option value="{{ $gd }}" {{ old('golongan_darah')==$gd?'selected':'' }}>
+                                    {{ $gd }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-2 row g-2">
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Rambut</label>
+                        <select name="rambut"
+                                class="form-select form-select-sm form-control-light @error('rambut') is-invalid @enderror">
+                            <option value="">-- Pilih --</option>
+                            @php
+                                $rambutList = ['Pendek','Sedang','Panjang','Beruban','Lainnya'];
+                            @endphp
+                            @foreach($rambutList as $rb)
+                                <option value="{{ $rb }}" {{ old('rambut')==$rb?'selected':'' }}>{{ $rb }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Bentuk Muka</label>
+                        <select name="bentuk_muka"
+                                class="form-select form-select-sm form-control-light @error('bentuk_muka') is-invalid @enderror">
+                            <option value="">-- Pilih --</option>
+                            @php
+                                $mukaList = ['Oval','Bulat','Persegi','Hati','Lainnya'];
+                            @endphp
+                            @foreach($mukaList as $mk)
+                                <option value="{{ $mk }}" {{ old('bentuk_muka')==$mk?'selected':'' }}>{{ $mk }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-2 row g-2">
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Warna Kulit</label>
+                        <select name="warna_kulit"
+                                class="form-select form-select-sm form-control-light @error('warna_kulit') is-invalid @enderror">
+                            <option value="">-- Pilih --</option>
+                            @php
+                                $kulitList = ['Putih','Kuning Langsat','Sawo Matang','Gelap','Lainnya'];
+                            @endphp
+                            @foreach($kulitList as $kl)
+                                <option value="{{ $kl }}" {{ old('warna_kulit')==$kl?'selected':'' }}>{{ $kl }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-1">Ciri Khas</label>
+                        <input type="text"
+                               name="ciri_khas"
+                               value="{{ old('ciri_khas') }}"
+                               class="form-control form-control-sm form-control-light @error('ciri_khas') is-invalid @enderror">
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">Cacat Tubuh</label>
+                    <select name="cacat_tubuh"
+                            class="form-select form-select-sm form-control-light @error('cacat_tubuh') is-invalid @enderror">
+                        <option value="">-- Pilih --</option>
+                        @php
+                            $cacatList = ['Tidak Ada','Ada'];
+                        @endphp
+                        @foreach($cacatList as $ct)
+                            <option value="{{ $ct }}" {{ old('cacat_tubuh')==$ct?'selected':'' }}>{{ $ct }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Foto 3x4 --}}
+                <div class="mb-2">
+                    <label class="form-label small text-muted mb-1">Foto 3x4 (jpg/png)</label>
+                    <div>
+                        <input type="file"
+                               name="foto_3x4"
+                               class="form-control form-control-sm @error('foto_3x4') is-invalid @enderror"
+                               accept="image/*"
+                               data-show-filename="true"
+                               data-show-preview="true">
+                        <small class="text-muted file-name" style="font-size:10px;"></small>
+                        <div class="mt-2">
+                            <img class="img-preview"
+                                 src="#"
+                                 alt="Preview Foto 3x4"
+                                 style="max-height:130px;border-radius:8px;display:none;border:1px solid #e5e7eb;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- STEP 3 – II & III: Pendidikan / Kursus / Riwayat Pekerjaan --}}
+    <div class="step-pane d-none" data-step="3">
+        <div class="step-title">II. Pendidikan &amp; Kursus · III. Riwayat Pekerjaan</div>
+
+        {{-- Pendidikan (II.1) --}}
+        <div class="sub-section-head">1. Pendidikan di Dalam dan Luar Negeri</div>
+        <div id="pendidikan-wrapper" class="mb-2">
+            <div class="row g-1 mb-1 pendidikan-row dynamic-row">
+                <div class="col-6 col-md-2">
+                    <input type="text" name="pendidikan_jenjang[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Tingkat">
+                </div>
+                <div class="col-6 col-md-3">
+                    <input type="text" name="pendidikan_nama[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Nama Sekolah / PT">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="text" name="pendidikan_akreditasi[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Akreditasi">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="text" name="pendidikan_tempat[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Tempat">
+                </div>
+                <div class="col-12 col-md-3 d-flex flex-column gap-1">
+                    <input type="file"
+                           name="pendidikan_file[]"
+                           class="form-control form-control-sm form-control-light"
+                           accept=".pdf,image/*"
+                           data-show-filename="true"
+                           data-show-preview="true">
+                    <small class="text-muted file-name" style="font-size:10px;">STTB/Ijazah (pdf/jpg)</small>
+                    <img class="img-preview"
+                         src="#"
+                         alt="Preview"
+                         style="max-height:60px;border-radius:6px;display:none;border:1px solid #e5e7eb;">
+                    <button type="button"
+                            class="btn btn-link text-danger p-0 align-self-start remove-row-btn"
+                            style="font-size:11px;">Hapus</button>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-primary mb-3" id="add-pendidikan">+ Tambah Pendidikan</button>
+
+        {{-- Kursus / Latihan (II.2) --}}
+        <div class="sub-section-head mt-2">2. Kursus / Latihan di Dalam dan Luar Negeri</div>
+        <div id="pelatihan-wrapper" class="mb-2">
+            <div class="row g-1 mb-1 pelatihan-row dynamic-row">
+                <div class="col-12 col-md-3">
+                    <input type="text" name="pelatihan_nama[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Nama Kursus / Latihan">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="text" name="pelatihan_durasi[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Lamanya">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="date" name="pelatihan_mulai[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Tgl Mulai">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="date" name="pelatihan_selesai[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Tgl Selesai">
+                </div>
+                <div class="col-6 col-md-3 d-flex flex-column gap-1">
+                    <input type="file"
+                           name="pelatihan_file[]"
+                           class="form-control form-control-sm form-control-light"
+                           accept=".pdf,image/*"
+                           data-show-filename="true"
+                           data-show-preview="true">
+                    <small class="text-muted file-name" style="font-size:10px;">Sertifikat (pdf/jpg)</small>
+                    <img class="img-preview"
+                         src="#"
+                         alt="Preview"
+                         style="max-height:60px;border-radius:6px;display:none;border:1px solid #e5e7eb;">
+                    <button type="button"
+                            class="btn btn-link text-danger p-0 align-self-start remove-row-btn"
+                            style="font-size:11px;">Hapus</button>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-primary mb-3" id="add-pelatihan">+ Tambah Kursus / Pelatihan</button>
+
+        {{-- Riwayat Pekerjaan (III) --}}
+        <div class="sub-section-head mt-2">III. Riwayat Pekerjaan</div>
+        <div id="pekerjaan-wrapper" class="mb-2">
+            <div class="row g-1 mb-1 pekerjaan-row dynamic-row">
+                <div class="col-12 col-md-3">
+                    <input type="text" name="pekerjaan_instansi[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Instansi / Perusahaan">
+                </div>
+                <div class="col-12 col-md-3">
+                    <input type="text" name="pekerjaan_jabatan[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Jabatan">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="date" name="pekerjaan_mulai[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Mulai">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="date" name="pekerjaan_selesai[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Selesai">
+                </div>
+                <div class="col-12 col-md-2 d-flex flex-column gap-1">
+                    <input type="file"
+                           name="pekerjaan_file[]"
+                           class="form-control form-control-sm form-control-light"
+                           accept=".pdf,image/*"
+                           data-show-filename="true"
+                           data-show-preview="true">
+                    <small class="text-muted file-name" style="font-size:10px;">SK Pengangkatan</small>
+                    <img class="img-preview"
+                         src="#"
+                         alt="Preview"
+                         style="max-height:60px;border-radius:6px;display:none;border:1px solid #e5e7eb;">
+                    <button type="button"
+                            class="btn btn-link text-danger p-0 align-self-start remove-row-btn"
+                            style="font-size:11px;">Hapus</button>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-primary" id="add-pekerjaan">+ Tambah Riwayat Pekerjaan</button>
+    </div>
+
+    {{-- STEP 4 – IV Tanda Jasa, V Keluarga, VI Organisasi --}}
+    <div class="step-pane d-none" data-step="4">
+        <div class="step-title">IV. Tanda Jasa · V. Riwayat Keluarga · VI. Organisasi</div>
+
+        {{-- Tanda Jasa / Penghargaan --}}
+        <div class="sub-section-head">IV. Tanda Jasa / Penghargaan</div>
+        <div id="tandajasa-wrapper" class="mb-2">
+            <div class="row g-1 mb-1 tandajasa-row dynamic-row">
+                <div class="col-12 col-md-3">
+                    <input type="text" name="tandajasa_nama[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Nama Penghargaan">
+                </div>
+                <div class="col-12 col-md-3">
+                    <input type="text" name="tandajasa_instansi[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Negara / Instansi Pemberi">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="text" name="tandajasa_tahun[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Tahun">
+                </div>
+                <div class="col-6 col-md-4 d-flex flex-column gap-1">
+                    <input type="file"
+                           name="tandajasa_file[]"
+                           class="form-control form-control-sm form-control-light"
+                           accept=".pdf,image/*"
+                           data-show-filename="true"
+                           data-show-preview="true">
+                    <small class="text-muted file-name" style="font-size:10px;">SK / Piagam</small>
+                    <img class="img-preview"
+                         src="#"
+                         alt="Preview"
+                         style="max-height:60px;border-radius:6px;display:none;border:1px solid #e5e7eb;">
+                    <button type="button"
+                            class="btn btn-link text-danger p-0 align-self-start remove-row-btn"
+                            style="font-size:11px;">Hapus</button>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-primary mb-3" id="add-tandajasa">+ Tambah Tanda Jasa</button>
+
+        {{-- Riwayat Keluarga --}}
+        <div class="sub-section-head mt-2">V. Riwayat Keluarga (Istri/Suami, Anak, Orang Tua, Saudara, Mertua)</div>
+        <div id="keluarga-wrapper" class="mb-2">
+            <div class="row g-1 mb-1 keluarga-row dynamic-row">
+                <div class="col-12 col-md-2">
+                    <input type="text" name="keluarga_hubungan[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Hubungan">
+                </div>
+                <div class="col-12 col-md-3">
+                    <input type="text" name="keluarga_nama[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Nama">
+                </div>
+                <div class="col-12 col-md-3">
+                    <input type="text" name="keluarga_ttl[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="TTL">
+                </div>
+                <div class="col-12 col-md-4 d-flex align-items-start gap-1">
+                    <input type="text" name="keluarga_pekerjaan[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Pekerjaan / Instansi">
+                    <button type="button"
+                            class="btn btn-link text-danger p-0 remove-row-btn"
+                            style="font-size:11px;">Hapus</button>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-primary mb-3" id="add-keluarga">+ Tambah Anggota Keluarga</button>
+
+        {{-- Organisasi --}}
+        <div class="sub-section-head mt-2">VI. Keterangan Organisasi</div>
+        <div id="organisasi-wrapper" class="mb-2">
+            <div class="row g-1 mb-1 organisasi-row dynamic-row">
+                <div class="col-12 col-md-3">
+                    <input type="text" name="organisasi_nama[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Nama Organisasi">
+                </div>
+                <div class="col-12 col-md-3">
+                    <input type="text" name="organisasi_jabatan[]"
+                           class="form-control form-control-sm form-control-light"
+                           placeholder="Jabatan di Organisasi">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="date" name="organisasi_mulai[]"
+                           class="form-control form-control-sm form-control-light">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="date" name="organisasi_selesai[]"
+                           class="form-control form-control-sm form-control-light">
+                </div>
+                <div class="col-12 col-md-2 d-flex flex-column gap-1">
+                    <input type="file"
+                           name="organisasi_file[]"
+                           class="form-control form-control-sm form-control-light"
+                           accept=".pdf,image/*"
+                           data-show-filename="true"
+                           data-show-preview="true">
+                    <small class="text-muted file-name" style="font-size:10px;">Kartu / SK</small>
+                    <img class="img-preview"
+                         src="#"
+                         alt="Preview"
+                         style="max-height:60px;border-radius:6px;display:none;border:1px solid #e5e7eb;">
+                    <button type="button"
+                            class="btn btn-link text-danger p-0 align-self-start remove-row-btn"
+                            style="font-size:11px;">Hapus</button>
+                </div>
+            </div>
+        </div>
+
+        <p class="small text-muted mt-1">
+            Pastikan data sudah terisi dengan benar sebelum menekan tombol <strong>Daftar</strong>.
+        </p>
+    </div>
+
+    {{-- STEP NAV BUTTONS --}}
+    <div class="d-flex justify-content-between mt-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="btnPrev">Sebelumnya</button>
+        <div>
+            <button type="button" class="btn btn-sm btn-solid-blue" id="btnNext">Berikutnya</button>
+            <button type="submit" class="btn btn-sm btn-solid-blue d-none" id="btnSubmit">Daftar</button>
+        </div>
+    </div>
+</form>
+@endsection
+
+@push('styles')
+<style>
+    .step-dot {
+        flex: 1 1 0;
+        text-align: center;
+        padding: 6px 4px;
+        border-radius: 999px;
+        background: #e5edff;
+        color: #4b5563;
+        font-weight: 500;
+        border: 1px solid #d4ddff;
+        font-size: 11px;
+        min-width: 0;
+    }
+    .step-dot-active {
+        background: linear-gradient(135deg,#2563eb,#60a5fa);
+        color: #f9fafb;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.45);
+        border-color: transparent;
+    }
+    .step-pane {
+        border-radius: 18px;
+        background: rgba(255,255,255,0.97);
+        border: 1px solid #e5e7eb;
+        padding: 14px 16px;
+        box-shadow: 0 10px 24px rgba(15,23,42,0.07);
+        margin-bottom: 2px;
+    }
+    .step-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #1d4ed8;
+        margin-bottom: 8px;
+    }
+    .sub-section-head {
+        font-size: 12px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 4px;
+    }
+
+    /* RESPONSIVE STEP DOTS */
+    @media (max-width: 576px){
+        .step-dots-wrapper{
+            gap:4px !important;
+        }
+        .step-dot{
+            flex: 1 1 calc(50% - 4px);
+            font-size:10px;
+            padding:5px 3px;
+        }
+        .step-pane{
+            padding:10px 10px;
+        }
+    }
+</style>
+@endpush
+
+@push('scripts')
 <script>
-function previewPhoto(e){
-    const file = e.target.files[0];
-    const preview = document.getElementById('photoPreview');
-    const placeholder = document.getElementById('photoPlaceholder');
-    if(file){
-        const reader = new FileReader();
-        reader.onload = function(ev){
-            preview.src = ev.target.result;
-            preview.style.display = 'block';
-            placeholder.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-    }else{
-        preview.src = '';
-        preview.style.display = 'none';
-        placeholder.style.display = 'block';
+document.addEventListener('DOMContentLoaded', function () {
+    let currentStep = 1;
+    const maxStep = 4;
+
+    const stepDots  = document.querySelectorAll('.step-dot');
+    const stepPanes = document.querySelectorAll('.step-pane');
+    const btnPrev   = document.getElementById('btnPrev');
+    const btnNext   = document.getElementById('btnNext');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    function renderSteps() {
+        stepPanes.forEach(pane => {
+            pane.classList.toggle('d-none', parseInt(pane.dataset.step) !== currentStep);
+        });
+        stepDots.forEach(dot => {
+            dot.classList.toggle('step-dot-active', parseInt(dot.dataset.step) === currentStep);
+        });
+
+        if (btnPrev) btnPrev.disabled = currentStep === 1;
+        if (btnNext) btnNext.classList.toggle('d-none', currentStep === maxStep);
+        if (btnSubmit) btnSubmit.classList.toggle('d-none', currentStep !== maxStep);
     }
-}
 
-function togglePassword(inputId, iconId){
-    const input = document.getElementById(inputId);
-    const icon  = document.getElementById(iconId);
-    if(!input) return;
-    if(input.type === 'password'){
-        input.type = 'text';
-        if(icon) icon.classList.replace('bi-eye','bi-eye-slash');
-    }else{
-        input.type = 'password';
-        if(icon) icon.classList.replace('bi-eye-slash','bi-eye');
+    function hasEmptyRequired(step) {
+        const pane = document.querySelector('.step-pane[data-step="' + step + '"]');
+        if (!pane) return false;
+
+        let empty = false;
+        const requiredFields = pane.querySelectorAll('[data-required="true"]');
+        requiredFields.forEach(el => {
+            const val = (el.value || '').trim();
+            if (!val) {
+                empty = true;
+                el.classList.add('is-invalid');
+            } else {
+                el.classList.remove('is-invalid');
+            }
+        });
+
+        if (empty && typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data belum lengkap',
+                text: 'Silakan isi semua data wajib pada langkah ini terlebih dahulu.',
+            });
+        }
+
+        return empty;
     }
-}
 
-function addRow(tableId, rowHtml){
-    const tbody = document.getElementById(tableId).querySelector('tbody');
-    const tr = document.createElement('tr');
-    tr.innerHTML = rowHtml;
-    tbody.appendChild(tr);
-}
-function removeRow(btn){
-    const tr = btn.closest('tr');
-    const tbody = tr.parentElement;
-    if(tbody.children.length > 1){
-        tr.remove();
-    }else{
-        tr.querySelectorAll('input, textarea').forEach(el => el.value = '');
+    if (btnPrev) {
+        btnPrev.addEventListener('click', function () {
+            if (currentStep > 1) {
+                currentStep--;
+                renderSteps();
+            }
+        });
     }
-}
 
-// Family
-function addFamilyRow(){
-    addRow('familyTable', `
-        <td><input type="text" name="family_name[]" class="form-control form-control-sm"></td>
-        <td><input type="text" name="family_relationship[]" class="form-control form-control-sm" placeholder="Suami/Istri/Anak"></td>
-        <td><input type="number" name="family_age[]" class="form-control form-control-sm" min="0"></td>
-        <td><input type="text" name="family_education[]" class="form-control form-control-sm"></td>
-        <td><input type="text" name="family_occupation[]" class="form-control form-control-sm"></td>
-        <td class="text-center">
-            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">&times;</button>
-        </td>
-    `);
-}
+    if (btnNext) {
+        btnNext.addEventListener('click', function () {
+            if (hasEmptyRequired(currentStep)) {
+                return;
+            }
+            if (currentStep < maxStep) {
+                currentStep++;
+                renderSteps();
+            }
+        });
+    }
 
-// Educations
-function addEduRow(){
-    addRow('eduTable', `
-        <td><input type="text" name="edu_level[]" class="form-control form-control-sm" placeholder="D3/S1/Profesi"></td>
-        <td><input type="text" name="edu_institution[]" class="form-control form-control-sm"></td>
-        <td><input type="text" name="edu_city[]" class="form-control form-control-sm"></td>
-        <td><input type="text" name="edu_year_start[]" class="form-control form-control-sm" placeholder="2020"></td>
-        <td><input type="text" name="edu_year_end[]" class="form-control form-control-sm" placeholder="2024"></td>
-        <td class="text-center">
-            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">&times;</button>
-        </td>
-    `);
-}
+    // Show/hide password
+    document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const targetId = this.dataset.target;
+            const input = document.getElementById(targetId);
+            if (!input) return;
 
-// Jobs
-function addJobRow(){
-    addRow('jobTable', `
-        <td><input type="text" name="job_position[]" class="form-control form-control-sm" placeholder="Perawat Pelaksana"></td>
-        <td><input type="text" name="job_institution[]" class="form-control form-control-sm"></td>
-        <td><input type="text" name="job_year_start[]" class="form-control form-control-sm" placeholder="2020"></td>
-        <td><input type="text" name="job_year_end[]" class="form-control form-control-sm" placeholder="2024 / Sekarang"></td>
-        <td><input type="text" name="job_description[]" class="form-control form-control-sm"></td>
-        <td class="text-center">
-            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">&times;</button>
-        </td>
-    `);
-}
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            this.textContent = isPassword ? 'Sembunyikan' : 'Lihat';
+        });
+    });
 
-// Sertifikat wajib
-function addCertWajibRow(){
-    addRow('certWajibTable', `
-        <td><input type="text" name="cert_wajib_name[]" class="form-control form-control-sm"></td>
-        <td><input type="text" name="cert_wajib_desc[]" class="form-control form-control-sm"></td>
-        <td><input type="date" name="cert_wajib_start[]" class="form-control form-control-sm"></td>
-        <td><input type="date" name="cert_wajib_end[]" class="form-control form-control-sm"></td>
-        <td><input type="file" name="cert_wajib_file[]" class="form-control form-control-sm" accept=".pdf,image/*"></td>
-        <td class="text-center">
-            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">&times;</button>
-        </td>
-    `);
-}
+    // Preview nama file & preview gambar
+    function bindFilePreview(input) {
+        const parent = input.parentElement;
+        const label = parent ? parent.querySelector('.file-name') : null;
+        const imgEl = parent ? parent.querySelector('.img-preview') : null;
 
-// Sertifikat pengembangan
-function addCertDevRow(){
-    addRow('certDevTable', `
-        <td><input type="text" name="cert_dev_name[]" class="form-control form-control-sm"></td>
-        <td><input type="text" name="cert_dev_desc[]" class="form-control form-control-sm"></td>
-        <td><input type="date" name="cert_dev_start[]" class="form-control form-control-sm"></td>
-        <td><input type="date" name="cert_dev_end[]" class="form-control form-control-sm"></td>
-        <td><input type="file" name="cert_dev_file[]" class="form-control form-control-sm" accept=".pdf,image/*"></td>
-        <td class="text-center">
-            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" onclick="removeRow(this)">&times;</button>
-        </td>
-    `);
-}
+        input.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+
+            if (label && this.dataset.showFilename === 'true') {
+                label.textContent = file ? file.name : '';
+            }
+
+            if (imgEl && this.dataset.showPreview === 'true') {
+                if (file && file.type && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imgEl.src = e.target.result;
+                        imgEl.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imgEl.src = '#';
+                    imgEl.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    function initFileInputs(root) {
+        (root || document).querySelectorAll('input[type="file"]').forEach(input => {
+            bindFilePreview(input);
+        });
+    }
+
+    initFileInputs(document);
+
+    // Helper clone row
+    function cloneRow(wrapperId, rowClass) {
+        const wrapper = document.getElementById(wrapperId);
+        if (!wrapper) return;
+
+        const row = wrapper.querySelector('.' + rowClass);
+        if (!row) return;
+
+        const clone = row.cloneNode(true);
+
+        clone.querySelectorAll('input').forEach(i => {
+            if (i.type === 'file') {
+                i.value = null;
+            } else {
+                i.value = '';
+            }
+        });
+        clone.querySelectorAll('.file-name').forEach(fn => fn.textContent = '');
+        clone.querySelectorAll('.img-preview').forEach(img => {
+            img.src = '#';
+            img.style.display = 'none';
+        });
+
+        wrapper.appendChild(clone);
+        initFileInputs(clone);
+    }
+
+    // ADD buttons – pakai pengecekan null dulu
+    const addPendidikanBtn = document.getElementById('add-pendidikan');
+    if (addPendidikanBtn) {
+        addPendidikanBtn.addEventListener('click', function () {
+            cloneRow('pendidikan-wrapper', 'pendidikan-row');
+        });
+    }
+
+    const addPelatihanBtn = document.getElementById('add-pelatihan');
+    if (addPelatihanBtn) {
+        addPelatihanBtn.addEventListener('click', function () {
+            cloneRow('pelatihan-wrapper', 'pelatihan-row');
+        });
+    }
+
+    const addPekerjaanBtn = document.getElementById('add-pekerjaan');
+    if (addPekerjaanBtn) {
+        addPekerjaanBtn.addEventListener('click', function () {
+            cloneRow('pekerjaan-wrapper', 'pekerjaan-row');
+        });
+    }
+
+    const addKeluargaBtn = document.getElementById('add-keluarga');
+    if (addKeluargaBtn) {
+        addKeluargaBtn.addEventListener('click', function () {
+            cloneRow('keluarga-wrapper', 'keluarga-row');
+        });
+    }
+
+    const addOrganisasiBtn = document.getElementById('add-organisasi');
+    if (addOrganisasiBtn) {
+        addOrganisasiBtn.addEventListener('click', function () {
+            cloneRow('organisasi-wrapper', 'organisasi-row');
+        });
+    }
+
+    const addTandaJasaBtn = document.getElementById('add-tandajasa');
+    if (addTandaJasaBtn) {
+        addTandaJasaBtn.addEventListener('click', function () {
+            cloneRow('tandajasa-wrapper', 'tandajasa-row');
+        });
+    }
+
+    // Hapus row – guard minimal 1 baris
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.remove-row-btn');
+        if (!btn) return;
+
+        const row = btn.closest('.dynamic-row');
+        if (!row) return;
+
+        let wrapper = row.closest('[id$="-wrapper"]');
+        if (!wrapper) wrapper = row.parentElement;
+
+        const rows = wrapper.querySelectorAll('.dynamic-row');
+
+        if (rows.length <= 1) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Tidak dapat dihapus',
+                    text: 'Minimal satu baris data harus tersedia.',
+                });
+            }
+            return;
+        }
+
+        row.remove();
+    });
+
+    // AUTO PINDAH STEP KE FIELD ERROR PERTAMA (DARI SERVER)
+    @if($errors->any())
+    const errorKeys = @json($errors->keys());
+    (function jumpToFirstError() {
+        let firstField = null;
+
+        errorKeys.some(function (key) {
+            let el = document.querySelector('[name="' + key + '"]');
+            if (!el) el = document.querySelector('[name^="' + key + '["]');
+            if (el) { firstField = el; return true; }
+            return false;
+        });
+
+        if (firstField) {
+            const pane = firstField.closest('.step-pane');
+            if (pane && pane.dataset.step) {
+                currentStep = parseInt(pane.dataset.step);
+                renderSteps();
+            }
+            setTimeout(function () {
+                firstField.scrollIntoView({behavior: 'smooth', block: 'center'});
+                firstField.focus();
+                firstField.classList.add('is-invalid');
+            }, 200);
+        }
+    })();
+    @endif
+
+    renderSteps();
+});
 </script>
-</body>
-</html>
+@endpush

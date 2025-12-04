@@ -6,34 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class PerawatProfile extends Model
 {
-    protected $table = 'perawat_profiles'; // pastikan sama dengan DB-mu
-
     protected $fillable = [
-   'user_id',
-        'birth_place',
-        'birth_date',
-        'gender',
-        'religion',
-        'phone',
-        'marital_status',
-        'address',
-        'office_address',
-        'nip',
-        'current_position',
-        'work_unit',
-        'last_education',
-        'education_institution',
-        'profile_photo',
+        'user_id',
+        'nik',
+        'nama_lengkap',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'agama',
+        'status_perkawinan',
+        'alamat',
+        'kota',
+        'no_hp',
+        'golongan_darah',
+        'tinggi_badan',
+        'berat_badan',
+        'foto_3x4',           // <-- TAMBAH INI
     ];
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-  public function certificates()
-{
-    // sambungkan ke certificates lewat user_id yang sama
-    return $this->hasMany(Certificate::class, 'user_id', 'user_id');
-}
-
 }

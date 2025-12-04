@@ -13,10 +13,15 @@ class CreateUsersTable extends Migration
 
             $table->string('name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+
             $table->string('password');
 
-            // Tiga role utama
-            $table->enum('role', ['admin', 'perawat', 'pewawancara'])->default('perawat');
+            // Role: admin / perawat / pewawancara
+            $table->string('role')->default('perawat');
+
+            // Opsional, untuk notif Telegram
+            $table->string('telegram_chat_id')->nullable();
 
             $table->rememberToken();
             $table->timestamps();
