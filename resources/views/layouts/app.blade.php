@@ -236,6 +236,18 @@
                 <span class="dot"></span>
                 <span>DRH & Profil Perawat</span>
             </a>
+            <a href="{{ route('perawat.pelatihan.index') }}" class="nav-linkx">
+                <span class="dot"></span>
+                <span>Pelatihan</span>
+            </a>
+            <a href="{{ route('perawat.organisasi.index') }}" class="nav-linkx">
+                <span class="dot"></span>
+                <span>Organisasi</span>
+            </a>
+            <a href="{{ route('perawat.tandajasa.index') }}" class="nav-linkx">
+                <span class="dot"></span>
+                <span>Tanda Jasa</span>
+            </a>
             <a href="#" class="nav-linkx">
                 <span class="dot"></span>
                 <span>Dokumen Lisensi & Sertifikat</span>
