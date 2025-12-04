@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-{{-- Mengatur Judul Halaman agar muncul di Header Layout --}}
 @php
     $pageTitle = 'Riwayat Pendidikan';
     $pageSubtitle = 'Kelola data pendidikan formal dan akademik Anda.';
@@ -10,7 +9,6 @@
 
 @push('styles')
 <style>
-    /* Card Container Khusus Halaman Ini */
     .content-card {
         background: #ffffff;
         border-radius: 16px;
@@ -18,8 +16,6 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         padding: 24px;
     }
-
-    /* Styling Form Input agar lebih soft */
     .form-control-custom {
         border-radius: 8px;
         border: 1px solid var(--border-soft);
@@ -37,8 +33,6 @@
         color: var(--text-muted);
         margin-bottom: 6px;
     }
-
-    /* Styling Tabel */
     .table-custom th {
         background-color: var(--blue-soft-2);
         color: var(--text-main);
@@ -48,14 +42,13 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         padding: 12px 8px;
+        vertical-align: middle;
     }
     .table-custom td {
         vertical-align: middle;
         padding: 10px 8px;
         border-bottom: 1px solid var(--blue-soft-2);
     }
-    
-    /* Tombol Aksi */
     .btn-action {
         border-radius: 8px;
         font-size: 11px;
@@ -67,7 +60,6 @@
 
 @section('content')
 
-    {{-- Tombol Kembali (Opsional, jika ingin ditaruh di atas card) --}}
     <div class="d-flex justify-content-end mb-3">
         <a href="{{ route('perawat.drh') }}" class="btn btn-sm btn-outline-secondary px-3" style="border-radius: 8px; font-size: 12px;">
             <i class="bi bi-arrow-left"></i> Kembali ke DRH
@@ -76,7 +68,6 @@
 
     <div class="content-card">
         
-        {{-- Alert Error --}}
         @if($errors->any())
             <div class="alert alert-danger py-2 px-3 small rounded-3 mb-4 border-0 bg-danger-subtle text-danger">
                 <ul class="mb-0 ps-3">
@@ -89,41 +80,57 @@
 
         {{-- FORM TAMBAH --}}
         <div class="p-3 mb-4 rounded-3" style="background-color: #f8fafc; border: 1px dashed var(--border-soft);">
-            <h6 class="mb-3" style="font-size: 14px; color: var(--blue-main); font-weight: 600;">
-                + Tambah Data Pendidikan
-            </h6>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="m-0" style="font-size: 14px; color: var(--blue-main); font-weight: 600;">
+                    + Tambah Data Pendidikan
+                </h6>
+            </div>
+            
             <form action="{{ route('perawat.pendidikan.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="row g-3 align-items-end">
+                {{-- Baris 1: Info Institusi --}}
+                <div class="row g-3 mb-2">
                     <div class="col-md-2">
                         <label class="form-label">Jenjang <span class="text-danger">*</span></label>
-                        <input type="text" name="jenjang" class="form-control form-control-custom" placeholder="Contoh: S1">
+                        <input type="text" name="jenjang" class="form-control form-control-custom" placeholder="D3/S1/Ners">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Nama Institusi <span class="text-danger">*</span></label>
+                        <input type="text" name="nama_institusi" class="form-control form-control-custom" placeholder="Nama Universitas/STIKES">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">Nama Institusi <span class="text-danger">*</span></label>
-                        <input type="text" name="nama_institusi" class="form-control form-control-custom" placeholder="Nama Kampus">
+                        <label class="form-label">Jurusan</label>
+                        <input type="text" name="jurusan" class="form-control form-control-custom" placeholder="Ilmu Keperawatan">
                     </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Akreditasi</label>
-                        <input type="text" name="akreditasi" class="form-control form-control-custom" placeholder="A/B">
-                    </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">Tempat</label>
                         <input type="text" name="tempat" class="form-control form-control-custom" placeholder="Kota">
                     </div>
-                    <div class="col-md-1">
-                        <label class="form-label">Lulus</label>
-                        <input type="text" name="tahun_lulus" class="form-control form-control-custom" placeholder="202X">
+                </div>
+
+                {{-- Baris 2: Detail Akademik --}}
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-2">
+                        <label class="form-label">Akreditasi</label>
+                        <input type="text" name="akreditasi" class="form-control form-control-custom" placeholder="A/B/Unggul">
                     </div>
                     <div class="col-md-2">
+                        <label class="form-label">Thn Masuk</label>
+                        <input type="text" name="tahun_masuk" class="form-control form-control-custom" placeholder="20XX">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Thn Lulus</label>
+                        <input type="text" name="tahun_lulus" class="form-control form-control-custom" placeholder="20XX">
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Ijazah (PDF)</label>
                         <input type="file" name="dokumen" class="form-control form-control-custom" style="padding: 5px 8px;">
                     </div>
-                </div>
-                <div class="mt-3 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary btn-sm px-4" style="border-radius: 8px; background: var(--blue-main); border: none;">
-                        Simpan Data
-                    </button>
+                    <div class="col-md-3 text-end">
+                        <button type="submit" class="btn btn-primary btn-sm px-4 w-100" style="border-radius: 8px; background: var(--blue-main); border: none;">
+                            Simpan Data
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -134,10 +141,12 @@
                 <thead>
                     <tr>
                         <th style="width:40px;">No</th>
-                        <th>Jenjang & Institusi</th>
+                        <th style="width:25%;">Jenjang & Institusi</th>
                         <th>Akreditasi</th>
                         <th>Tempat</th>
-                        <th>Thn Lulus</th>
+                        <th>Jurusan</th>
+                        <th>Masuk</th>
+                        <th>Lulus</th>
                         <th>Dokumen</th>
                         <th style="width:140px;">Aksi</th>
                     </tr>
@@ -147,16 +156,16 @@
                         <tr>
                             <td class="text-center text-muted">{{ $i+1 }}</td>
                             
-                            {{-- Form Update Inline --}}
-                            <td colspan="6" class="p-0">
+                            {{-- Form Update Inline (Colspan harus 8: Total kolom 9 dikurangi kolom No) --}}
+                            <td colspan="8" class="p-0">
                                 <form action="{{ route('perawat.pendidikan.update',$row->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
-                                    {{-- Menggunakan layout tabel tricky agar form sejajar --}}
+                                    {{-- Table Trick untuk Alignment --}}
                                     <table class="w-100 m-0 bg-transparent">
                                         <tr>
                                             <td style="border:none; width: 25%;">
-                                                <input type="text" name="jenjang" value="{{ $row->jenjang }}" class="form-control form-control-custom mb-1" style="font-weight:600;">
-                                                <input type="text" name="nama_institusi" value="{{ $row->nama_institusi }}" class="form-control form-control-custom text-muted" style="font-size: 11px;">
+                                                <input type="text" name="jenjang" value="{{ $row->jenjang }}" class="form-control form-control-custom mb-1 fw-bold" placeholder="Jenjang">
+                                                <input type="text" name="nama_institusi" value="{{ $row->nama_institusi }}" class="form-control form-control-custom text-muted" style="font-size: 11px;" placeholder="Institusi">
                                             </td>
                                             <td style="border:none;">
                                                 <input type="text" name="akreditasi" value="{{ $row->akreditasi }}" class="form-control form-control-custom text-center">
@@ -164,7 +173,13 @@
                                             <td style="border:none;">
                                                 <input type="text" name="tempat" value="{{ $row->tempat }}" class="form-control form-control-custom">
                                             </td>
-                                            <td style="border:none; width: 80px;">
+                                            <td style="border:none;">
+                                                <input type="text" name="jurusan" value="{{ $row->jurusan }}" class="form-control form-control-custom">
+                                            </td>
+                                            <td style="border:none; width: 70px;">
+                                                <input type="text" name="tahun_masuk" value="{{ $row->tahun_masuk }}" class="form-control form-control-custom text-center">
+                                            </td>
+                                            <td style="border:none; width: 70px;">
                                                 <input type="text" name="tahun_lulus" value="{{ $row->tahun_lulus }}" class="form-control form-control-custom text-center">
                                             </td>
                                             <td style="border:none;">
@@ -172,26 +187,22 @@
                                                     <input type="file" name="dokumen" class="form-control form-control-custom" style="padding: 4px; font-size: 10px;">
                                                     @if($row->dokumen_path)
                                                         <a href="{{ asset('storage/'.$row->dokumen_path) }}" target="_blank" class="text-decoration-none text-primary">
-                                                            <i class="bi bi-file-earmark-pdf"></i> Lihat File
+                                                            <i class="bi bi-file-earmark-pdf"></i> File
                                                         </a>
-                                                    @else
-                                                        <span class="text-muted text-opacity-50">- Kosong -</span>
                                                     @endif
                                                 </div>
                                             </td>
                                             <td style="border:none; width: 140px;">
-                                                <div class="d-flex gap-2">
-                                                    <button type="submit" class="btn btn-action btn-outline-primary" title="Simpan Perubahan">
-                                                        Update
+                                                <div class="d-flex gap-2 justify-content-end">
+                                                    <button type="submit" class="btn btn-action btn-outline-primary" title="Simpan">
+                                                        <i class="bi bi-check-lg"></i>
                                                     </button>
                                 </form> 
-                                {{-- Tutup Form Update --}}
-                                
-                                                    <form action="{{ route('perawat.pendidikan.destroy',$row->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data pendidikan ini?');">
+                                                    <form action="{{ route('perawat.pendidikan.destroy',$row->id) }}" method="POST" onsubmit="return confirm('Hapus data ini?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-action btn-outline-danger" title="Hapus Data">
-                                                            Hapus
+                                                        <button type="submit" class="btn btn-action btn-outline-danger" title="Hapus">
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
                                                 </div>
@@ -203,11 +214,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-5">
+                            <td colspan="9" class="text-center py-5"> {{-- Colspan 9 sesuai total header --}}
                                 <div class="text-muted mb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-muted opacity-25"><path d="M22 10v6M2 10v6"/><path d="M2 10l10-5 10 5-10 5z"/><path d="M12 12v9"/></svg>
+                                    <i class="bi bi-mortarboard display-6 opacity-25"></i>
                                 </div>
-                                <span class="text-muted" style="font-size: 13px;">Belum ada data riwayat pendidikan.</span>
+                                <span class="text-muted small">Belum ada data riwayat pendidikan.</span>
                             </td>
                         </tr>
                     @endforelse
