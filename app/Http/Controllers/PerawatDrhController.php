@@ -133,8 +133,8 @@ class PerawatDrhController extends Controller
             'tempat'         => 'nullable|string|max:100',
             'tahun_lulus'    => 'nullable|string|max:10',
             'dokumen'        => 'nullable|mimes:pdf,jpg,jpeg,png|max:4096',
-            'jurusan'        => 'nullable|string|max:150', 
-            'tahun_masuk'    => 'nullable|string|max:10', 
+            'jurusan'        => 'nullable|string|max:150',
+            'tahun_masuk'    => 'nullable|string|max:10',
         ]);
 
         $data = $request->only('jenjang','nama_institusi','akreditasi','tempat','tahun_lulus','jurusan','tahun_masuk');
@@ -165,8 +165,8 @@ class PerawatDrhController extends Controller
             'tempat'         => 'nullable|string|max:100',
             'tahun_lulus'    => 'nullable|string|max:10',
             'dokumen'        => 'nullable|mimes:pdf,jpg,jpeg,png|max:4096',
-            'jurusan'        => 'nullable|string|max:150', 
-            'tahun_masuk'    => 'nullable|string|max:10', 
+            'jurusan'        => 'nullable|string|max:150',
+            'tahun_masuk'    => 'nullable|string|max:10',
         ]);
 
         $data = $request->only('jenjang','nama_institusi','akreditasi','tempat','tahun_lulus','jurusan','tahun_masuk');
@@ -359,7 +359,9 @@ class PerawatDrhController extends Controller
         ]);
     }
 
-    /* ============ KELUARGA ============ */
+   /* ============ KELUARGA ============ */
+
+    // 1. Menampilkan Halaman List (index.blade.php)
     public function keluargaIndex()
     {
         $user = $this->currentPerawat();
@@ -369,6 +371,16 @@ class PerawatDrhController extends Controller
         return view('perawat.keluarga.index', compact('user', 'keluarga'));
     }
 
+    // 2. Menampilkan Halaman Form Tambah (create.blade.php) -- BARU
+    public function keluargaCreate()
+    {
+        $user = $this->currentPerawat();
+        if (!$user) return redirect('/');
+
+        return view('perawat.keluarga.create', compact('user'));
+    }
+
+    // 3. Proses Simpan Data (Store)
     public function keluargaStore(Request $request)
     {
         $user = $this->currentPerawat();
@@ -391,6 +403,19 @@ class PerawatDrhController extends Controller
         ]);
     }
 
+    // 4. Menampilkan Halaman Form Edit (edit.blade.php) -- BARU
+    public function keluargaEdit($id)
+    {
+        $user = $this->currentPerawat();
+        if (!$user) return redirect('/');
+
+        // Pastikan data yang diedit milik user yang sedang login
+        $keluarga = PerawatKeluarga::where('user_id', $user->id)->findOrFail($id);
+
+        return view('perawat.keluarga.edit', compact('user', 'keluarga'));
+    }
+
+    // 5. Proses Update Data
     public function keluargaUpdate(Request $request, $id)
     {
         $user = $this->currentPerawat();
@@ -411,6 +436,8 @@ class PerawatDrhController extends Controller
             'icon' => 'success', 'title' => 'Berhasil', 'text' => 'Data keluarga diperbarui.'
         ]);
     }
+
+    // 6. Hapus Data
     public function keluargaDestroy($id)
     {
         $user = $this->currentPerawat();
