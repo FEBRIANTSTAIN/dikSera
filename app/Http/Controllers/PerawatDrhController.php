@@ -111,7 +111,9 @@ class PerawatDrhController extends Controller
         ]);
     }
 
-    /* ============ PENDIDIKAN ============ */
+ /* ============ PENDIDIKAN ============ */
+
+    // 1. Index (List)
     public function pendidikanIndex()
     {
         $user = $this->currentPerawat();
@@ -121,6 +123,16 @@ class PerawatDrhController extends Controller
         return view('perawat.pendidikan.index', compact('user','pendidikan'));
     }
 
+    // 2. Create (Form Tambah)
+    public function pendidikanCreate()
+    {
+        $user = $this->currentPerawat();
+        if (!$user) return redirect('/');
+
+        return view('perawat.pendidikan.create', compact('user'));
+    }
+
+    // 3. Store (Simpan)
     public function pendidikanStore(Request $request)
     {
         $user = $this->currentPerawat();
@@ -151,6 +163,17 @@ class PerawatDrhController extends Controller
         ]);
     }
 
+    // 4. Edit (Form Edit)
+    public function pendidikanEdit($id)
+    {
+        $user = $this->currentPerawat();
+        if (!$user) return redirect('/');
+
+        $pendidikan = PerawatPendidikan::where('user_id', $user->id)->findOrFail($id);
+        return view('perawat.pendidikan.edit', compact('user', 'pendidikan'));
+    }
+
+    // 5. Update (Simpan Perubahan)
     public function pendidikanUpdate(Request $request, $id)
     {
         $user = $this->currentPerawat();
@@ -170,7 +193,9 @@ class PerawatDrhController extends Controller
         ]);
 
         $data = $request->only('jenjang','nama_institusi','akreditasi','tempat','tahun_lulus','jurusan','tahun_masuk');
+
         if ($request->hasFile('dokumen')) {
+            // if ($pendidikan->dokumen_path) Storage::disk('public')->delete($pendidikan->dokumen_path);
             $data['dokumen_path'] = $request->file('dokumen')->store('perawat/pendidikan','public');
         }
 
@@ -181,12 +206,16 @@ class PerawatDrhController extends Controller
         ]);
     }
 
+    // 6. Destroy (Hapus)
     public function pendidikanDestroy($id)
     {
         $user = $this->currentPerawat();
         if (!$user) return redirect('/');
 
         $pendidikan = PerawatPendidikan::where('user_id',$user->id)->findOrFail($id);
+
+        // if ($pendidikan->dokumen_path) Storage::disk('public')->delete($pendidikan->dokumen_path);
+
         $pendidikan->delete();
 
         return redirect()->route('perawat.pendidikan.index')->with('swal', [
