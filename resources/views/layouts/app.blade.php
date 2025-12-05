@@ -245,7 +245,7 @@
                         </div>
                     </div>
                 </div>
-
+                @if (Auth::check() && Auth::user()->role === 'perawat')
                 {{-- UMUM --}}
                 <div class="nav-section-title">Umum</div>
                 <a href="{{ route('dashboard') }}"
@@ -314,6 +314,24 @@
                     <span class="dot"></span>
                     <span>Pengaturan</span>
                 </a>
+                @endif
+
+                {{-- ADMIN PANEL --}}
+                @if (Auth::check() && Auth::user()->role === 'admin')
+                    <div class="nav-section-title">Admin Panel</div>
+
+                    <a href="{{ route('dashboard.admin') }}"
+                        class="nav-linkx {{ isset($menu) && $menu === 'admin' ? 'active' : '' }}">
+                        <span class="dot"></span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{{ route('admin.perawat.index') }}"
+                        class="nav-linkx {{ request()->routeIs('admin.perawat.*') ? 'active' : '' }}">
+                        <span class="dot"></span>
+                        <span>Kelola Data Perawat</span>
+                    </a>
+                @endif
+
             </div>
 
             <div class="sidebar-footer">

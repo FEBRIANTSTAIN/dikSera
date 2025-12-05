@@ -20,6 +20,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('dashboard/admin', [DashboardController::class, 'adminIndex'])->name('dashboard.admin');
 // ADMIN – daftar perawat
 Route::get('/admin/perawat', [AdminPerawatController::class, 'index'])
     ->name('admin.perawat.index');
