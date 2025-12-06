@@ -127,4 +127,9 @@ class DashboardController extends Controller
             'statusList'
         ));
     }
+
+    public function adminIndex()
+    {
+        return view('dashboard.admin');
+    }
 }

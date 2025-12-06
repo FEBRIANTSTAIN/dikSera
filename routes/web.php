@@ -20,6 +20,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('dashboard/admin', [DashboardController::class, 'adminIndex'])->name('dashboard.admin');
 // ADMIN – daftar perawat
 Route::get('/admin/perawat', [AdminPerawatController::class, 'index'])
     ->name('admin.perawat.index');
@@ -27,6 +28,16 @@ Route::get('/admin/perawat', [AdminPerawatController::class, 'index'])
 // ADMIN – detail per perawat
 Route::get('/admin/perawat/{id}', [AdminPerawatController::class, 'show'])
     ->name('admin.perawat.show');
+
+// ADMIN – edit perawat
+Route::get('/admin/perawat/{id}/edit', [AdminPerawatController::class, 'edit'])
+    ->name('admin.perawat.edit');
+Route::put('/admin/perawat/{id}', [AdminPerawatController::class, 'update'])
+    ->name('admin.perawat.update');
+
+// ADMIN – hapus perawat
+Route::delete('/admin/perawat/{id}', [AdminPerawatController::class, 'destroy'])
+    ->name('admin.perawat.destroy');
 
 Route::prefix('perawat')->name('perawat.')->group(function () {
 
