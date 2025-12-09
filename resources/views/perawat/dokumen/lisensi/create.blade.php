@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Dokumen Lisensi – DIKSERA')
+@section('title', 'Tambah Lisensi – DIKSERA')
 
 @push('styles')
+{{-- Mengambil Style yang sama persis dengan Code 2 --}}
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     :root {
@@ -45,7 +46,7 @@
         padding: 40px;
     }
 
-    /* --- Inputs --- */
+    /* --- Inputs & Select --- */
     .form-label {
         font-size: 0.9rem;
         font-weight: 600;
@@ -58,7 +59,8 @@
         color: #ef4444;
     }
 
-    .form-control {
+    /* Menambahkan support untuk file input agar terlihat rapi */
+    .form-control, .form-select, .form-control-file {
         border: 1px solid var(--input-border);
         border-radius: 10px;
         padding: 12px 16px;
@@ -66,9 +68,10 @@
         color: var(--text-dark);
         background-color: #fff;
         transition: all 0.2s ease;
+        width: 100%; /* Memastikan full width */
     }
 
-    .form-control:focus {
+    .form-control:focus, .form-select:focus {
         border-color: var(--primary-blue);
         box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         outline: none;
@@ -132,18 +135,6 @@
         border-radius: 10px;
         font-size: 0.9rem;
     }
-
-    .file-status {
-        font-size: 0.85rem;
-        color: var(--primary-blue);
-        background-color: #eff6ff;
-        padding: 8px 12px;
-        border-radius: 8px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 8px;
-    }
 </style>
 @endpush
 
@@ -152,10 +143,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
 
-            {{-- Header --}}
+            {{-- Header: Judul & Tombol Kembali --}}
             <div class="page-header">
                 <div>
-                    <h1 class="page-title">Edit Dokumen Lisensi</h1>
+                    <h1 class="page-title">Tambah Lisensi Baru</h1>
                 </div>
                 <a href="{{ route('perawat.lisensi.index') }}" class="btn-back">
                     <i class="bi bi-arrow-left"></i> Kembali
@@ -165,6 +156,7 @@
             {{-- Form Card --}}
             <div class="form-card">
 
+                {{-- Menampilkan Error Global jika ada --}}
                 @if($errors->any())
                     <div class="alert alert-danger py-3 px-4 mb-4">
                         <ul class="mb-0 ps-3">
@@ -173,54 +165,48 @@
                     </div>
                 @endif
 
-                <form action="{{ route('perawat.lisensi.update', $lisensi->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('perawat.lisensi.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    @method('PUT')
 
-                    <div class="row g-4">
-                        {{-- Jenis & Nomor --}}
-                        <div class="col-md-6">
-                            <label class="form-label">Jenis Dokumen <span class="required-star">*</span></label>
-                            <input type="text" name="jenis" class="form-control" value="{{ old('jenis', $lisensi->jenis) }}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Nomor Dokumen <span class="required-star">*</span></label>
-                            <input type="text" name="nomor" class="form-control" value="{{ old('nomor', $lisensi->nomor) }}" required>
+                    <div class="row g-4"> {{-- Menggunakan row g-4 untuk spacing antar elemen --}}
+
+                        {{-- Nomor Lisensi --}}
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Nomor Lisensi <span class="required-star">*</span></label>
+                            <input type="text" name="nomor" class="form-control @error('nomor') is-invalid @enderror" value="{{ old('nomor') }}" placeholder="Masukkan nomor lisensi" required>
+                            @error('nomor')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
-                        {{-- Tanggal --}}
-                        <div class="col-md-6">
+                        {{-- Tanggal Terbit & Expired (Side by Side) --}}
+                        <div class="col-md-6 mb-3">
                             <label class="form-label">Tanggal Terbit <span class="required-star">*</span></label>
-                            <input type="date" name="tgl_terbit" class="form-control" value="{{ old('tgl_terbit', $lisensi->tgl_terbit->format('Y-m-d')) }}" required>
+                            <input type="date" name="tgl_terbit" class="form-control @error('tgl_terbit') is-invalid @enderror" value="{{ old('tgl_terbit') }}" required>
+                            @error('tgl_terbit')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
-                        <div class="col-md-6">
+
+                        <div class="col-md-6 mb-3">
                             <label class="form-label">Tanggal Expired <span class="required-star">*</span></label>
-                            <input type="date" name="tgl_expired" class="form-control" value="{{ old('tgl_expired', $lisensi->tgl_expired->format('Y-m-d')) }}" required>
+                            <input type="date" name="tgl_expired" class="form-control @error('tgl_expired') is-invalid @enderror" value="{{ old('tgl_expired') }}" required>
+                            @error('tgl_expired')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
                         {{-- Upload Dokumen --}}
-                        <div class="col-12">
-                            <label class="form-label">Ganti File Dokumen (Opsional)</label>
-                            <input type="file" name="dokumen" class="form-control">
-
-                            @if($lisensi->file_path)
-                                <div class="file-status">
-                                    <i class="bi bi-file-earmark-check-fill"></i>
-                                    File saat ini sudah tersimpan. Biarkan kosong jika tidak ingin mengubah.
-                                </div>
-                            @endif
-
-                            <div class="form-text text-muted mt-2 small">
-                                <i class="bi bi-info-circle me-1"></i> Format PDF, JPG, atau PNG. Maksimal 5MB.
-                            </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Upload Dokumen (PDF/Gambar, Max 5MB) <span class="required-star">*</span></label>
+                            {{-- Menggunakan class form-control agar style border seragam --}}
+                            <input type="file" name="dokumen" class="form-control @error('dokumen') is-invalid @enderror" style="padding-top: 9px;" required>
+                            @error('dokumen')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                         </div>
+
                     </div>
 
+                    {{-- Tombol Simpan --}}
                     <div class="mt-5">
                         <button type="submit" class="btn-submit">
-                            <i class="bi bi-arrow-repeat"></i> Update Dokumen
+                            <i class="bi bi-save2"></i> Simpan Data Lisensi
                         </button>
                     </div>
+
                 </form>
             </div>
 

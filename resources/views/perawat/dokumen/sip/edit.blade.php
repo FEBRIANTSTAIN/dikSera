@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Dokumen Lisensi – DIKSERA')
+@section('title', 'Edit SIP – DIKSERA')
 
 @push('styles')
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     :root {
         --primary-blue: #2563eb;
-        --primary-hover: #1d4ed8;
         --text-dark: #0f172a;
         --text-gray: #64748b;
         --bg-light: #f8fafc;
         --input-border: #e2e8f0;
+        --accent-orange: #f59e0b; /* Warna tema Edit */
     }
 
     body {
@@ -58,7 +58,7 @@
         color: #ef4444;
     }
 
-    .form-control {
+    .form-control, .form-select {
         border: 1px solid var(--input-border);
         border-radius: 10px;
         padding: 12px 16px;
@@ -68,19 +68,22 @@
         transition: all 0.2s ease;
     }
 
-    .form-control:focus {
-        border-color: var(--primary-blue);
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    .form-text {
+        font-size: 0.85rem;
+        color: var(--text-gray);
+        margin-top: 5px;
+    }
+
+    /* Focus Orange untuk Edit */
+    .form-control:focus, .form-select:focus {
+        border-color: var(--accent-orange);
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
         outline: none;
     }
 
-    .form-control::placeholder {
-        color: #cbd5e1;
-    }
-
     /* --- Buttons --- */
-    .btn-submit {
-        background-color: var(--primary-blue);
+    .btn-submit-edit {
+        background-color: var(--accent-orange);
         color: white;
         width: 100%;
         padding: 14px;
@@ -88,7 +91,7 @@
         font-weight: 600;
         font-size: 1rem;
         border: none;
-        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.25);
+        box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.25);
         transition: all 0.2s;
         display: flex;
         justify-content: center;
@@ -96,10 +99,10 @@
         gap: 8px;
     }
 
-    .btn-submit:hover {
-        background-color: var(--primary-hover);
+    .btn-submit-edit:hover {
+        background-color: #d97706;
         transform: translateY(-2px);
-        box-shadow: 0 8px 12px -1px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 8px 12px -1px rgba(245, 158, 11, 0.3);
         color: white;
     }
 
@@ -132,6 +135,21 @@
         border-radius: 10px;
         font-size: 0.9rem;
     }
+
+    /* Current File Link Style */
+    .current-file-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--primary-blue);
+        font-weight: 500;
+        text-decoration: none;
+        margin-top: 8px;
+        font-size: 0.9rem;
+    }
+    .current-file-link:hover {
+        text-decoration: underline;
+    }
 </style>
 @endpush
 
@@ -143,9 +161,9 @@
             {{-- Header --}}
             <div class="page-header">
                 <div>
-                    <h1 class="page-title">Tambah Dokumen Lisensi</h1>
+                    <h1 class="page-title">Edit SIP</h1>
                 </div>
-                <a href="{{ route('perawat.lisensi.index') }}" class="btn-back">
+                <a href="{{ route('perawat.sip.index') }}" class="btn-back">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
@@ -161,46 +179,47 @@
                     </div>
                 @endif
 
-                <form action="{{ route('perawat.lisensi.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('perawat.sip.update', $data->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
 
                     <div class="row g-4">
-                        {{-- Jenis & Nomor --}}
-                        <div class="col-md-6">
-                            <label class="form-label">Jenis Dokumen <span class="required-star">*</span></label>
-                            <input type="text" name="jenis" class="form-control" value="{{ old('jenis') }}" placeholder="Contoh: STR, SIP, Sertifikat ACLS" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Nomor Dokumen <span class="required-star">*</span></label>
-                            <input type="text" name="nomor" class="form-control" value="{{ old('nomor') }}" placeholder="Nomor Surat/Sertifikat" required>
+
+                        {{-- Nomor SIP --}}
+                        <div class="col-12">
+                            <label class="form-label">Nomor SIP <span class="required-star">*</span></label>
+                            <input type="text" name="nomor" class="form-control" value="{{ old('nomor', $data->nomor) }}" required placeholder="Masukkan nomor SIP">
                         </div>
 
-                        {{-- Tanggal --}}
+                        {{-- Tanggal Terbit & Expired --}}
                         <div class="col-md-6">
                             <label class="form-label">Tanggal Terbit <span class="required-star">*</span></label>
-                            <input type="date" name="tgl_terbit" class="form-control" value="{{ old('tgl_terbit') }}" required>
+                            <input type="date" name="tgl_terbit" class="form-control" value="{{ old('tgl_terbit', $data->tgl_terbit) }}" required>
                         </div>
+
                         <div class="col-md-6">
                             <label class="form-label">Tanggal Expired <span class="required-star">*</span></label>
-                            <input type="date" name="tgl_expired" class="form-control" value="{{ old('tgl_expired') }}" required>
-                            <div class="form-text text-muted mt-1 small" style="font-size: 0.8rem;">
-                                * Status (Aktif/Expired) dihitung otomatis oleh sistem.
-                            </div>
+                            <input type="date" name="tgl_expired" class="form-control" value="{{ old('tgl_expired', $data->tgl_expired) }}" required>
                         </div>
 
                         {{-- Upload Dokumen --}}
                         <div class="col-12">
-                            <label class="form-label">Upload Dokumen <span class="required-star">*</span></label>
-                            <input type="file" name="dokumen" class="form-control" required>
-                            <div class="form-text text-muted mt-2 small">
-                                <i class="bi bi-info-circle me-1"></i> Format PDF, JPG, atau PNG. Maksimal 5MB.
-                            </div>
+                            <label class="form-label">Upload Dokumen Baru</label>
+                            <input type="file" name="dokumen" class="form-control pt-2 pb-2">
+                            <div class="form-text">Kosongkan jika tidak ingin mengganti dokumen.</div>
+
+                            @if($data->file_path)
+                                <a href="{{ Storage::url($data->file_path) }}" target="_blank" class="current-file-link">
+                                    <i class="bi bi-file-earmark-pdf"></i> Lihat Dokumen Saat Ini
+                                </a>
+                            @endif
                         </div>
+
                     </div>
 
                     <div class="mt-5">
-                        <button type="submit" class="btn-submit">
-                            <i class="bi bi-save2"></i> Simpan Dokumen
+                        <button type="submit" class="btn-submit-edit">
+                            <i class="bi bi-check-lg"></i> Update SIP
                         </button>
                     </div>
                 </form>
