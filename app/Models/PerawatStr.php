@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PerawatLisensi extends Model
+class PerawatStr extends Model
 {
     use HasFactory;
 
-    protected $table = 'perawat_lisensis';
+    protected $table = 'perawat_strs';
     protected $fillable = [
         'user_id',
         'nomor',

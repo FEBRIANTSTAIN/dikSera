@@ -102,13 +102,37 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/tanda-jasa/{id}', [PerawatDrhController::class, 'tandajasaUpdate'])->name('tandajasa.update');
         Route::delete('/tanda-jasa/{id}', [PerawatDrhController::class, 'tandajasaDestroy'])->name('tandajasa.destroy');
 
-        // === LISENSI & DOKUMEN (STR/SIP) ===
-        Route::get('/lisensi', [PerawatDrhController::class, 'lisensiIndex'])->name('lisensi.index');
-        Route::get('/lisensi/create', [PerawatDrhController::class, 'lisensiCreate'])->name('lisensi.create');
-        Route::post('/lisensi', [PerawatDrhController::class, 'lisensiStore'])->name('lisensi.store');
-        Route::get('/lisensi/{id}/edit', [PerawatDrhController::class, 'lisensiEdit'])->name('lisensi.edit');
-        Route::put('/lisensi/{id}', [PerawatDrhController::class, 'lisensiUpdate'])->name('lisensi.update');
-        Route::delete('/lisensi/{id}', [PerawatDrhController::class, 'lisensiDestroy'])->name('lisensi.destroy');
+        // === DOKUMEN: LISENSI ===
+        Route::get('/dokumen/lisensi', [PerawatDrhController::class, 'lisensiIndex'])->name('lisensi.index');
+        Route::get('/dokumen/lisensi/create', [PerawatDrhController::class, 'lisensiCreate'])->name('lisensi.create');
+        Route::post('/dokumen/lisensi', [PerawatDrhController::class, 'lisensiStore'])->name('lisensi.store');
+        Route::get('/dokumen/lisensi/{id}/edit', [PerawatDrhController::class, 'lisensiEdit'])->name('lisensi.edit');
+        Route::put('/dokumen/lisensi/{id}', [PerawatDrhController::class, 'lisensiUpdate'])->name('lisensi.update');
+        Route::delete('/dokumen/lisensi/{id}', [PerawatDrhController::class, 'lisensiDestroy'])->name('lisensi.destroy');
+
+        // === DOKUMEN: STR ===
+        Route::get('/dokumen/str', [PerawatDrhController::class, 'strIndex'])->name('str.index');
+        Route::get('/dokumen/str/create', [PerawatDrhController::class, 'strCreate'])->name('str.create');
+        Route::post('/dokumen/str', [PerawatDrhController::class, 'strStore'])->name('str.store');
+        Route::get('/dokumen/str/{id}/edit', [PerawatDrhController::class, 'strEdit'])->name('str.edit');
+        Route::put('/dokumen/str/{id}', [PerawatDrhController::class, 'strUpdate'])->name('str.update');
+        Route::delete('/dokumen/str/{id}', [PerawatDrhController::class, 'strDestroy'])->name('str.destroy');
+
+        // === DOKUMEN: SIP ===
+        Route::get('/dokumen/sip', [PerawatDrhController::class, 'sipIndex'])->name('sip.index');
+        Route::get('/dokumen/sip/create', [PerawatDrhController::class, 'sipCreate'])->name('sip.create');
+        Route::post('/dokumen/sip', [PerawatDrhController::class, 'sipStore'])->name('sip.store');
+        Route::get('/dokumen/sip/{id}/edit', [PerawatDrhController::class, 'sipEdit'])->name('sip.edit');
+        Route::put('/dokumen/sip/{id}', [PerawatDrhController::class, 'sipUpdate'])->name('sip.update');
+        Route::delete('/dokumen/sip/{id}', [PerawatDrhController::class, 'sipDestroy'])->name('sip.destroy');
+
+        // === DOKUMEN: TAMBAHAN (DATA TAMBAHAN) ===
+        Route::get('/dokumen/tambahan', [PerawatDrhController::class, 'tambahanIndex'])->name('tambahan.index');
+        Route::get('/dokumen/tambahan/create', [PerawatDrhController::class, 'tambahanCreate'])->name('tambahan.create');
+        Route::post('/dokumen/tambahan', [PerawatDrhController::class, 'tambahanStore'])->name('tambahan.store');
+        Route::get('/dokumen/tambahan/{id}/edit', [PerawatDrhController::class, 'tambahanEdit'])->name('tambahan.edit');
+        Route::put('/dokumen/tambahan/{id}', [PerawatDrhController::class, 'tambahanUpdate'])->name('tambahan.update');
+        Route::delete('/dokumen/tambahan/{id}', [PerawatDrhController::class, 'tambahanDestroy'])->name('tambahan.destroy');
     });
 
 });

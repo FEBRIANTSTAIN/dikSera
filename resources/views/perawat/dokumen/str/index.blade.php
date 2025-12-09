@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dokumen Lisensi – DIKSERA')
+@section('title', 'Data STR Perawat')
 
 @push('styles')
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -149,17 +149,35 @@
         gap: 5px;
     }
 
-    /* Link Biru */
-    .link-blue {
-        color: var(--primary-blue);
+    /* --- Custom Status Badges --- */
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 0.75rem;
         font-weight: 600;
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    .link-blue:hover {
-        color: var(--primary-hover);
-        text-decoration: underline;
+
+    .status-active {
+        background-color: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .status-warning {
+        background-color: #fef9c3;
+        color: #854d0e;
+        border: 1px solid #fde047;
+    }
+
+    .status-danger {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
     }
 
     /* Action Buttons */
@@ -199,24 +217,23 @@
     {{-- Header --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Dokumen Lisensi</h1>
-            <p class="page-subtitle">Kelola masa berlaku dokumen legal (STR, SIP, Sertifikat) Anda.</p>
+            <h1 class="page-title">Data STR (Surat Tanda Registrasi)</h1>
+            <p class="page-subtitle">Kelola data Surat Tanda Registrasi perawat.</p>
         </div>
         <div class="d-flex gap-2">
-            {{-- Tombol Kembali (Opsional, jika ingin konsisten dengan code 2) --}}
-            {{-- <a href="{{ route('perawat.drh') }}" class="btn-white">
+            <a href="{{ route('perawat.drh') }}" class="btn-white">
                 <i class="bi bi-arrow-left"></i> Kembali
-            </a> --}}
-            <a href="{{ route('perawat.lisensi.create') }}" class="btn-blue">
-                <i class="bi bi-plus-lg"></i> Tambah Dokumen
+            </a>
+            <a href="{{ route('perawat.str.create') }}" class="btn-blue">
+                <i class="bi bi-plus-lg"></i> Tambah STR
             </a>
         </div>
     </div>
 
     {{-- Alert --}}
-    @if(session('swal'))
+    @if(session('success'))
         <div class="alert-blue">
-            <i class="bi bi-check-circle-fill"></i> {{ session('swal')['text'] ?? 'Berhasil disimpan.' }}
+            <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
         </div>
     @endif
 
@@ -227,66 +244,74 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="30%">Jenis & Nomor Dokumen</th>
+                        <th width="30%">Nomor STR</th>
                         <th width="25%">Masa Berlaku</th>
                         <th width="15%">Status</th>
-                        <th width="15%">File</th>
+                        <th width="15%">Dokumen</th>
                         <th width="10%" class="text-end">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($lisensi as $item)
+                    @forelse($data as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
 
-                            {{-- Jenis & Nomor (Digabung agar rapi) --}}
+                            {{-- Nomor STR --}}
                             <td>
-                                <span class="data-title">{{ $item->jenis }}</span>
+                                <span class="data-title">{{ $item->nomor }}</span>
+                            </td>
+
+                            {{-- Masa Berlaku --}}
+                            <td>
                                 <span class="data-sub">
-                                    <i class="bi bi-card-heading"></i> {{ $item->nomor }}
+                                    <i class="bi bi-calendar-event"></i>
+                                    {{ \Carbon\Carbon::parse($item->tgl_terbit)->format('d-m-Y') }}
+                                    s/d
+                                    {{ \Carbon\Carbon::parse($item->tgl_expired)->format('d-m-Y') }}
                                 </span>
                             </td>
 
-                            {{-- Masa Berlaku (Digabung) --}}
+                            {{-- Status Badge Logic --}}
                             <td>
-                                <div class="text-muted small mb-1">
-                                    Terbit: <span class="text-dark fw-medium">{{ \Carbon\Carbon::parse($item->tgl_terbit)->format('d M Y') }}</span>
-                                </div>
-                                <div class="text-muted small">
-                                    Expired: <span class="text-danger fw-medium">{{ \Carbon\Carbon::parse($item->tgl_expired)->format('d M Y') }}</span>
-                                </div>
-                            </td>
+                                @php
+                                    $expired = \Carbon\Carbon::parse($item->tgl_expired);
+                                    $today = \Carbon\Carbon::now();
+                                    $diff = $today->diffInDays($expired, false);
+                                @endphp
 
-                            {{-- Status --}}
-                            <td>
-                                @if($item->status == 'aktif')
-                                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-normal">Aktif</span>
-                                @elseif($item->status == 'hampir_expired')
-                                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-normal">Hampir Expired</span>
+                                @if($diff < 0)
+                                    <span class="status-badge status-danger">
+                                        <i class="bi bi-x-circle-fill"></i> Expired
+                                    </span>
+                                @elseif($diff < 90)
+                                    <span class="status-badge status-warning">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Hampir Expired
+                                    </span>
                                 @else
-                                    <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-normal">Expired</span>
+                                    <span class="status-badge status-active">
+                                        <i class="bi bi-check-circle-fill"></i> Aktif
+                                    </span>
                                 @endif
                             </td>
 
-                            {{-- File --}}
+                            {{-- Dokumen --}}
                             <td>
                                 @if($item->file_path)
-                                    <a href="{{ asset('storage/'.$item->file_path) }}" target="_blank" class="link-blue">
-                                        <i class="bi bi-file-earmark-pdf"></i> Lihat File
+                                    <a href="{{ Storage::url($item->file_path) }}" target="_blank" class="text-decoration-none" style="font-weight: 500; color: var(--primary-blue);">
+                                        <i class="bi bi-file-earmark-pdf-fill"></i> Lihat File
                                     </a>
                                 @else
-                                    <span class="text-muted small">-</span>
+                                    <span class="text-muted text-xs">Tidak ada file</span>
                                 @endif
                             </td>
 
                             {{-- Aksi --}}
                             <td class="text-end">
                                 <div class="d-flex gap-1 justify-content-end">
-                                    <a href="{{ route('perawat.lisensi.edit', $item->id) }}" class="action-btn" title="Edit">
+                                    <a href="{{ route('perawat.str.edit', $item->id) }}" class="action-btn" title="Edit">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
-
-                                    <form action="{{ route('perawat.lisensi.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus dokumen ini?');">
+                                    <form action="{{ route('perawat.str.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus STR ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="action-btn delete" title="Hapus">
@@ -300,8 +325,8 @@
                         <tr>
                             <td colspan="6" class="text-center py-5">
                                 <div class="text-muted" style="opacity: 0.6;">
-                                    <i class="bi bi-file-earmark-x fs-1 d-block mb-2"></i>
-                                    Belum ada dokumen lisensi yang ditambahkan.
+                                    <i class="bi bi-clipboard-x fs-1 d-block mb-2"></i>
+                                    Belum ada data STR.
                                 </div>
                             </td>
                         </tr>
@@ -310,6 +335,5 @@
             </table>
         </div>
     </div>
-
 </div>
 @endsection
