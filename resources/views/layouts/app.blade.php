@@ -627,9 +627,9 @@
                         </div>
 
                         <div class="nav-section-title">Lainnya</div>
-                        <a href="#" class="nav-linkx">
+                        <a href="{{ route('perawat.telegram.link') }}" class="nav-linkx">
                             <i class="bi bi-gear-fill"></i>
-                            <span class="link-text">Pengaturan</span>
+                            <span class="link-text">Telegram</span>
                         </a>
                     @endif
 
@@ -648,6 +648,12 @@
                             class="nav-linkx {{ request()->routeIs('admin.perawat.*') ? 'active' : '' }}">
                             <i class="bi bi-people"></i> {{-- Icon baru --}}
                             <span class="link-text">Data Perawat</span>
+                        </a>
+
+                        <div class="nav-section-title">Lainnya</div>
+                        <a href="{{ route('admin.profile.index') }}" class="nav-linkx">
+                            <i class="bi bi-gear-fill"></i>
+                            <span class="link-text">Profile</span>
                         </a>
                     @endif
                 </div>

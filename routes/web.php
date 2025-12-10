@@ -5,13 +5,16 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminPerawatController;
+use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\PerawatDrhController;
+use App\Http\Controllers\TelegramController;
 
 /*
 |--------------------------------------------------------------------------
 | PUBLIC ROUTES (Bisa diakses tanpa login)
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // Authentication
@@ -33,14 +36,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard/admin', [DashboardController::class, 'adminIndex'])->name('dashboard.admin');
 
     // === GROUP ADMIN ===
-    Route::prefix('admin')->name('admin.')->group(function(){
+    Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/perawat', [AdminPerawatController::class, 'index'])->name('perawat.index');
         Route::get('/perawat/{id}', [AdminPerawatController::class, 'show'])->name('perawat.show');
         Route::get('/perawat/{id}/edit', [AdminPerawatController::class, 'edit'])->name('perawat.edit');
         Route::put('/perawat/{id}', [AdminPerawatController::class, 'update'])->name('perawat.update');
         Route::delete('/perawat/{id}', [AdminPerawatController::class, 'destroy'])->name('perawat.destroy');
-        Route::get('/perawat/{id}/sertifikat', [AdminPerawatController::class, 'sertifikat'])
-        ->name('perawat.sertifikat');
+
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile.index');
+        Route::post('/telegram/generate', [AdminProfileController::class, 'generateCode'])->name('telegram.generate');
+        Route::post('/telegram/unlink', [AdminProfileController::class, 'unlink'])->name('telegram.unlink');
+        Route::post('/telegram/test', [AdminProfileController::class, 'testMessage'])->name('telegram.test');
     });
 
     // === GROUP PERAWAT ===
@@ -135,6 +141,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dokumen/tambahan/{id}/edit', [PerawatDrhController::class, 'tambahanEdit'])->name('tambahan.edit');
         Route::put('/dokumen/tambahan/{id}', [PerawatDrhController::class, 'tambahanUpdate'])->name('tambahan.update');
         Route::delete('/dokumen/tambahan/{id}', [PerawatDrhController::class, 'tambahanDestroy'])->name('tambahan.destroy');
+
+        // Link Telegram Account
+        Route::get('/telegram/link', [TelegramController::class, 'linkTelegram'])->name('telegram.link');
+        Route::post('/telegram/generate-code', [TelegramController::class, 'generateCode'])->name('telegram.generate-code');
+        Route::post('/telegram/unlink', [TelegramController::class, 'unlinkTelegram'])->name('telegram.unlink');
     });
 
+    Route::post('/webhook', [TelegramController::class, 'webhook'])->name('webhook');
 });

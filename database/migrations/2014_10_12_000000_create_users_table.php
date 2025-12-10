@@ -23,6 +23,10 @@ class CreateUsersTable extends Migration
             // Opsional, untuk notif Telegram
             $table->string('telegram_chat_id')->nullable();
 
+            // untuk verifikasi Telegram
+            $table->string('telegram_verification_code', 10)->nullable();
+            $table->timestamp('telegram_verification_expires_at')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });

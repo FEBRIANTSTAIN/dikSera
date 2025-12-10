@@ -22,6 +22,8 @@ class User extends Authenticatable
         'password',
         'role',
         'telegram_chat_id',
+        'telegram_verification_code',
+        'telegram_verification_expires_at',
     ];
 
     protected $hidden = [
