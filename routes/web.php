@@ -42,6 +42,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/perawat/{id}/edit', [AdminPerawatController::class, 'edit'])->name('perawat.edit');
         Route::put('/perawat/{id}', [AdminPerawatController::class, 'update'])->name('perawat.update');
         Route::delete('/perawat/{id}', [AdminPerawatController::class, 'destroy'])->name('perawat.destroy');
+        Route::get('/perawat/{id}/sertifikat', [AdminPerawatController::class, 'sertifikat'])
+        ->name('perawat.sertifikat');
 
         Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile.index');
         Route::post('/telegram/generate', [AdminProfileController::class, 'generateCode'])->name('telegram.generate');
