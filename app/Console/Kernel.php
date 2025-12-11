@@ -15,10 +15,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Jalankan setiap hari jam 8 pagi
+        // 1. Cek Dokumen Expired
         $schedule->command('sertifikat:check-expiry')
-            ->dailyAt('08:00')
-            ->timezone('Asia/Jakarta');
+            ->dailyAt('08:00')            
+            ->timezone('Asia/Jakarta');   
+
+        // 2. Telegram Polling
+        // Perintah ini akan dipanggil scheduler setiap menit.
+        // Tapi `withoutOverlapping` akan mencegahnya jalan kalau instance sebelumnya masih hidup.
+        $schedule->command('telegram:polling')
+            ->everyMinute()
+            ->withoutOverlapping()  // Cek Apakah bot sedang jalan? Kalau ya, skip.
+            ->runInBackground()     // Jalan di background 
+            ->appendOutputTo(storage_path('logs/telegram-bot.log')); // Simpan log output
     }
 
     /**
