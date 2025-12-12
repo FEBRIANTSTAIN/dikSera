@@ -16,4 +16,9 @@ class Form extends Model
         'waktu_mulai' => 'datetime',
         'waktu_selesai' => 'datetime',
     ];
+
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'form_user');
+    }
 }
