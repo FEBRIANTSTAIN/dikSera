@@ -136,7 +136,7 @@
                         <th style="width:50px;" class="text-center">No</th>
                         <th>Identitas Perawat</th>
                         <th>Kontak & NIK</th>
-                        <th>Alamat Domisili</th>
+                        <th>Dokumen Expired</th>
                         <th style="width:160px;" class="text-center">Aksi</th> {{-- Lebar ditambah dikit biar muat 4 tombol --}}
                     </tr>
                 </thead>
@@ -177,9 +177,8 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="d-inline-block text-truncate" style="max-width: 250px;"
-                                    title="{{ $p->profile->alamat ?? '-' }}">
-                                    {{ $p->profile->alamat ?? '-' }}
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-3 py-2">
+                                    {{ $p->expired_docs_count }} dokumen expired
                                 </span>
                             </td>
                             <td class="text-center">

@@ -18,6 +18,7 @@ class PerawatStr extends Model
         'tgl_terbit',
         'tgl_expired',
         'file_path',
+        'kelayakan',
     ];
 
     public function user()

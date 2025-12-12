@@ -44,7 +44,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/perawat/{id}', [AdminPerawatController::class, 'update'])->name('perawat.update');
         Route::delete('/perawat/{id}', [AdminPerawatController::class, 'destroy'])->name('perawat.destroy');
         Route::get('/perawat/{id}/sertifikat', [AdminPerawatController::class, 'sertifikat'])
-        ->name('perawat.sertifikat');
+            ->name('perawat.sertifikat');
+
+        // Verifikasi kelayakan dokumen
+        Route::post('/perawat/verifikasi-kelayakan', [AdminPerawatController::class, 'verifikasiKelayakan'])->name('perawat.verifikasi.kelayakan');
 
         Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile.index');
         Route::post('/telegram/generate', [AdminProfileController::class, 'generateCode'])->name('telegram.generate');
@@ -52,9 +55,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/telegram/test', [AdminProfileController::class, 'testMessage'])->name('telegram.test');
 
         // === MANAJEMEN AKUN ===
-    Route::get('/manajemen-akun', [ManajemenAkunController::class, 'index'])->name('manajemen_akun.index');
-    Route::put('/manajemen-akun/{id}/update', [ManajemenAkunController::class, 'updateStatus'])->name('manajemen_akun.update');
-    Route::delete('/manajemen-akun/{id}', [ManajemenAkunController::class, 'destroy'])->name('manajemen_akun.destroy');
+        Route::get('/manajemen-akun', [ManajemenAkunController::class, 'index'])->name('manajemen_akun.index');
+        Route::put('/manajemen-akun/{id}/update', [ManajemenAkunController::class, 'updateStatus'])->name('manajemen_akun.update');
+        Route::delete('/manajemen-akun/{id}', [ManajemenAkunController::class, 'destroy'])->name('manajemen_akun.destroy');
     });
 
     // === GROUP PERAWAT ===

@@ -108,6 +108,61 @@
             color: var(--blue-main);
             background: var(--blue-soft);
         }
+
+        /* Soft Action Buttons */
+        .btn-verify {
+            border: none;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .btn-verify-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .btn-verify-success:hover,
+        .btn-verify-success.active {
+            background: #166534;
+            color: #ffffff;
+        }
+
+        .btn-verify-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-verify-danger:hover,
+        .btn-verify-danger.active {
+            background: #991b1b;
+            color: #ffffff;
+        }
+
+        .btn-verify-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-verify-secondary:hover,
+        .btn-verify-secondary.active {
+            background: #475569;
+            color: #ffffff;
+        }
+
+        .verify-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
     </style>
 @endpush
 
@@ -305,10 +360,61 @@
                                             <span class="text-muted small">-</span>
                                         @endif
                                     </td>
-                                    <td>{!! $statusHtml !!}</td>
+                                    <td>
+                                        {!! $statusHtml !!}
+                                        <div class="mt-2 mb-2 d-flex align-items-center gap-2">
+                                            <span class="text-muted" style="font-size: 11px;">Verifikasi:</span>
+                                            <span
+                                                class="badge-soft badge-soft-secondary status-kelayakan-{{ $item->id }}">
+                                                <span
+                                                    class="fw-bold text-uppercase kelayakan-label">{{ $item->kelayakan ?? 'pending' }}</span>
+                                            </span>
+                                        </div>
+                                        <div class="verify-actions">
+                                            {{-- Form Layak --}}
+                                            <form action="{{ route('admin.perawat.verifikasi.kelayakan') }}"
+                                                method="POST">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $item->id }}">
+                                                <input type="hidden" name="tipe" value="tambahan">
+                                                <input type="hidden" name="kelayakan" value="layak">
+                                                <button type="submit" class="btn-verify btn-verify-success"
+                                                    title="Set Layak">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            </form>
+
+                                            {{-- Form Tidak Layak --}}
+                                            <form action="{{ route('admin.perawat.verifikasi.kelayakan') }}"
+                                                method="POST">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $item->id }}">
+                                                <input type="hidden" name="tipe" value="tambahan">
+                                                <input type="hidden" name="kelayakan" value="tidak_layak">
+                                                <button type="submit" class="btn-verify btn-verify-danger"
+                                                    title="Set Tidak Layak">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
+                                            </form>
+
+                                            {{-- Form Pending/Reset --}}
+                                            <form action="{{ route('admin.perawat.verifikasi.kelayakan') }}"
+                                                method="POST">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $item->id }}">
+                                                <input type="hidden" name="tipe" value="tambahan">
+                                                <input type="hidden" name="kelayakan" value="pending">
+                                                <button type="submit" class="btn-verify btn-verify-secondary"
+                                                    title="Reset ke Pending">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                     <td class="text-end">
                                         @if ($item->file_path)
-                                            <a href="{{ Storage::url($item->file_path) }}" target="_blank" class="btn-file">
+                                            <a href="{{ Storage::url($item->file_path) }}" target="_blank"
+                                                class="btn-file">
                                                 <i class="bi bi-file-earmark-text"></i> File
                                             </a>
                                         @else
