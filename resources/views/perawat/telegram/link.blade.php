@@ -84,7 +84,7 @@
     <div class="container-fluid">
         {{-- Tombol Kembali --}}
         <div class="d-flex justify-content-start mb-3">
-            <a href="{{ route('perawat.drh') }}" class="btn btn-sm btn-outline-secondary px-3"
+            <a href="{{ route('dashboard') }}" class="btn btn-sm btn-outline-secondary px-3"
                 style="border-radius: 8px; font-size: 12px;">
                 <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
             </a>

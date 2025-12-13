@@ -637,7 +637,7 @@
                         <div class="nav-section-title">Lainnya</div>
                         <a href="{{ route('perawat.telegram.link') }}" class="nav-linkx">
                             <i class="bi bi-gear-fill"></i>
-                            <span class="link-text">Telegram</span>
+                            <span class="link-text">Pengaturan</span>
                         </a>
                     @endif
 
@@ -646,46 +646,57 @@
                     @if (Auth::check() && Auth::user()->role === 'admin')
                         <div class="nav-section-title">Admin Panel</div>
 
+                        {{-- Dashboard --}}
                         <a href="{{ route('dashboard.admin') }}"
                             class="nav-linkx {{ isset($menu) && $menu === 'admin' ? 'active' : '' }}">
-                            <i class="bi bi-speedometer2"></i> {{-- Icon baru --}}
+                            <i class="bi bi-speedometer2"></i>
                             <span class="link-text">Dashboard</span>
                         </a>
 
+                        {{-- Manajemen Akun --}}
                         <a href="{{ route('admin.manajemen_akun.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.manajemen_akun*') ? 'active' : '' }}">
-                            <i class="bi bi-people"></i> {{-- Icon baru --}}
+                            <i class="bi bi-person-gear"></i> {{-- Ganti icon biar beda dengan data perawat --}}
                             <span class="link-text">Manajemen Akun</span>
                         </a>
 
+                        {{-- Data Perawat --}}
                         <a href="{{ route('admin.perawat.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.perawat.*') ? 'active' : '' }}">
-                            <i class="bi bi-people"></i> {{-- Icon baru --}}
+                            <i class="bi bi-person-lines-fill"></i> {{-- Icon lebih cocok untuk data list --}}
                             <span class="link-text">Data Perawat</span>
                         </a>
 
+                        <div class="nav-section-title">Manajeman Ujian</div>
+
+                        {{-- Penanggung Jawab --}}
                         <a href="{{ route('admin.penanggung-jawab.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.penanggung-jawab*') ? 'active' : '' }}">
-                            <i class="bi bi-person-badge"></i> {{-- Icon Jabatan/Badge --}}
+                            <i class="bi bi-shield-check"></i> {{-- Icon authority/PJ --}}
                             <span class="link-text">Penanggung Jawab</span>
                         </a>
 
+                        {{-- Form Ujian --}}
                         <a href="{{ route('admin.form.index') }}"
-                            class="nav-linkx {{ request()->routeIs('admin.perawat.*') ? 'active' : '' }}">
-                            <i class="bi bi-file-earmark-text"></i>
-                            <span class="link-text">Google Form</span>
+                            class="nav-linkx {{ request()->routeIs('admin.form.*') ? 'active' : '' }}">
+                            <i class="bi bi-ui-checks"></i> {{-- Icon form --}}
+                            <span class="link-text">Form Ujian</span>
                         </a>
 
+                        {{-- Bank Soal --}}
                         <a href="#"
-                            class="nav-linkx {{ request()->routeIs('admin.perawat.*') ? 'active' : '' }}">
-                            <i class="bi bi-file-earmark-text"></i>
+                            class="nav-linkx {{ request()->routeIs('admin.bank-soal.*') ? 'active' : '' }}">
+                            <i class="bi bi-journal-text"></i> {{-- Icon bank soal --}}
                             <span class="link-text">Bank Soal</span>
                         </a>
 
                         <div class="nav-section-title">Lainnya</div>
-                        <a href="{{ route('admin.profile.index') }}" class="nav-linkx">
+
+                        {{-- Profile --}}
+                        <a href="{{ route('admin.profile.index') }}"
+                            class="nav-linkx {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
                             <i class="bi bi-gear-fill"></i>
-                            <span class="link-text">Profile</span>
+                            <span class="link-text">Pengaturan</span>
                         </a>
                     @endif
                 </div>
