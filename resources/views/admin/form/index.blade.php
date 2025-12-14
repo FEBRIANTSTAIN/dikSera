@@ -73,7 +73,7 @@
             color: #075985;
         }
 
-        /* Action Buttons */
+        /* Action Buttons (Icon Only) */
         .btn-icon {
             width: 32px;
             height: 32px;
@@ -84,6 +84,8 @@
             justify-content: center;
             transition: all 0.2s;
             border: 1px solid transparent;
+            text-decoration: none;
+            /* Fix untuk tag <a> */
         }
 
         .btn-icon:hover {
@@ -161,7 +163,8 @@
                         <th>Informasi Form</th>
                         <th>Target & Jadwal</th>
                         <th>Status</th>
-                        <th style="width: 140px;" class="text-center">Aksi</th>
+                        {{-- Lebar diperbesar agar 5 tombol muat --}}
+                        <th style="width: 200px;" class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -223,34 +226,34 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
 
-                                    {{-- MODAL TRIGGER: Setting Status --}}
-                                    {{-- Kirim data form ke modal via attribute data-* --}}
+                                    {{-- 1. Kelola Soal (Primary Action) --}}
+                                    <a href="{{ route('admin.form.kelola-soal', $form->id) }}"
+                                        class="btn btn-icon btn-outline-primary" title="Atur Soal" data-bs-toggle="tooltip">
+                                        <i class="bi bi-list-check"></i>
+                                    </a>
+
+                                    {{-- 2. Ubah Status (Modal) --}}
                                     <button type="button" class="btn btn-icon btn-outline-secondary btn-status-modal"
                                         data-id="{{ $form->id }}" data-judul="{{ $form->judul }}"
                                         data-status="{{ $form->status }}" title="Ubah Status" data-bs-toggle="tooltip">
                                         <i class="bi bi-gear"></i>
                                     </button>
 
-                                    {{-- Edit --}}
+                                    {{-- 3. Edit Detail --}}
                                     <a href="{{ route('admin.form.edit', $form->id) }}"
                                         class="btn btn-icon btn-outline-warning" title="Edit Detail"
                                         data-bs-toggle="tooltip">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
-                                    {{-- Tombol Atur Soal --}}
-                                    <a href="{{ route('admin.form.kelola-soal', $form->id) }}"
-                                        class="btn btn-icon btn-outline-primary" title="Atur Soal" data-bs-toggle="tooltip">
-                                        <i class="bi bi-list-check"></i>
-                                    </a>
-
-                                    {{-- Hasil Ujian --}}
+                                    {{-- 4. Hasil Ujian --}}
                                     <a href="{{ route('admin.form.hasil', $form->id) }}"
-                                        class="btn btn-sm btn-outline-success" title="Lihat Hasil & Nilai">
+                                        class="btn btn-icon btn-outline-success" title="Lihat Hasil & Nilai"
+                                        data-bs-toggle="tooltip">
                                         <i class="bi bi-trophy"></i>
                                     </a>
 
-                                    {{-- Hapus --}}
+                                    {{-- 5. Hapus --}}
                                     <form action="{{ route('admin.form.destroy', $form->id) }}" method="POST"
                                         class="d-inline delete-form">
                                         @csrf
@@ -357,6 +360,12 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Init Tooltip
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
             // 1. Inisialisasi Modal
             var statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
 

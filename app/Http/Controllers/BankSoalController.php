@@ -9,7 +9,7 @@ class BankSoalController extends Controller
 {
     public function index()
     {
-        $soals = BankSoal::latest()->get();
+        $soals = BankSoal::latest()->paginate(10);
 
         return view('admin.bank_soal.index', compact('soals'));
     }
