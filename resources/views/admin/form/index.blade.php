@@ -237,11 +237,17 @@
                                         data-bs-toggle="tooltip">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    
+
                                     {{-- Tombol Atur Soal --}}
                                     <a href="{{ route('admin.form.kelola-soal', $form->id) }}"
                                         class="btn btn-icon btn-outline-primary" title="Atur Soal" data-bs-toggle="tooltip">
                                         <i class="bi bi-list-check"></i>
+                                    </a>
+
+                                    {{-- Hasil Ujian --}}
+                                    <a href="{{ route('admin.form.hasil', $form->id) }}"
+                                        class="btn btn-sm btn-outline-success" title="Lihat Hasil & Nilai">
+                                        <i class="bi bi-trophy"></i>
                                     </a>
 
                                     {{-- Hapus --}}

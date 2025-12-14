@@ -82,6 +82,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('bank-soal/{id}/update', [BankSoalController::class, 'update'])->name('bank-soal.update');
         Route::post('bank-soal/{id}/delete', [BankSoalController::class, 'destroy'])->name('bank-soal.delete');
 
+        // === REKAP HASIL UJIAN ===
+        Route::get('/forms/{form}/hasil', [FormController::class, 'hasil'])->name('form.hasil');
+        Route::delete('/hasil-ujian/{result}', [FormController::class, 'resetHasil'])->name('form.reset-hasil');
+        
         // Menampilkan halaman pilih soal untuk form tertentu
         Route::get('/forms/{form}/kelola-soal', [FormController::class, 'kelolaSoal'])->name('form.kelola-soal');
         // Menyimpan pilihan soal ke database
