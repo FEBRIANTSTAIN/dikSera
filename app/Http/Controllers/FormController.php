@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\BankSoal;
 use App\Models\Form;
 use App\Models\User;
 use App\Models\PenanggungJawabUjian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Models\ExamResult;
 
 class FormController extends Controller
 {
@@ -123,5 +125,46 @@ class FormController extends Controller
     {
         $form->delete();
         return back()->with('success', 'Form berhasil dihapus!');
+    }
+
+    public function kelolaSoal(Form $form)
+    {
+        // Ambil semua soal dari bank soal
+        $allSoals = BankSoal::latest()->get();
+        $existingSoalIds = $form->questions->pluck('id')->toArray();
+
+        return view('admin.form.kelola_soal', compact('form', 'allSoals', 'existingSoalIds'));
+    }
+
+    // MENYIMPAN PILIHAN SOAL
+    public function simpanSoal(Request $request, Form $form)
+    {
+        $request->validate([
+            'soal_ids' => 'array',
+            'soal_ids.*' => 'exists:bank_soals,id',
+        ]);
+        $form->questions()->sync($request->soal_ids ?? []);
+
+        return redirect()->route('admin.form.index')->with('success', 'Soal berhasil diatur untuk form ini!');
+    }
+
+    // MENAMPILKAN REKAP HASIL
+    public function hasil(Form $form)
+    {
+        $results = $form->examResults()
+            ->with('user')
+            ->orderByDesc('total_nilai') // Urutkan dari nilai tertinggi
+            ->get();
+
+        return view('admin.form.hasil', compact('form', 'results'));
+    }
+
+    // RESET / HAPUS HASIL USER (Agar bisa ujian ulang)
+    public function resetHasil($id)
+    {
+        $result = ExamResult::findOrFail($id);
+        $result->delete();
+        // UserAnswer::where('form_id', $result->form_id)->where('user_id', $result->user_id)->delete();
+        return back()->with('success', 'Data ujian peserta berhasil direset. Peserta dapat mengerjakan ulang.');
     }
 }

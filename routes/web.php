@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminPerawatController;
 use App\Http\Controllers\AdminProfileController;
+use App\Http\Controllers\BankSoalController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\PerawatDrhController;
 use App\Http\Controllers\TelegramController;
@@ -72,6 +73,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/forms/{form}/edit', [FormController::class, 'edit'])->name('form.edit');
         Route::put('/forms/{form}', [FormController::class, 'update'])->name('form.update');
         Route::delete('/forms/{form}', [FormController::class, 'destroy'])->name('form.destroy');
+
+        // === KELOLA SOAL ===
+        Route::get('bank-soal', [BankSoalController::class, 'index'])->name('bank-soal.index');
+        Route::get('bank-soal/create', [BankSoalController::class, 'create'])->name('bank-soal.create');
+        Route::post('bank-soal/store', [BankSoalController::class, 'store'])->name('bank-soal.store');
+        Route::get('bank-soal/{id}/edit', [BankSoalController::class, 'edit'])->name('bank-soal.edit');
+        Route::post('bank-soal/{id}/update', [BankSoalController::class, 'update'])->name('bank-soal.update');
+        Route::post('bank-soal/{id}/delete', [BankSoalController::class, 'destroy'])->name('bank-soal.delete');
+
+        // === REKAP HASIL UJIAN ===
+        Route::get('/forms/{form}/hasil', [FormController::class, 'hasil'])->name('form.hasil');
+        Route::delete('/hasil-ujian/{result}', [FormController::class, 'resetHasil'])->name('form.reset-hasil');
+        
+        // Menampilkan halaman pilih soal untuk form tertentu
+        Route::get('/forms/{form}/kelola-soal', [FormController::class, 'kelolaSoal'])->name('form.kelola-soal');
+        // Menyimpan pilihan soal ke database
+        Route::post('/forms/{form}/kelola-soal', [FormController::class, 'simpanSoal'])->name('form.simpan-soal');
     });
 
     // === GROUP PERAWAT ===
@@ -175,6 +193,9 @@ Route::middleware(['auth'])->group(function () {
         // === MENU UJIAN / FORM ===
         Route::get('/ujian-aktif', [UserFormController::class, 'index'])->name('ujian.index');
         Route::get('/ujian-aktif/{form:slug}', [UserFormController::class, 'show'])->name('ujian.show');
+        Route::get('/ujian/{form:slug}/kerjakan', [UserFormController::class, 'kerjakan'])->name('ujian.kerjakan');
+        Route::post('/ujian/{form:slug}/submit', [UserFormController::class, 'submit'])->name('ujian.submit');
+        Route::get('/ujian/{form:slug}/selesai', [UserFormController::class, 'selesai'])->name('ujian.selesai');
     });
 
     Route::post('/webhook', [TelegramController::class, 'webhook'])->name('webhook');

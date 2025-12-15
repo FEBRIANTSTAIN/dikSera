@@ -13,10 +13,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <style>
-        /* =========================================
-        1. VARIABLES & GLOBAL RESET
-        ========================================= */
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
+    <style>
         :root {
             --blue-main: #1d4ed8;
             --blue-soft: #e0edff;
@@ -43,9 +42,7 @@
             overflow-x: hidden;
         }
 
-        /* =========================================
-        2. LAYOUT UTAMA (SHARED)
-        ========================================= */
+        /* --- LAYOUT --- */
         .app-shell {
             min-height: 100vh;
             display: flex;
@@ -64,7 +61,6 @@
             flex-direction: column;
             gap: 16px;
             width: 100%;
-            max-width: 100%;
             overflow: hidden;
             transition: margin-left var(--transition-speed);
         }
@@ -76,17 +72,7 @@
             margin-bottom: 10px;
         }
 
-        .page-title {
-            font-size: 20px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* =========================================
-        3. SIDEBAR COMPONENTS (SHARED)
-        ========================================= */
+        /* --- SIDEBAR --- */
         .app-sidebar {
             width: var(--sidebar-width);
             background: #ffffff;
@@ -104,15 +90,6 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
             overflow-x: hidden;
-        }
-
-        .app-sidebar::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .app-sidebar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
         }
 
         .brand-row {
@@ -143,8 +120,8 @@
         }
 
         .brand-info {
-            transition: opacity 0.2s, width 0.2s;
             white-space: nowrap;
+            transition: opacity 0.2s;
         }
 
         .brand-name {
@@ -156,7 +133,6 @@
         .brand-caption {
             font-size: 10px;
             color: var(--text-muted);
-            max-width: 140px;
             line-height: 1.2;
         }
 
@@ -170,9 +146,14 @@
             white-space: nowrap;
         }
 
-        .nav-linkx {
+        /* --- NAVIGATION ITEMS (FIXED ALIGNMENT) --- */
+        .nav-linkx,
+        .nav-dropdown {
             display: flex;
             align-items: center;
+            width: 100%;
+            justify-content: flex-start;
+            /* Rata Kiri */
             gap: 12px;
             font-size: 13px;
             padding: 10px 12px;
@@ -182,17 +163,26 @@
             transition: all 0.2s;
             white-space: nowrap;
             cursor: pointer;
-            position: relative; /* Penting untuk badge absolute pada collapse */
+            position: relative;
         }
 
-        .nav-linkx i {
+        /* Ikon Menu */
+        .nav-linkx i:not(.dropdown-icon),
+        .nav-dropdown i:not(.dropdown-icon) {
             font-size: 18px;
             min-width: 24px;
             text-align: center;
             color: #6b7280;
-            transition: color 0.2s;
         }
 
+        /* Ikon Panah (FIX: Dorong ke kanan) */
+        .dropdown-icon {
+            margin-left: auto;
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Hover & Active States */
         .nav-linkx:hover,
         .nav-dropdown:hover {
             background: #f3f6ff;
@@ -214,68 +204,7 @@
             color: #fff;
         }
 
-        .sidebar-footer {
-            margin-top: auto;
-            font-size: 10px;
-            color: #9ca3af;
-            padding-left: 12px;
-            white-space: nowrap;
-        }
-
-        /* =========================================
-        4. BADGE NOTIFIKASI (UPDATED & MOVED GLOBAL)
-        ========================================= */
-        .badge-notification {
-            background: linear-gradient(135deg, #ef4444, #dc2626); /* Gradient Merah Tegas */
-            color: white;
-            font-size: 11px;
-            padding: 3px 8px; /* Sedikit lebih besar agar teks tidak sesak */
-            min-width: 22px; /* Lebar minimum agar bentuknya bulat bagus */
-            text-align: center;
-            border-radius: 12px;
-            margin-left: auto; /* Dorong ke paling kanan */
-            font-weight: 700;
-            line-height: 1.2;
-            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.4); /* Shadow merah agar timbul */
-            border: 2px solid #fff; /* Border putih agar kontras dengan background */
-            animation: pulse-red 1.5s infinite; /* Animasi denyut */
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @keyframes pulse-red {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        /* =========================================
-        5. DROPDOWN & ANIMATIONS
-        ========================================= */
-        .nav-dropdown {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            font-size: 13px;
-            padding: 10px 12px;
-            border-radius: 14px;
-            color: #4b5563;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .dropdown-icon {
-            transition: transform 0.3s ease;
-            font-size: 12px;
-        }
-
-        .app-shell.is-collapsed .dropdown-icon {
-            display: none;
-        }
-
+        /* Submenu */
         .nav-submenu {
             max-height: 0;
             opacity: 0;
@@ -303,7 +232,6 @@
             color: #4b5563;
             text-decoration: none;
             transition: all 0.2s;
-            white-space: nowrap;
         }
 
         .nav-sublink:hover {
@@ -311,9 +239,47 @@
             background: var(--blue-soft-2);
         }
 
-        /* =========================================
-        6. DESKTOP SPECIFIC (min-width: 992px)
-        ========================================= */
+        /* Badge & Footer */
+        .badge-notification {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            min-width: 22px;
+            border-radius: 12px;
+            margin-left: auto;
+            font-weight: 700;
+            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.4);
+            border: 2px solid #fff;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 10px;
+            color: #9ca3af;
+            padding-left: 12px;
+            white-space: nowrap;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        /* --- DESKTOP (Min 992px) --- */
         @media (min-width: 992px) {
             .sidebar-wrapper {
                 position: relative;
@@ -323,7 +289,6 @@
                 position: absolute;
                 top: 20px;
                 right: -16px;
-                transform: translateX(50%);
                 width: 32px;
                 height: 32px;
                 background: #fff;
@@ -338,19 +303,17 @@
                 transition: all .3s ease;
             }
 
-            .sidebar-toggle-btn i {
-                transition: transform 0.4s;
-                font-size: 14px;
-                font-weight: 700;
-            }
-
             .sidebar-toggle-btn:hover {
-                transform: translateX(50%) scale(1.15);
+                transform: scale(1.15);
                 border-color: var(--blue-main);
-                box-shadow: 0 0 0 4px var(--blue-soft);
             }
 
-            /* --- COLLAPSED (Desktop) --- */
+            .header-toggle,
+            .mobile-overlay {
+                display: none !important;
+            }
+
+            /* Collapsed State */
             .app-shell.is-collapsed .app-sidebar {
                 width: var(--sidebar-width-collapsed);
                 padding: 18px 8px;
@@ -363,39 +326,26 @@
             .app-shell.is-collapsed .dropdown-icon {
                 opacity: 0;
                 width: 0;
-                overflow: hidden;
-                pointer-events: none;
-                transition: opacity .2s ease, width .2s ease;
+                display: none;
             }
 
-            .app-shell.is-collapsed .brand-row {
-                justify-content: center;
-                gap: 0;
-                padding-left: 0;
-            }
-
+            .app-shell.is-collapsed .brand-row,
             .app-shell.is-collapsed .nav-linkx,
             .app-shell.is-collapsed .nav-dropdown {
                 justify-content: center;
-                padding: 12px 0 !important;
-                gap: 0;
-            }
-
-            .app-shell.is-collapsed .nav-linkx i,
-            .app-shell.is-collapsed .nav-dropdown i {
-                margin: 0 auto;
-            }
-
-            .app-shell.is-collapsed .nav-section-title {
-                margin: 0;
-                padding: 0;
+                padding-left: 0;
+                padding-right: 0;
             }
 
             .app-shell.is-collapsed .nav-submenu {
                 display: none !important;
             }
 
-            /* BADGE KHUSUS SAAT COLLAPSED */
+            .app-shell.is-collapsed .nav-linkx i {
+                margin: 0;
+            }
+
+            /* Badge saat collapsed */
             .app-shell.is-collapsed .badge-notification {
                 position: absolute;
                 top: 6px;
@@ -406,23 +356,14 @@
                 font-size: 0;
                 min-width: auto;
                 margin: 0;
-                border: 2px solid #fff;
-            }
-
-            .header-toggle,
-            .mobile-overlay {
-                display: none !important;
             }
         }
 
-        /* =========================================
-        7. MOBILE SPECIFIC (max-width: 991px)
-        ========================================= */
+        /* --- MOBILE (Max 991px) --- */
         @media (max-width: 991px) {
             .app-shell {
-                padding: 0;
-                gap: 0;
                 display: block;
+                padding: 0;
             }
 
             .app-sidebar {
@@ -432,11 +373,8 @@
                 height: 100vh;
                 width: 280px !important;
                 border-radius: 0;
-                border-right: 1px solid var(--border-soft);
-                border-top: none;
-                border-bottom: none;
-                transition: left 0.3s ease-in-out;
                 z-index: 1051;
+                transition: left 0.3s ease-in-out;
             }
 
             .app-sidebar.mobile-active {
@@ -451,7 +389,6 @@
                 display: block;
                 font-size: 24px;
                 cursor: pointer;
-                color: var(--text-main);
             }
 
             .app-main {
@@ -459,16 +396,6 @@
                 border: none;
                 min-height: 100vh;
                 padding: 16px;
-            }
-
-            .brand-info, .link-text, .nav-section-title, .sidebar-footer, .dropdown-icon {
-                display: block !important;
-                opacity: 1 !important;
-                width: auto !important;
-            }
-
-            .nav-linkx, .nav-dropdown {
-                justify-content: flex-start !important;
             }
 
             .mobile-overlay {
@@ -481,31 +408,12 @@
                 z-index: 1040;
                 display: none;
                 backdrop-filter: blur(2px);
-                opacity: 0;
                 transition: opacity 0.3s;
             }
 
             .mobile-overlay.show {
                 display: block;
                 opacity: 1;
-            }
-
-            .user-pill {
-                font-size: 12px;
-                padding: 6px 12px;
-                background: #f8fafc;
-                border: 1px solid #e2e8f0;
-                border-radius: 30px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .user-dot {
-                width: 8px;
-                height: 8px;
-                background: #22c55e;
-                border-radius: 50%;
             }
         }
     </style>
@@ -700,7 +608,7 @@
                         </a>
 
                         {{-- Bank Soal --}}
-                        <a href="#"
+                        <a href="{{ route('admin.bank-soal.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.bank-soal.*') ? 'active' : '' }}">
                             <i class="bi bi-journal-text"></i> {{-- Icon bank soal --}}
                             <span class="link-text">Bank Soal</span>
@@ -765,6 +673,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     @if (session('swal'))
         <script>
