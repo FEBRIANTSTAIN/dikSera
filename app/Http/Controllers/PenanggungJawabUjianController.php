@@ -21,9 +21,11 @@ class PenanggungJawabUjianController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'no_hp' => 'required|string|max:20',
+            'nama'    => 'required|string|max:255',
+            'no_hp'   => 'required|string|max:20',
             'jabatan' => 'required|string|max:255',
+            // Validasi type harus salah satu dari dua pilihan
+            'type'    => 'required|in:pewawancara,ujian',
         ]);
 
         PenanggungJawabUjian::create($request->all());
@@ -41,9 +43,11 @@ class PenanggungJawabUjianController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'no_hp' => 'required|string|max:20',
+            'nama'    => 'required|string|max:255',
+            'no_hp'   => 'required|string|max:20',
             'jabatan' => 'required|string|max:255',
+            // Validasi type saat update
+            'type'    => 'required|in:pewawancara,ujian',
         ]);
 
         $item = PenanggungJawabUjian::findOrFail($id);

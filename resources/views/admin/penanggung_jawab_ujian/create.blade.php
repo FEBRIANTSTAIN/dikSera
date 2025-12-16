@@ -30,6 +30,11 @@
             letter-spacing: 0.5px;
             margin-bottom: 6px;
         }
+        /* Tambahan agar dropdown select terlihat rapi */
+        select.form-control-custom {
+            appearance: auto;
+            cursor: pointer;
+        }
     </style>
 @endpush
 
@@ -56,8 +61,23 @@
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0 text-muted"
                               style="border-color: #e2e8f0;"><i class="bi bi-person"></i></span>
-                        <input type="text" name="nama" class="form-control form-control-custom border-start-0 ps-0"
+                        <input type="text" name="nama" value="{{ old('nama') }}"
+                            class="form-control form-control-custom border-start-0 ps-0"
                             placeholder="Contoh: Dr. Budi Santoso, S.Kep" required>
+                    </div>
+                </div>
+
+                {{-- Tipe Penanggung Jawab (BARU) --}}
+                <div class="mb-4">
+                    <label class="form-label">Tipe Penanggung Jawab <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"
+                              style="border-color: #e2e8f0;"><i class="bi bi-person-badge"></i></span>
+                        <select name="type" class="form-control form-control-custom border-start-0 ps-0" required>
+                            <option value="" selected disabled>-- Pilih Tipe --</option>
+                            <option value="pewawancara" {{ old('type') == 'pewawancara' ? 'selected' : '' }}>Pewawancara</option>
+                            <option value="ujian" {{ old('type') == 'ujian' ? 'selected' : '' }}>Pengawas Ujian</option>
+                        </select>
                     </div>
                 </div>
 
@@ -67,7 +87,8 @@
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0 text-muted"
                               style="border-color: #e2e8f0;"><i class="bi bi-briefcase"></i></span>
-                        <input type="text" name="jabatan" class="form-control form-control-custom border-start-0 ps-0"
+                        <input type="text" name="jabatan" value="{{ old('jabatan') }}"
+                            class="form-control form-control-custom border-start-0 ps-0"
                             placeholder="Contoh: Kepala Diklat / Ketua Panitia" required>
                     </div>
                 </div>
@@ -78,7 +99,8 @@
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0 text-muted"
                               style="border-color: #e2e8f0;"><i class="bi bi-whatsapp"></i></span>
-                        <input type="text" name="no_hp" class="form-control form-control-custom border-start-0 ps-0"
+                        <input type="text" name="no_hp" value="{{ old('no_hp') }}"
+                            class="form-control form-control-custom border-start-0 ps-0"
                             placeholder="Contoh: 081234567890" required>
                     </div>
                 </div>

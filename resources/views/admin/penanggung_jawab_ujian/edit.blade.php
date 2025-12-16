@@ -30,6 +30,11 @@
             letter-spacing: 0.5px;
             margin-bottom: 6px;
         }
+        /* Tambahan agar select terlihat rapi */
+        select.form-control-custom {
+            appearance: auto;
+            cursor: pointer;
+        }
     </style>
 @endpush
 
@@ -58,6 +63,23 @@
                               style="border-color: #e2e8f0;"><i class="bi bi-person"></i></span>
                         <input type="text" name="nama" value="{{ old('nama', $item->nama) }}"
                             class="form-control form-control-custom border-start-0 ps-0" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Tipe Penanggung Jawab <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"
+                              style="border-color: #e2e8f0;"><i class="bi bi-person-badge"></i></span>
+                        <select name="type" class="form-control form-control-custom border-start-0 ps-0" required>
+                            <option value="">-- Pilih Tipe --</option>
+                            <option value="pewawancara" {{ old('type', $item->type) == 'pewawancara' ? 'selected' : '' }}>
+                                Pewawancara
+                            </option>
+                            <option value="ujian" {{ old('type', $item->type) == 'ujian' ? 'selected' : '' }}>
+                                Pengawas Ujian
+                            </option>
+                        </select>
                     </div>
                 </div>
 

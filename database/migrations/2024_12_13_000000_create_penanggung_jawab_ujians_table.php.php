@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('nama');
             $table->string('no_hp');
             $table->string('jabatan');
+            $table->enum('type', ['pewawancara', 'ujian']);
             $table->timestamps();
         });
     }

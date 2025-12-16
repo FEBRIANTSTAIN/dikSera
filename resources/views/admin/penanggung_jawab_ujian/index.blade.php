@@ -32,12 +32,9 @@
 
         .table-custom td {
             padding: 12px 16px;
-            /* Mengurangi padding vertikal agar baris lebih rapat */
             vertical-align: middle;
             border-bottom: 1px solid #f1f5f9;
-            /* >>> PERUBAHAN DI SINI <<< */
             font-size: 14px;
-            /* Mengecilkan font di isi tabel */
         }
     </style>
 @endpush
@@ -66,7 +63,7 @@
                             <tr>
                                 <th width="5%">No</th>
                                 <th>Nama Lengkap</th>
-                                <th>Jabatan</th>
+                                <th>Tipe</th> <th>Jabatan</th>
                                 <th>No. HP</th>
                                 <th class="text-end">Aksi</th>
                             </tr>
@@ -76,6 +73,21 @@
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td class="fw-bold text-dark">{{ $item->nama }}</td>
+
+                                    <td>
+                                        @if($item->type == 'pewawancara')
+                                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10">
+                                                Pewawancara
+                                            </span>
+                                        @elseif($item->type == 'ujian')
+                                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-10">
+                                                Pengawas Ujian
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary">-</span>
+                                        @endif
+                                    </td>
+
                                     <td><span class="badge bg-light text-dark border">{{ $item->jabatan }}</span></td>
                                     <td>{{ $item->no_hp }}</td>
                                     <td class="text-end">
@@ -97,7 +109,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-muted">
+                                    <td colspan="6" class="text-center py-5 text-muted">
                                         <i class="bi bi-person-x display-6 d-block mb-2 opacity-25"></i>
                                         Belum ada data penanggung jawab.
                                     </td>
