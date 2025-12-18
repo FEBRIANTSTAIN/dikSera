@@ -28,7 +28,7 @@ class Form extends Model
 
     public function questions()
     {
-        return $this->belongsToMany(BankSoal::class, 'form_questions')
+        return $this->belongsToMany(BankSoal::class, 'form_questions', 'form_id', 'bank_soal_id')
             ->withPivot('bobot')
             ->withTimestamps();
     }

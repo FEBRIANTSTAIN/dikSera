@@ -10,6 +10,8 @@ use App\Models\PenanggungJawabUjian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\ExamResult;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class FormController extends Controller
 {
@@ -22,13 +24,11 @@ class FormController extends Controller
     public function create()
     {
         $pjs = PenanggungJawabUjian::all();
+        $users = User::where('role', 'perawat')->get()
+            ->sortByDesc(function ($user) {
+                return count($user->dokumen_warning) > 0;
+            });
 
-        $users = User::where('role', 'perawat')->get();
-        $users = $users->sortByDesc(function ($user) {
-            return count($user->dokumen_warning) > 0;
-        });
-
-        // Kirim $pjs ke view
         return view('admin.form.create', compact('users', 'pjs'));
     }
 
@@ -36,7 +36,7 @@ class FormController extends Controller
     {
         $request->validate([
             'judul' => 'required|string|max:255',
-            'penanggung_jawab_id' => 'required|exists:penanggung_jawab_ujians,id', // Validasi PJ
+            'penanggung_jawab_id' => 'required|exists:penanggung_jawab_ujians,id',
             'waktu_mulai' => 'required|date',
             'waktu_selesai' => 'required|date|after:waktu_mulai',
             'target_peserta' => 'required',
@@ -48,7 +48,7 @@ class FormController extends Controller
             'judul' => $request->judul,
             'slug' => Str::slug($request->judul) . '-' . Str::random(5),
             'deskripsi' => $request->deskripsi,
-            'penanggung_jawab_id' => $request->penanggung_jawab_id, // Simpan PJ
+            'penanggung_jawab_id' => $request->penanggung_jawab_id,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_selesai' => $request->waktu_selesai,
             'target_peserta' => $request->target_peserta,
@@ -59,35 +59,33 @@ class FormController extends Controller
             $form->participants()->attach($request->participants);
         }
 
+        // Pakai ->with('success') agar ditangkap JS CDN
         return redirect()->route('admin.form.index')->with('success', 'Form berhasil dibuat!');
     }
 
     public function updateStatus(Request $request, Form $form)
     {
-        $request->validate([
-            'status' => 'required|in:draft,publish,closed'
-        ]);
+        $request->validate(['status' => 'required|in:draft,publish,closed']);
 
-        $form->update([
-            'status' => $request->status
-        ]);
+        if ($form->status == $request->status) {
+            return back()->with('info', 'Status sudah ' . ucfirst($request->status));
+        }
 
+        $form->update(['status' => $request->status]);
         return back()->with('success', "Status berhasil diubah menjadi " . ucfirst($request->status));
     }
 
     public function edit(Form $form)
     {
         $pjs = PenanggungJawabUjian::all();
-
-        $users = User::where('role', 'perawat')->get();
-        $users = $users->sortByDesc(function ($user) {
-            return count($user->dokumen_warning) > 0;
-        });
+        $users = User::where('role', 'perawat')->get()
+            ->sortByDesc(function ($user) {
+                return count($user->dokumen_warning) > 0;
+            });
 
         $form->load('participants');
         $selectedParticipants = $form->participants->pluck('id')->toArray();
 
-        // Kirim $pjs ke view edit
         return view('admin.form.edit', compact('form', 'users', 'selectedParticipants', 'pjs'));
     }
 
@@ -95,7 +93,7 @@ class FormController extends Controller
     {
         $request->validate([
             'judul' => 'required|string|max:255',
-            'penanggung_jawab_id' => 'required|exists:penanggung_jawab_ujians,id', // Validasi PJ
+            'penanggung_jawab_id' => 'required|exists:penanggung_jawab_ujians,id',
             'waktu_mulai' => 'required|date',
             'waktu_selesai' => 'required|date|after:waktu_mulai',
             'target_peserta' => 'required',
@@ -107,7 +105,7 @@ class FormController extends Controller
             'judul' => $request->judul,
             'slug' => Str::slug($request->judul) . '-' . Str::random(5),
             'deskripsi' => $request->deskripsi,
-            'penanggung_jawab_id' => $request->penanggung_jawab_id, // Update PJ
+            'penanggung_jawab_id' => $request->penanggung_jawab_id,
             'waktu_mulai' => $request->waktu_mulai,
             'waktu_selesai' => $request->waktu_selesai,
             'target_peserta' => $request->target_peserta,
@@ -121,50 +119,96 @@ class FormController extends Controller
 
         return redirect()->route('admin.form.index')->with('success', 'Form berhasil diperbarui!');
     }
+
     public function destroy(Form $form)
     {
         $form->delete();
         return back()->with('success', 'Form berhasil dihapus!');
     }
 
+    // --- FITUR SOAL ---
+
     public function kelolaSoal(Form $form)
     {
-        // Ambil semua soal dari bank soal
         $allSoals = BankSoal::latest()->get();
-        $existingSoalIds = $form->questions->pluck('id')->toArray();
+        $existingSoalIds = $form->questions()->allRelatedIds()->toArray();
 
         return view('admin.form.kelola_soal', compact('form', 'allSoals', 'existingSoalIds'));
     }
 
-    // MENYIMPAN PILIHAN SOAL
     public function simpanSoal(Request $request, Form $form)
     {
         $request->validate([
             'soal_ids' => 'array',
             'soal_ids.*' => 'exists:bank_soals,id',
         ]);
+
         $form->questions()->sync($request->soal_ids ?? []);
 
-        return redirect()->route('admin.form.index')->with('success', 'Soal berhasil diatur untuk form ini!');
+        return redirect()->route('admin.form.index')->with('success', 'Soal berhasil diatur!');
     }
 
-    // MENAMPILKAN REKAP HASIL
+    public function generateSoal(Request $request, Form $form)
+    {
+        $request->validate([
+            'jumlah_soal' => 'required|integer|min:1',
+            'kategori'    => 'nullable|string',
+        ]);
+
+        $existingIds = DB::table('form_questions')
+            ->where('form_id', $form->id)
+            ->pluck('bank_soal_id')
+            ->toArray();
+
+        $query = DB::table('bank_soals');
+
+        if ($request->kategori && $request->kategori != 'Semua') {
+            $query->where('kategori', $request->kategori);
+        }
+
+        $randomSoalIds = $query->whereNotIn('id', $existingIds)
+            ->inRandomOrder()
+            ->limit($request->jumlah_soal)
+            ->pluck('id')
+            ->toArray();
+
+        if (empty($randomSoalIds)) {
+            return back()->with('error', 'Maaf, stok soal tidak cukup atau tidak ditemukan untuk kategori ini.');
+        }
+
+        $dataInsert = [];
+        $now = Carbon::now();
+
+        foreach ($randomSoalIds as $soalId) {
+            $dataInsert[] = [
+                'form_id'      => $form->id,
+                'bank_soal_id' => $soalId,
+                'bobot'        => 1, 
+                'created_at'   => $now,
+                'updated_at'   => $now,
+            ];
+        }
+
+        // Eksekusi Insert
+        DB::table('form_questions')->insert($dataInsert);
+
+        return back()->with('success', 'Berhasil menambahkan ' . count($randomSoalIds) . ' soal acak.');
+    }
+
     public function hasil(Form $form)
     {
         $results = $form->examResults()
             ->with('user')
-            ->orderByDesc('total_nilai') // Urutkan dari nilai tertinggi
+            ->orderByDesc('total_nilai')
             ->get();
 
         return view('admin.form.hasil', compact('form', 'results'));
     }
 
-    // RESET / HAPUS HASIL USER (Agar bisa ujian ulang)
     public function resetHasil($id)
     {
         $result = ExamResult::findOrFail($id);
         $result->delete();
-        // UserAnswer::where('form_id', $result->form_id)->where('user_id', $result->user_id)->delete();
-        return back()->with('success', 'Data ujian peserta berhasil direset. Peserta dapat mengerjakan ulang.');
+        return back()->with('success', 'Data ujian peserta berhasil direset.');
     }
 }

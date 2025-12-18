@@ -116,7 +116,7 @@
                 </a>
             </div>
 
-            <form action="{{ route('admin.bank-soal.store') }}" method="POST">
+            <form action="{{ route('admin.bank-soal.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="content-card">
@@ -127,6 +127,17 @@
                         <label class="form-label">Pertanyaan <span class="text-danger">*</span></label>
                         <textarea name="pertanyaan" class="form-control form-control-custom" rows="4"
                             placeholder="Tuliskan pertanyaan disini..." required>{{ old('pertanyaan') }}</textarea>
+                        {{-- Di bawah textarea pertanyaan --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Gambar Soal (Opsional)</label>
+                            <input type="file" name="gambar" class="form-control" accept="image/*">
+                            @if (isset($soal) && $soal->gambar)
+                                <div class="mt-2">
+                                    <img src="{{ asset('storage/' . $soal->gambar) }}" alt="Preview"
+                                        style="max-height: 150px;" class="rounded border">
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     {{-- Kategori --}}
@@ -134,7 +145,7 @@
                         <label class="form-label">Kategori Soal <span class="text-danger">*</span></label>
                         <select name="kategori" class="form-select form-select-custom">
                             <option value="">-- Pilih Kategori --</option>
-                            @foreach (['Umum', 'Gak Umum',] as $kategori)
+                            @foreach (['Umum', 'Gak Umum'] as $kategori)
                                 <option value="{{ $kategori }}" {{ old('kategori') == $kategori ? 'selected' : '' }}>
                                     {{ $kategori }}
                                 </option>

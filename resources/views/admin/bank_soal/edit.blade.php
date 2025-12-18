@@ -116,9 +116,9 @@
                 </a>
             </div>
 
-            <form action="{{ route('admin.bank-soal.update', $soal->id) }}" method="POST">
+            <form action="{{ route('admin.bank-soal.update', $soal->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                @method('PUT') {{-- Penting untuk update --}}
+                @method('POST') 
 
                 <div class="content-card">
                     <h5 class="mb-4 fw-bold text-dark border-bottom pb-3">Edit Soal</h5>
@@ -128,6 +128,17 @@
                         <label class="form-label">Pertanyaan <span class="text-danger">*</span></label>
                         <textarea name="pertanyaan" class="form-control form-control-custom" rows="4"
                             placeholder="Tuliskan pertanyaan disini..." required>{{ old('pertanyaan', $soal->pertanyaan) }}</textarea>
+                        {{-- Di bawah textarea pertanyaan --}}
+                        <div class="mb-4">
+                            <label class="form-label">Gambar Pendukung (Opsional)</label>
+                            @if ($soal->gambar)
+                                <div class="mb-2">
+                                    <img src="{{ asset('storage/' . $soal->gambar) }}" alt="Preview"
+                                        style="max-width: 200px; max-height: 150px; object-fit: contain;" class="rounded border">
+                                </div>
+                            @endif
+                            <input type="file" name="gambar" class="form-control" accept="image/*">
+                        </div>
                     </div>
 
                     {{-- Kategori --}}
@@ -135,7 +146,7 @@
                         <label class="form-label">Kategori Soal <span class="text-danger">*</span></label>
                         <select name="kategori" class="form-select form-select-custom">
                             <option value="">-- Pilih Kategori --</option>
-                            @foreach (['Umum', 'Gak Umum',] as $kategori)
+                            @foreach (['Umum', 'Gak Umum'] as $kategori)
                                 <option value="{{ $kategori }}"
                                     {{ old('kategori', $soal->kategori) == $kategori ? 'selected' : '' }}>
                                     {{ $kategori }}
