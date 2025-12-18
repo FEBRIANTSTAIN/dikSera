@@ -221,18 +221,27 @@
                             <div class="d-flex gap-3 mb-3">
                                 <div class="question-badge">{{ $index + 1 }}</div>
                                 <div class="flex-grow-1">
-                                    <h6 class="text-dark lh-base mb-0" style="font-size: 16px; font-weight: 500;">
-                                        {!! nl2br(e($soal->pertanyaan)) !!}
-                                    </h6>
+                                    {{-- AREA PERTANYAAN --}}
+                                    <div class="flex-grow-1">
+                                        {{-- 1. Tampilkan Gambar Jika Ada --}}
+                                        @if ($soal->gambar)
+                                            <div class="mb-3">
+                                                <img src="{{ asset('storage/' . $soal->gambar) }}" alt="Gambar Soal"
+                                                    class="img-fluid rounded border"
+                                                    style="max-height: 300px; width: auto;">
+                                            </div>
+                                        @endif
+
+                                        {{-- 2. Teks Pertanyaan --}}
+                                        <h6 class="text-dark lh-base mb-0" style="font-size: 16px; font-weight: 500;">
+                                            {!! nl2br(e($soal->pertanyaan)) !!}
+                                        </h6>
+                                    </div>
                                 </div>
                             </div>
 
                             {{-- Opsi Jawaban --}}
                             <div class="d-flex flex-column gap-2 ms-md-5">
-                                {{-- 
-                                    Tips: Sebaiknya hindari shuffle di view jika ingin melacak analisis butir soal per opsi (A/B/C/D).
-                                    Jika tetap ingin shuffle, pastikan value input tetap key asli ('a', 'b', etc).
-                                --}}
                                 @foreach (['a', 'b', 'c', 'd', 'e'] as $optKey)
                                     @if (isset($soal->opsi_jawaban[$optKey]) && !empty($soal->opsi_jawaban[$optKey]))
                                         <div>
@@ -330,8 +339,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // 1. Logic Timer
-            // Ganti format tanggal agar kompatibel dengan Safari (YYYY/MM/DD) jika perlu, tapi format standar ISO biasanya oke.
             var countDownDate = new Date("{{ $form->waktu_selesai->format('Y-m-d H:i:s') }}").getTime();
 
             var timerInterval = setInterval(function() {

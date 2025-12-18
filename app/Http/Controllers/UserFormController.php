@@ -72,8 +72,8 @@ class UserFormController extends Controller
             return back()->with('error', 'Waktu ujian telah habis.');
         }
 
-        // Ambil soal acak
         $questions = $form->questions()
+            ->select('bank_soals.*')
             ->withPivot('bobot')
             ->inRandomOrder()
             ->get();
@@ -101,7 +101,12 @@ class UserFormController extends Controller
                 ->with('error', 'Anda sudah mengerjakan ujian ini sebelumnya.');
         }
 
-        $questions = $form->questions()->withPivot('bobot')->get();
+        // Tambahkan select di sini juga biar aman saat mengambil kunci jawaban
+        $questions = $form->questions()
+            ->select('bank_soals.*')
+            ->withPivot('bobot')
+            ->get();
+
         $userAnswers = $request->input('answers', []);
 
         $totalBenar = 0;
@@ -118,7 +123,8 @@ class UserFormController extends Controller
                 $jawabanUser = $userAnswers[$question->id] ?? null;
 
                 $isCorrect = false;
-                if ($jawabanUser && strtolower($jawabanUser) === strtolower($question->kunci_jawaban)) {
+                // Pastikan kunci jawaban tidak null sebelum dicek
+                if ($jawabanUser && $question->kunci_jawaban && strtolower($jawabanUser) === strtolower($question->kunci_jawaban)) {
                     $isCorrect = true;
                     $totalBenar++;
                     $totalNilaiBobot += $bobotSoal;

@@ -85,9 +85,11 @@ Route::middleware(['auth'])->group(function () {
         // === REKAP HASIL UJIAN ===
         Route::get('/forms/{form}/hasil', [FormController::class, 'hasil'])->name('form.hasil');
         Route::delete('/hasil-ujian/{result}', [FormController::class, 'resetHasil'])->name('form.reset-hasil');
-        
+        Route::post('/forms/{form}/generate-soal', [FormController::class, 'generateSoal'])->name('form.generate-soal');
         // Menampilkan halaman pilih soal untuk form tertentu
         Route::get('/forms/{form}/kelola-soal', [FormController::class, 'kelolaSoal'])->name('form.kelola-soal');
+        // Route untuk menerima kiriman JSON dari Sheet.js
+        Route::post('/bank-soal/import-json', [BankSoalController::class, 'importJson'])->name('bank-soal.import-json');
         // Menyimpan pilihan soal ke database
         Route::post('/forms/{form}/kelola-soal', [FormController::class, 'simpanSoal'])->name('form.simpan-soal');
     });

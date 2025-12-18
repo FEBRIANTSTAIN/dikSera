@@ -136,24 +136,60 @@
             </a>
         </div>
 
-        <form action="{{ route('admin.form.simpan-soal', $form->id) }}" method="POST" class="h-100">
-            @csrf
+        <div class="content-card">
 
-            <div class="content-card">
-
-                {{-- Toolbar: Search & Info --}}
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="position-relative" style="width: 300px;">
-                        <input type="text" id="searchInput" class="form-control search-input"
-                            placeholder="Cari pertanyaan atau kategori...">
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <span class="badge bg-light text-dark border px-3 py-2">
-                            Total Bank Soal: <strong>{{ $allSoals->count() }}</strong>
-                        </span>
-                    </div>
+            {{-- Toolbar: Search & Info --}}
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="position-relative" style="width: 300px;">
+                    <input type="text" id="searchInput" class="form-control search-input"
+                        placeholder="Cari pertanyaan atau kategori...">
                 </div>
+
+                <div class="d-flex gap-2">
+                    <span class="badge bg-light text-dark border px-3 py-2">
+                        Total Bank Soal: <strong>{{ $allSoals->count() }}</strong>
+                    </span>
+                </div>
+            </div>
+
+            {{-- 
+                FORM 1: GENERATOR SOAL
+            --}}
+            <div class="card border-0 shadow-sm mb-4 bg-light">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-shuffle me-2"></i>Generator Soal Otomatis</h6>
+                    <form action="{{ route('admin.form.generate-soal', $form->id) }}" method="POST"
+                        class="row g-3 align-items-end">
+                        @csrf
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">Kategori</label>
+                            <select name="kategori" class="form-select">
+                                <option value="Semua">Semua Kategori</option>
+                                @foreach (\App\Models\BankSoal::distinct()->pluck('kategori') as $cat)
+                                    <option value="{{ $cat }}">{{ $cat }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Jumlah Soal</label>
+                            <input type="number" name="jumlah_soal" class="form-control" placeholder="Cth: 50"
+                                min="1" required>
+                        </div>
+                        <div class="col-md-5">
+                            <button type="submit" class="btn btn-dark w-100">
+                                <i class="bi bi-magic me-2"></i> Tambahkan Secara Acak
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- 
+                FORM 2: SIMPAN MANUAL
+            --}}
+            <form action="{{ route('admin.form.simpan-soal', $form->id) }}" method="POST"
+                class="d-flex flex-column flex-grow-1" style="overflow: hidden;">
+                @csrf
 
                 {{-- Table Scrollable Area --}}
                 <div class="table-responsive flex-grow-1 border rounded-3 custom-scroll">
@@ -217,8 +253,9 @@
                         <i class="bi bi-save me-2"></i> Simpan Konfigurasi
                     </button>
                 </div>
-            </div>
-        </form>
+            </form>
+
+        </div> {{-- End Content Card --}}
     </div>
 
 @endsection

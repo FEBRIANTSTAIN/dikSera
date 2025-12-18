@@ -16,6 +16,7 @@ class CreateBankSoalsTable extends Migration
         Schema::create('bank_soals', function (Blueprint $table) {
             $table->id();
             $table->text('pertanyaan');
+            $table->string('gambar')->nullable();
             // Menyimpan opsi sebagai JSON.
             $table->json('opsi_jawaban');
             // Menyimpan kunci jawaban
