@@ -10,6 +10,7 @@ class PerawatLisensi extends Model
     use HasFactory;
 
     protected $table = 'perawat_lisensis';
+
     protected $fillable = [
         'user_id',
         'nomor',
@@ -19,6 +20,7 @@ class PerawatLisensi extends Model
         'tgl_expired',
         'file_path',
         'kelayakan',
+        'metode_perpanjangan', 
     ];
 
     public function user()

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage; // Tambahkan ini untuk manajemen file
+use Illuminate\Support\Facades\Storage;
 use App\Models\PerawatProfile;
 use App\Models\PerawatPendidikan;
 use App\Models\PerawatPelatihan;
@@ -16,6 +16,8 @@ use App\Models\PerawatLisensi;
 use App\Models\PerawatStr;
 use App\Models\PerawatSip;
 use App\Models\PerawatDataTambahan;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class PerawatDrhController extends Controller
 {
@@ -744,97 +746,45 @@ class PerawatDrhController extends Controller
        BAGIAN MANAJEMEN DOKUMEN (LISENSI, STR, SIP, TAMBAHAN)
        ========================================================== */
 
-    /* ------------ 1. LISENSI (Tanpa Field Jenis) ------------ */
     public function lisensiIndex()
     {
         $user = $this->currentPerawat();
         if (!$user) return redirect('/');
-        // Order by expired date descending agar yang paling baru/lama terlihat
-        $data = PerawatLisensi::where('user_id', $user->id)->orderBy('tgl_expired', 'desc')->get();
+
+        // Mengambil data lisensi milik user yang sedang login
+        $data = PerawatLisensi::where('user_id', $user->id)
+                    ->orderBy('tgl_expired', 'desc')
+                    ->get();
+
         return view('perawat.dokumen.lisensi.index', compact('user', 'data'));
     }
 
-    public function lisensiCreate()
+    public function generateLisensi($id)
     {
         $user = $this->currentPerawat();
         if (!$user) return redirect('/');
-        return view('perawat.dokumen.lisensi.create', compact('user'));
-    }
 
-   public function lisensiStore(Request $request)
-{
-    $user = $this->currentPerawat();
-    if (!$user) return redirect('/');
+        $lisensi = PerawatLisensi::where('user_id', $user->id)->findOrFail($id);
 
-    $request->validate([
-        'nama'        => 'required|string|max:100', // Validasi Baru
-        'lembaga'     => 'required|string|max:100', // Validasi Baru
-        'nomor'       => 'required|string|max:100',
-        'tgl_terbit'  => 'required|date',
-        'tgl_expired' => 'required|date',
-        'dokumen'     => 'required|mimes:pdf,jpg,jpeg,png|max:5120',
-    ]);
+        $data = [
+            'lisensi' => $lisensi,
+            'user'    => $user,
+            'date'    => date('d F Y')
+        ];
 
-    $data = $request->except(['dokumen', '_token']);
-    $data['user_id'] = $user->id;
+        $pdf = Pdf::loadView('perawat.dokumen.lisensi.print', $data);
+        $pdf->setPaper('A4', 'portrait');
 
-    if ($request->hasFile('dokumen')) {
-        $data['file_path'] = $request->file('dokumen')->store('perawat/dokumen/lisensi', 'public');
-    }
+        $fileName = 'generated_lisensi_' . time() . '.pdf';
+        $path = 'perawat/dokumen/lisensi/' . $fileName;
 
-    PerawatLisensi::create($data);
+        Storage::disk('public')->put($path, $pdf->output());
 
-    return redirect()->route('perawat.lisensi.index')->with('swal', ['icon'=>'success', 'title'=>'Berhasil', 'text'=>'Lisensi berhasil disimpan.']);
-}
+        $lisensi->update([
+            'file_path' => $path
+        ]);
 
-
-    public function lisensiEdit($id)
-    {
-        $user = $this->currentPerawat();
-        if (!$user) return redirect('/');
-        $data = PerawatLisensi::where('user_id', $user->id)->findOrFail($id);
-        return view('perawat.dokumen.lisensi.edit', compact('user', 'data'));
-    }
-
-    public function lisensiUpdate(Request $request, $id)
-{
-    $user = $this->currentPerawat();
-    if (!$user) return redirect('/');
-    $lisensi = PerawatLisensi::where('user_id', $user->id)->findOrFail($id);
-
-    $request->validate([
-        'nama'        => 'required|string|max:100', // Validasi Baru
-        'lembaga'     => 'required|string|max:100', // Validasi Baru
-        'nomor'       => 'required|string|max:100',
-        'tgl_terbit'  => 'required|date',
-        'tgl_expired' => 'required|date',
-        'dokumen'     => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
-    ]);
-
-    $data = $request->except(['dokumen', '_token', '_method']);
-
-    if ($request->hasFile('dokumen')) {
-        if ($lisensi->file_path && Storage::disk('public')->exists($lisensi->file_path)) {
-            Storage::disk('public')->delete($lisensi->file_path);
-        }
-        $data['file_path'] = $request->file('dokumen')->store('perawat/dokumen/lisensi', 'public');
-    }
-
-    $lisensi->update($data);
-    return redirect()->route('perawat.lisensi.index')->with('swal', ['icon'=>'success', 'title'=>'Berhasil', 'text'=>'Lisensi diperbarui.']);
-}
-
-    public function lisensiDestroy($id)
-    {
-        $user = $this->currentPerawat();
-        if (!$user) return redirect('/');
-        $data = PerawatLisensi::where('user_id', $user->id)->findOrFail($id);
-
-        if ($data->file_path && Storage::disk('public')->exists($data->file_path)) {
-            Storage::disk('public')->delete($data->file_path);
-        }
-        $data->delete();
-        return redirect()->route('perawat.lisensi.index')->with('swal', ['icon'=>'success', 'title'=>'Berhasil', 'text'=>'Lisensi dihapus.']);
+        return $pdf->stream('Lisensi_' . $user->name . '.pdf');
     }
 
     /* ------------ 2. STR (Surat Tanda Registrasi) ------------ */

@@ -11,6 +11,7 @@ use App\Models\PerawatSip;
 use App\Models\PerawatStr;
 use App\Models\PerawatLisensi;
 use App\Models\PerawatDataTambahan;
+use App\Models\ExamResult;
 
 class User extends Authenticatable
 {
@@ -86,5 +87,9 @@ class User extends Authenticatable
         }
 
         return $warnings;
+    }
+    public function examResult()
+    {
+        return $this->hasOne(ExamResult::class, 'user_id')->latest();
     }
 }

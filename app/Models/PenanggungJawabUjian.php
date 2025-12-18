@@ -15,5 +15,6 @@ class PenanggungJawabUjian extends Model
         'nama',
         'no_hp',
         'jabatan',
+        'type',
     ];
 }

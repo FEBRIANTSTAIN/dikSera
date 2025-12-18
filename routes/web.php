@@ -13,6 +13,11 @@ use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\ManajemenAkunController;
 use App\Http\Controllers\PenanggungJawabUjianController;
 use App\Http\Controllers\UserFormController;
+use App\Http\Controllers\AdminPengajuanController;
+use App\Http\Controllers\PengajuanSertifikatController;
+use App\Http\Controllers\AdminPengajuanWawancaraController;
+use App\Http\Controllers\AdminLisensiController;
+
 /*
 |--------------------------------------------------------------------------
 | PUBLIC ROUTES (Bisa diakses tanpa login)
@@ -49,6 +54,40 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/perawat/{id}/sertifikat', [AdminPerawatController::class, 'sertifikat'])
             ->name('perawat.sertifikat');
 
+        // === DOKUMEN: LISENSI ===
+        Route::get('/admin/lisensi', [AdminLisensiController::class, 'lisensiIndex'])->name('lisensi.index');
+        Route::get('/admin/lisensi/create', [AdminLisensiController::class, 'lisensiCreate'])->name('lisensi.create');
+        Route::post('/admin/lisensi', [AdminLisensiController::class, 'lisensiStore'])->name('lisensi.store');
+        Route::get('/admin/lisensi/{id}/edit', [AdminLisensiController::class, 'lisensiEdit'])->name('lisensi.edit');
+        Route::put('/admin/lisensi/{id}', [AdminLisensiController::class, 'lisensiUpdate'])->name('lisensi.update');
+        Route::delete('/admin/lisensi/{id}', [AdminLisensiController::class, 'lisensiDestroy'])->name('lisensi.destroy');
+
+        // APPROVAL PENGAJUAN
+        Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('pengajuan.index');
+
+        // HAPUS SALAH SATU ROUTE APPROVE YANG DUPLIKAT (Hapus GET, Pertahankan POST)
+        // Route::get('/pengajuan/{id}/approve', [AdminPengajuanController::class, 'approve'])->name('pengajuan.approve'); <--- INI BIANG KEROK ERRORNYA
+
+        Route::get('/pengajuan/{id}/reject', [AdminPengajuanController::class, 'reject'])->name('pengajuan.reject');
+        Route::get('/pengajuan/{id}/approve-score', [AdminPengajuanController::class, 'approveExamScore'])->name('pengajuan.approve_score');
+
+        // POST method untuk approve (Form submit)
+        Route::post('/pengajuan/{id}/approve', [AdminPengajuanController::class, 'approve'])->name('pengajuan.approve');
+
+        Route::get('/pengajuan/{id}/complete', [AdminPengajuanController::class, 'completeProcess'])->name('pengajuan.complete');
+        Route::get('/pengajuan/{id}', [AdminPengajuanController::class, 'show'])->name('pengajuan.show');
+        Route::post('/pengajuan/bulk-approve', [AdminPengajuanController::class, 'bulkApprove'])->name('pengajuan.bulk_approve');
+        Route::post('/pengajuan/bulk-approve-score', [AdminPengajuanController::class, 'bulkApproveScore'])->name('pengajuan.bulk_approve_score');
+        Route::post('/pengajuan/bulk-approve-interview', [AdminPengajuanController::class, 'bulkApproveInterview'])->name('pengajuan.bulk_approve_interview');
+
+        // PENGAJUAN WAWANCARA (Updated Name)
+        Route::prefix('pengajuan-wawancara')->name('pengajuan_wawancara.')->group(function() {
+            Route::get('/{id}/approve', [AdminPengajuanWawancaraController::class, 'approveJadwal']) ->name('approve');
+            Route::post('/{id}/reject', [AdminPengajuanWawancaraController::class, 'rejectJadwal'])->name('reject');
+            Route::get('/{id}/penilaian', [AdminPengajuanWawancaraController::class, 'showPenilaian'])->name('penilaian');
+            Route::post('/{id}/penilaian', [AdminPengajuanWawancaraController::class, 'storePenilaian'])->name('store_penilaian');
+        });
+
         // Verifikasi kelayakan dokumen
         Route::post('/perawat/verifikasi-kelayakan', [AdminPerawatController::class, 'verifikasiKelayakan'])->name('perawat.verifikasi.kelayakan');
 
@@ -83,15 +122,19 @@ Route::middleware(['auth'])->group(function () {
         Route::post('bank-soal/{id}/delete', [BankSoalController::class, 'destroy'])->name('bank-soal.delete');
 
         // === REKAP HASIL UJIAN ===
-        Route::get('/forms/{form}/hasil', [FormController::class, 'hasil'])->name('form.hasil');
-        Route::delete('/hasil-ujian/{result}', [FormController::class, 'resetHasil'])->name('form.reset-hasil');
-        Route::post('/forms/{form}/generate-soal', [FormController::class, 'generateSoal'])->name('form.generate-soal');
-        // Menampilkan halaman pilih soal untuk form tertentu
-        Route::get('/forms/{form}/kelola-soal', [FormController::class, 'kelolaSoal'])->name('form.kelola-soal');
-        // Route untuk menerima kiriman JSON dari Sheet.js
-        Route::post('/bank-soal/import-json', [BankSoalController::class, 'importJson'])->name('bank-soal.import-json');
-        // Menyimpan pilihan soal ke database
-        Route::post('/forms/{form}/kelola-soal', [FormController::class, 'simpanSoal'])->name('form.simpan-soal');
+Route::get('/forms/{form}/hasil', [FormController::class, 'hasil'])->name('form.hasil');
+Route::delete('/hasil-ujian/{result}', [FormController::class, 'resetHasil'])->name('form.reset-hasil');
+Route::post('/forms/{form}/generate-soal', [FormController::class, 'generateSoal'])->name('form.generate-soal');
+
+// Menampilkan halaman pilih soal untuk form tertentu
+Route::get('/forms/{form}/kelola-soal', [FormController::class, 'kelolaSoal'])->name('form.kelola-soal');
+
+// Route untuk menerima kiriman JSON dari Sheet.js
+Route::post('/bank-soal/import-json', [BankSoalController::class, 'importJson'])->name('bank-soal.import-json');
+
+// Menyimpan pilihan soal ke database
+Route::post('/forms/{form}/kelola-soal', [FormController::class, 'simpanSoal'])->name('form.simpan-soal');
+
     });
 
     // === GROUP PERAWAT ===
@@ -155,13 +198,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/tanda-jasa/{id}', [PerawatDrhController::class, 'tandajasaUpdate'])->name('tandajasa.update');
         Route::delete('/tanda-jasa/{id}', [PerawatDrhController::class, 'tandajasaDestroy'])->name('tandajasa.destroy');
 
-        // === DOKUMEN: LISENSI ===
+        // === DOKUMEN: LISENSI (READ ONLY) ===
         Route::get('/dokumen/lisensi', [PerawatDrhController::class, 'lisensiIndex'])->name('lisensi.index');
-        Route::get('/dokumen/lisensi/create', [PerawatDrhController::class, 'lisensiCreate'])->name('lisensi.create');
-        Route::post('/dokumen/lisensi', [PerawatDrhController::class, 'lisensiStore'])->name('lisensi.store');
-        Route::get('/dokumen/lisensi/{id}/edit', [PerawatDrhController::class, 'lisensiEdit'])->name('lisensi.edit');
-        Route::put('/dokumen/lisensi/{id}', [PerawatDrhController::class, 'lisensiUpdate'])->name('lisensi.update');
-        Route::delete('/dokumen/lisensi/{id}', [PerawatDrhController::class, 'lisensiDestroy'])->name('lisensi.destroy');
 
         // === DOKUMEN: STR ===
         Route::get('/dokumen/str', [PerawatDrhController::class, 'strIndex'])->name('str.index');
@@ -198,6 +236,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/ujian/{form:slug}/kerjakan', [UserFormController::class, 'kerjakan'])->name('ujian.kerjakan');
         Route::post('/ujian/{form:slug}/submit', [UserFormController::class, 'submit'])->name('ujian.submit');
         Route::get('/ujian/{form:slug}/selesai', [UserFormController::class, 'selesai'])->name('ujian.selesai');
+
+        // CETAK SERTIFIKAT
+        Route::get('/pengajuan/{id}/sertifikat', [PengajuanSertifikatController::class, 'printSertifikat'])->name('pengajuan.sertifikat');
+
+        // PENGAJUAN PERPANJANGAN
+        Route::get('/pengajuan', [PengajuanSertifikatController::class, 'index'])->name('pengajuan.index');
+        Route::post('/pengajuan/store', [PengajuanSertifikatController::class, 'store'])->name('pengajuan.store');
+        Route::post('/pengajuan/{id}/pilih-metode', [PengajuanSertifikatController::class, 'pilihMetode'])->name('pengajuan.pilih_metode');
+        Route::post('/pengajuan/{id}/store-wawancara', [PengajuanSertifikatController::class, 'storeWawancara'])->name('pengajuan.store_wawancara');
+
+        // GENERATE LISENSI PDF
+        Route::get('/dokumen/lisensi/{id}/generate', [PerawatDrhController::class, 'generateLisensi'])->name('lisensi.generate');
     });
 
     Route::post('/webhook', [TelegramController::class, 'webhook'])->name('webhook');

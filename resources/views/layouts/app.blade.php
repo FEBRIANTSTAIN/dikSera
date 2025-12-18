@@ -146,14 +146,13 @@
             white-space: nowrap;
         }
 
-        /* --- NAVIGATION ITEMS (FIXED ALIGNMENT) --- */
+        /* --- NAVIGATION ITEMS --- */
         .nav-linkx,
         .nav-dropdown {
             display: flex;
             align-items: center;
             width: 100%;
             justify-content: flex-start;
-            /* Rata Kiri */
             gap: 12px;
             font-size: 13px;
             padding: 10px 12px;
@@ -175,7 +174,7 @@
             color: #6b7280;
         }
 
-        /* Ikon Panah (FIX: Dorong ke kanan) */
+        /* Ikon Panah */
         .dropdown-icon {
             margin-left: auto;
             font-size: 12px;
@@ -263,27 +262,14 @@
         }
 
         @keyframes pulse-red {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            }
-
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
-            }
-
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
         /* --- DESKTOP (Min 992px) --- */
         @media (min-width: 992px) {
-            .sidebar-wrapper {
-                position: relative;
-            }
+            .sidebar-wrapper { position: relative; }
 
             .sidebar-toggle-btn {
                 position: absolute;
@@ -308,113 +294,33 @@
                 border-color: var(--blue-main);
             }
 
-            .header-toggle,
-            .mobile-overlay {
-                display: none !important;
-            }
+            .header-toggle, .mobile-overlay { display: none !important; }
 
             /* Collapsed State */
-            .app-shell.is-collapsed .app-sidebar {
-                width: var(--sidebar-width-collapsed);
-                padding: 18px 8px;
-            }
-
+            .app-shell.is-collapsed .app-sidebar { width: var(--sidebar-width-collapsed); padding: 18px 8px; }
             .app-shell.is-collapsed .brand-info,
             .app-shell.is-collapsed .link-text,
             .app-shell.is-collapsed .nav-section-title,
             .app-shell.is-collapsed .sidebar-footer,
-            .app-shell.is-collapsed .dropdown-icon {
-                opacity: 0;
-                width: 0;
-                display: none;
-            }
-
+            .app-shell.is-collapsed .dropdown-icon { opacity: 0; width: 0; display: none; }
             .app-shell.is-collapsed .brand-row,
             .app-shell.is-collapsed .nav-linkx,
-            .app-shell.is-collapsed .nav-dropdown {
-                justify-content: center;
-                padding-left: 0;
-                padding-right: 0;
-            }
-
-            .app-shell.is-collapsed .nav-submenu {
-                display: none !important;
-            }
-
-            .app-shell.is-collapsed .nav-linkx i {
-                margin: 0;
-            }
-
-            /* Badge saat collapsed */
-            .app-shell.is-collapsed .badge-notification {
-                position: absolute;
-                top: 6px;
-                right: 6px;
-                width: 10px;
-                height: 10px;
-                padding: 0;
-                font-size: 0;
-                min-width: auto;
-                margin: 0;
-            }
+            .app-shell.is-collapsed .nav-dropdown { justify-content: center; padding-left: 0; padding-right: 0; }
+            .app-shell.is-collapsed .nav-submenu { display: none !important; }
+            .app-shell.is-collapsed .nav-linkx i { margin: 0; }
+            .app-shell.is-collapsed .badge-notification { position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; padding: 0; font-size: 0; min-width: auto; margin: 0; }
         }
 
         /* --- MOBILE (Max 991px) --- */
         @media (max-width: 991px) {
-            .app-shell {
-                display: block;
-                padding: 0;
-            }
-
-            .app-sidebar {
-                position: fixed;
-                top: 0;
-                left: -100%;
-                height: 100vh;
-                width: 280px !important;
-                border-radius: 0;
-                z-index: 1051;
-                transition: left 0.3s ease-in-out;
-            }
-
-            .app-sidebar.mobile-active {
-                left: 0;
-            }
-
-            .sidebar-toggle-btn {
-                display: none;
-            }
-
-            .header-toggle {
-                display: block;
-                font-size: 24px;
-                cursor: pointer;
-            }
-
-            .app-main {
-                border-radius: 0;
-                border: none;
-                min-height: 100vh;
-                padding: 16px;
-            }
-
-            .mobile-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.4);
-                z-index: 1040;
-                display: none;
-                backdrop-filter: blur(2px);
-                transition: opacity 0.3s;
-            }
-
-            .mobile-overlay.show {
-                display: block;
-                opacity: 1;
-            }
+            .app-shell { display: block; padding: 0; }
+            .app-sidebar { position: fixed; top: 0; left: -100%; height: 100vh; width: 280px !important; border-radius: 0; z-index: 1051; transition: left 0.3s ease-in-out; }
+            .app-sidebar.mobile-active { left: 0; }
+            .sidebar-toggle-btn { display: none; }
+            .header-toggle { display: block; font-size: 24px; cursor: pointer; }
+            .app-main { border-radius: 0; border: none; min-height: 100vh; padding: 16px; }
+            .mobile-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4); z-index: 1040; display: none; backdrop-filter: blur(2px); transition: opacity 0.3s; }
+            .mobile-overlay.show { display: block; opacity: 1; }
         }
     </style>
 
@@ -435,6 +341,7 @@
 
             <aside class="app-sidebar" id="appSidebar">
                 <div>
+                    {{-- BRAND LOGO --}}
                     <div class="brand-row">
                         <div class="brand-logo">
                             <img src="{{ asset('icon.png') }}" alt="Logo">
@@ -446,7 +353,9 @@
                         </div>
                     </div>
 
-                    {{-- MENU PERAWAT --}}
+                    {{-- ========================================= --}}
+                    {{-- MENU PERAWAT (ROLE: PERAWAT) --}}
+                    {{-- ========================================= --}}
                     @if (Auth::check() && Auth::user()->role === 'perawat')
                         <div class="nav-section-title">Umum</div>
                         <a href="{{ route('dashboard') }}"
@@ -456,8 +365,7 @@
 
                         <div class="nav-section-title">Menu Utama</div>
 
-
-                        {{-- DROPDOWN MASTER DATA --}}
+                        {{-- DROPDOWN: PELENGKAPAN DATA (MODUL 3) --}}
                         <div class="nav-linkx nav-dropdown" data-dropdown="#submenu-master">
                             <i class="bi bi-folder-fill"></i>
                             <span class="link-text">Pelengkapan Data</span>
@@ -465,44 +373,30 @@
                         </div>
 
                         <div id="submenu-master" class="nav-submenu">
-
-                            <a href="{{ route('perawat.drh') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.drh') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.drh') }}" class="nav-linkx {{ request()->routeIs('perawat.drh') ? 'active' : '' }}">
                                 <i class="bi bi-person-vcard-fill"></i> DRH & Profil
                             </a>
-
-                            <a href="{{ route('perawat.pelatihan.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.pelatihan.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.pelatihan.index') }}" class="nav-linkx {{ request()->routeIs('perawat.pelatihan.*') ? 'active' : '' }}">
                                 <i class="bi bi-award-fill"></i> Pelatihan
                             </a>
-
-                            <a href="{{ route('perawat.pendidikan.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.pendidikan.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.pendidikan.index') }}" class="nav-linkx {{ request()->routeIs('perawat.pendidikan.*') ? 'active' : '' }}">
                                 <i class="bi bi-book-fill"></i> Pendidikan
                             </a>
-
-                            <a href="{{ route('perawat.pekerjaan.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.pekerjaan.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.pekerjaan.index') }}" class="nav-linkx {{ request()->routeIs('perawat.pekerjaan.*') ? 'active' : '' }}">
                                 <i class="bi bi-briefcase-fill"></i> Pekerjaan
                             </a>
-
-                            <a href="{{ route('perawat.keluarga.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.keluarga.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.keluarga.index') }}" class="nav-linkx {{ request()->routeIs('perawat.keluarga.*') ? 'active' : '' }}">
                                 <i class="bi bi-people-fill"></i> Keluarga
                             </a>
-
-                            <a href="{{ route('perawat.organisasi.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.organisasi.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.organisasi.index') }}" class="nav-linkx {{ request()->routeIs('perawat.organisasi.*') ? 'active' : '' }}">
                                 <i class="bi bi-diagram-3-fill"></i> Organisasi
                             </a>
-
-                            <a href="{{ route('perawat.tandajasa.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.tandajasa.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.tandajasa.index') }}" class="nav-linkx {{ request()->routeIs('perawat.tandajasa.*') ? 'active' : '' }}">
                                 <i class="bi bi-star-fill"></i> Tanda Jasa
                             </a>
                         </div>
 
-                        {{-- DROPDOWN 2: DOKUMEN (BARU DITAMBAHKAN) --}}
+                        {{-- DROPDOWN: DOKUMEN (MODUL 4) --}}
                         @php
                             $isDokumenActive =
                                 request()->routeIs('perawat.lisensi.*') ||
@@ -511,8 +405,7 @@
                                 request()->routeIs('perawat.tambahan.*');
                         @endphp
 
-                        <div class="nav-linkx nav-dropdown {{ $isDokumenActive ? 'active' : '' }}"
-                            data-dropdown="#submenu-dokumen">
+                        <div class="nav-linkx nav-dropdown {{ $isDokumenActive ? 'active' : '' }}" data-dropdown="#submenu-dokumen">
                             <i class="bi bi-folder-fill"></i>
                             <span class="link-text">Dokumen</span>
                             <i class="bi bi-chevron-down dropdown-icon"></i>
@@ -520,39 +413,33 @@
 
                         <div id="submenu-dokumen" class="nav-submenu {{ $isDokumenActive ? 'show' : '' }}">
 
-                            {{-- Lisensi --}}
-                            <a href="{{ route('perawat.lisensi.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
-                                <i class="bi bi-file-earmark-fill"></i> Dokumen Lisensi
+                            <a href="{{ route('perawat.lisensi.index') }}" class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
+                                <i class="bi bi-file-earmark-text-fill"></i> Dokumen Lisensi
                             </a>
-
-                            {{-- STR --}}
-                            <a href="{{ route('perawat.str.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.str.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.str.index') }}" class="nav-linkx {{ request()->routeIs('perawat.str.*') ? 'active' : '' }}">
                                 <i class="bi bi-file-earmark-text-fill"></i> Dokumen STR
                             </a>
-
-                            {{-- SIP --}}
-                            <a href="{{ route('perawat.sip.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.sip.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.sip.index') }}" class="nav-linkx {{ request()->routeIs('perawat.sip.*') ? 'active' : '' }}">
                                 <i class="bi bi-file-earmark-check-fill"></i> Dokumen SIP
                             </a>
-
-                            {{-- Data Tambahan --}}
-                            <a href="{{ route('perawat.tambahan.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.tambahan.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.tambahan.index') }}" class="nav-linkx {{ request()->routeIs('perawat.tambahan.*') ? 'active' : '' }}">
                                 <i class="bi bi-file-earmark-plus-fill"></i> Data Tambahan
                             </a>
-
                         </div>
 
-                        {{-- MENU UJIAN DENGAN BADGE --}}
+                        {{-- STATUS PENGAJUAN (MODUL 8 & RENEWAL) --}}
+                        <a href="{{ route('perawat.pengajuan.index') }}"
+                            class="nav-linkx {{ request()->routeIs('perawat.pengajuan.*') ? 'active' : '' }}">
+                            <i class="bi bi-file-earmark-arrow-up-fill"></i>
+                            <span class="link-text">Status Pengajuan</span>
+                        </a>
+
+                        {{-- UJIAN & EVALUASI (MODUL 7) --}}
                         <a href="{{ route('perawat.ujian.index') }}"
                             class="nav-linkx {{ request()->routeIs('perawat.ujian.*') ? 'active' : '' }}">
                             <i class="bi bi-clipboard-check-fill"></i>
                             <span class="link-text">Ujian & Evaluasi</span>
 
-                            {{-- Langsung pakai variabelnya --}}
                             @if (isset($ujianActiveCount) && $ujianActiveCount > 0)
                                 <span class="badge-notification">{{ $ujianActiveCount }}</span>
                             @endif
@@ -566,11 +453,13 @@
                     @endif
 
 
-                    {{-- MENU ADMIN --}}
+                    {{-- ========================================= --}}
+                    {{-- MENU ADMIN (ROLE: ADMIN) --}}
+                    {{-- ========================================= --}}
                     @if (Auth::check() && Auth::user()->role === 'admin')
                         <div class="nav-section-title">Admin Panel</div>
 
-                        {{-- Dashboard --}}
+                        {{-- Dashboard (MODUL 10) --}}
                         <a href="{{ route('dashboard.admin') }}"
                             class="nav-linkx {{ isset($menu) && $menu === 'admin' ? 'active' : '' }}">
                             <i class="bi bi-speedometer2"></i>
@@ -580,43 +469,53 @@
                         {{-- Manajemen Akun --}}
                         <a href="{{ route('admin.manajemen_akun.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.manajemen_akun*') ? 'active' : '' }}">
-                            <i class="bi bi-person-gear"></i> {{-- Ganti icon biar beda dengan data perawat --}}
+                            <i class="bi bi-person-gear"></i>
                             <span class="link-text">Manajemen Akun</span>
                         </a>
 
-                        {{-- Data Perawat --}}
+                        {{-- Data Perawat & Status Kelayakan (MODUL 5) --}}
                         <a href="{{ route('admin.perawat.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.perawat.*') ? 'active' : '' }}">
-                            <i class="bi bi-person-lines-fill"></i> {{-- Icon lebih cocok untuk data list --}}
+                            <i class="bi bi-person-lines-fill"></i>
                             <span class="link-text">Data Perawat</span>
                         </a>
 
-                        <div class="nav-section-title">Manajeman Ujian</div>
+                        <a href="{{ route('admin.lisensi.index') }}" class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
+                                <i class="bi bi-file-earmark-fill"></i> Dokumen Lisensi
+                            </a>
+
+                         {{-- APPROVAL PENGAJUAN & WAWANCARA (MODUL 8) --}}
+                         <a href="{{ route('admin.pengajuan.index') }}"
+                            class="nav-linkx {{ request()->routeIs('admin.pengajuan.*') || request()->routeIs('admin.pengajuan_wawancara.*') ? 'active' : '' }}">
+                            <i class="bi bi-check-square-fill"></i>
+                            <span class="link-text">Approval Pengajuan</span>
+                        </a>
+
+                        <div class="nav-section-title">Manajemen Ujian</div>
 
                         {{-- Penanggung Jawab --}}
                         <a href="{{ route('admin.penanggung-jawab.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.penanggung-jawab*') ? 'active' : '' }}">
-                            <i class="bi bi-shield-check"></i> {{-- Icon authority/PJ --}}
+                            <i class="bi bi-shield-check"></i>
                             <span class="link-text">Penanggung Jawab</span>
                         </a>
 
-                        {{-- Form Ujian --}}
+                        {{-- Form Ujian (MODUL 7) --}}
                         <a href="{{ route('admin.form.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.form.*') ? 'active' : '' }}">
-                            <i class="bi bi-ui-checks"></i> {{-- Icon form --}}
+                            <i class="bi bi-ui-checks"></i>
                             <span class="link-text">Form Ujian</span>
                         </a>
 
-                        {{-- Bank Soal --}}
+                        {{-- Bank Soal (MODUL 6) --}}
                         <a href="{{ route('admin.bank-soal.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.bank-soal.*') ? 'active' : '' }}">
-                            <i class="bi bi-journal-text"></i> {{-- Icon bank soal --}}
+                            <i class="bi bi-journal-text"></i>
                             <span class="link-text">Bank Soal</span>
                         </a>
 
                         <div class="nav-section-title">Lainnya</div>
 
-                        {{-- Profile --}}
                         <a href="{{ route('admin.profile.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
                             <i class="bi bi-gear-fill"></i>
