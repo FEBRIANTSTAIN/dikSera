@@ -50,25 +50,22 @@ class AuthController extends Controller
             $user = Auth::user();
 
             // ============================================================
-            // CEK STATUS AKUN (LOGIKA TAMBAHAN)
+            // CEK STATUS AKUN
             // ============================================================
-            // Jika user BUKAN admin DAN status akunnya BUKAN 'active'
-            // Pastikan kolom 'status_akun' sudah ada di tabel users (via migration)
-            if ($user->role !== 'admin' && $user->status_akun !== 'active') {
+            // Update logika: Admin DAN Pewawancara bebas dari cek status "pending".
+            // Pengecekan status hanya berlaku untuk user biasa (Perawat).
+            if (!in_array($user->role, ['admin', 'pewawancara']) && $user->status_akun !== 'active') {
 
-                // Keluarkan user (Logout paksa agar sesi tidak tersimpan)
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                // Tentukan pesan error berdasarkan status
                 $pesanError = 'Akun Anda sedang menunggu persetujuan Admin. Mohon tunggu verifikasi.';
 
                 if ($user->status_akun === 'rejected') {
                     $pesanError = 'Mohon maaf, pendaftaran akun Anda telah ditolak oleh Admin.';
                 }
 
-                // Kembalikan ke halaman login dengan pesan error
                 return back()
                     ->withInput()
                     ->with('swal', [
@@ -79,10 +76,9 @@ class AuthController extends Controller
             }
             // ============================================================
 
-            // Jika lolos pengecekan, lanjutkan regenerasi session
             $request->session()->regenerate();
 
-            // Redirect Admin
+            // 1. Redirect Admin
             if ($user->role === 'admin') {
                 return redirect()
                     ->route('dashboard.admin')
@@ -93,7 +89,18 @@ class AuthController extends Controller
                     ]);
             }
 
-            // Redirect User Biasa (Perawat)
+            // 2. Redirect Pewawancara (INI YANG SEBELUMNYA KURANG)
+            if ($user->role === 'pewawancara') {
+                return redirect()
+                    ->route('dashboard.pewawancara')
+                    ->with('swal', [
+                        'icon'  => 'success',
+                        'title' => 'Login Berhasil',
+                        'text'  => 'Selamat bertugas, ' . $user->name . '.',
+                    ]);
+            }
+
+            // 3. Redirect User Biasa (Perawat)
             return redirect()
                 ->route('dashboard')
                 ->with('swal', [

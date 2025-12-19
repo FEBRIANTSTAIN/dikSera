@@ -262,14 +262,27 @@
         }
 
         @keyframes pulse-red {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
         }
 
         /* --- DESKTOP (Min 992px) --- */
         @media (min-width: 992px) {
-            .sidebar-wrapper { position: relative; }
+            .sidebar-wrapper {
+                position: relative;
+            }
 
             .sidebar-toggle-btn {
                 position: absolute;
@@ -294,33 +307,112 @@
                 border-color: var(--blue-main);
             }
 
-            .header-toggle, .mobile-overlay { display: none !important; }
+            .header-toggle,
+            .mobile-overlay {
+                display: none !important;
+            }
 
             /* Collapsed State */
-            .app-shell.is-collapsed .app-sidebar { width: var(--sidebar-width-collapsed); padding: 18px 8px; }
+            .app-shell.is-collapsed .app-sidebar {
+                width: var(--sidebar-width-collapsed);
+                padding: 18px 8px;
+            }
+
             .app-shell.is-collapsed .brand-info,
             .app-shell.is-collapsed .link-text,
             .app-shell.is-collapsed .nav-section-title,
             .app-shell.is-collapsed .sidebar-footer,
-            .app-shell.is-collapsed .dropdown-icon { opacity: 0; width: 0; display: none; }
+            .app-shell.is-collapsed .dropdown-icon {
+                opacity: 0;
+                width: 0;
+                display: none;
+            }
+
             .app-shell.is-collapsed .brand-row,
             .app-shell.is-collapsed .nav-linkx,
-            .app-shell.is-collapsed .nav-dropdown { justify-content: center; padding-left: 0; padding-right: 0; }
-            .app-shell.is-collapsed .nav-submenu { display: none !important; }
-            .app-shell.is-collapsed .nav-linkx i { margin: 0; }
-            .app-shell.is-collapsed .badge-notification { position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; padding: 0; font-size: 0; min-width: auto; margin: 0; }
+            .app-shell.is-collapsed .nav-dropdown {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .app-shell.is-collapsed .nav-submenu {
+                display: none !important;
+            }
+
+            .app-shell.is-collapsed .nav-linkx i {
+                margin: 0;
+            }
+
+            .app-shell.is-collapsed .badge-notification {
+                position: absolute;
+                top: 6px;
+                right: 6px;
+                width: 10px;
+                height: 10px;
+                padding: 0;
+                font-size: 0;
+                min-width: auto;
+                margin: 0;
+            }
         }
 
         /* --- MOBILE (Max 991px) --- */
         @media (max-width: 991px) {
-            .app-shell { display: block; padding: 0; }
-            .app-sidebar { position: fixed; top: 0; left: -100%; height: 100vh; width: 280px !important; border-radius: 0; z-index: 1051; transition: left 0.3s ease-in-out; }
-            .app-sidebar.mobile-active { left: 0; }
-            .sidebar-toggle-btn { display: none; }
-            .header-toggle { display: block; font-size: 24px; cursor: pointer; }
-            .app-main { border-radius: 0; border: none; min-height: 100vh; padding: 16px; }
-            .mobile-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4); z-index: 1040; display: none; backdrop-filter: blur(2px); transition: opacity 0.3s; }
-            .mobile-overlay.show { display: block; opacity: 1; }
+            .app-shell {
+                display: block;
+                padding: 0;
+            }
+
+            .app-sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                width: 280px !important;
+                border-radius: 0;
+                z-index: 1051;
+                transition: left 0.3s ease-in-out;
+            }
+
+            .app-sidebar.mobile-active {
+                left: 0;
+            }
+
+            .sidebar-toggle-btn {
+                display: none;
+            }
+
+            .header-toggle {
+                display: block;
+                font-size: 24px;
+                cursor: pointer;
+            }
+
+            .app-main {
+                border-radius: 0;
+                border: none;
+                min-height: 100vh;
+                padding: 16px;
+            }
+
+            .mobile-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.4);
+                z-index: 1040;
+                display: none;
+                backdrop-filter: blur(2px);
+                transition: opacity 0.3s;
+            }
+
+            .mobile-overlay.show {
+                display: block;
+                opacity: 1;
+            }
         }
     </style>
 
@@ -373,25 +465,32 @@
                         </div>
 
                         <div id="submenu-master" class="nav-submenu">
-                            <a href="{{ route('perawat.drh') }}" class="nav-linkx {{ request()->routeIs('perawat.drh') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.drh') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.drh') ? 'active' : '' }}">
                                 <i class="bi bi-person-vcard-fill"></i> DRH & Profil
                             </a>
-                            <a href="{{ route('perawat.pelatihan.index') }}" class="nav-linkx {{ request()->routeIs('perawat.pelatihan.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.pelatihan.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.pelatihan.*') ? 'active' : '' }}">
                                 <i class="bi bi-award-fill"></i> Pelatihan
                             </a>
-                            <a href="{{ route('perawat.pendidikan.index') }}" class="nav-linkx {{ request()->routeIs('perawat.pendidikan.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.pendidikan.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.pendidikan.*') ? 'active' : '' }}">
                                 <i class="bi bi-book-fill"></i> Pendidikan
                             </a>
-                            <a href="{{ route('perawat.pekerjaan.index') }}" class="nav-linkx {{ request()->routeIs('perawat.pekerjaan.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.pekerjaan.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.pekerjaan.*') ? 'active' : '' }}">
                                 <i class="bi bi-briefcase-fill"></i> Pekerjaan
                             </a>
-                            <a href="{{ route('perawat.keluarga.index') }}" class="nav-linkx {{ request()->routeIs('perawat.keluarga.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.keluarga.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.keluarga.*') ? 'active' : '' }}">
                                 <i class="bi bi-people-fill"></i> Keluarga
                             </a>
-                            <a href="{{ route('perawat.organisasi.index') }}" class="nav-linkx {{ request()->routeIs('perawat.organisasi.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.organisasi.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.organisasi.*') ? 'active' : '' }}">
                                 <i class="bi bi-diagram-3-fill"></i> Organisasi
                             </a>
-                            <a href="{{ route('perawat.tandajasa.index') }}" class="nav-linkx {{ request()->routeIs('perawat.tandajasa.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.tandajasa.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.tandajasa.*') ? 'active' : '' }}">
                                 <i class="bi bi-star-fill"></i> Tanda Jasa
                             </a>
                         </div>
@@ -405,7 +504,8 @@
                                 request()->routeIs('perawat.tambahan.*');
                         @endphp
 
-                        <div class="nav-linkx nav-dropdown {{ $isDokumenActive ? 'active' : '' }}" data-dropdown="#submenu-dokumen">
+                        <div class="nav-linkx nav-dropdown {{ $isDokumenActive ? 'active' : '' }}"
+                            data-dropdown="#submenu-dokumen">
                             <i class="bi bi-folder-fill"></i>
                             <span class="link-text">Dokumen</span>
                             <i class="bi bi-chevron-down dropdown-icon"></i>
@@ -413,16 +513,20 @@
 
                         <div id="submenu-dokumen" class="nav-submenu {{ $isDokumenActive ? 'show' : '' }}">
 
-                            <a href="{{ route('perawat.lisensi.index') }}" class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.lisensi.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
                                 <i class="bi bi-file-earmark-text-fill"></i> Dokumen Lisensi
                             </a>
-                            <a href="{{ route('perawat.str.index') }}" class="nav-linkx {{ request()->routeIs('perawat.str.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.str.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.str.*') ? 'active' : '' }}">
                                 <i class="bi bi-file-earmark-text-fill"></i> Dokumen STR
                             </a>
-                            <a href="{{ route('perawat.sip.index') }}" class="nav-linkx {{ request()->routeIs('perawat.sip.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.sip.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.sip.*') ? 'active' : '' }}">
                                 <i class="bi bi-file-earmark-check-fill"></i> Dokumen SIP
                             </a>
-                            <a href="{{ route('perawat.tambahan.index') }}" class="nav-linkx {{ request()->routeIs('perawat.tambahan.*') ? 'active' : '' }}">
+                            <a href="{{ route('perawat.tambahan.index') }}"
+                                class="nav-linkx {{ request()->routeIs('perawat.tambahan.*') ? 'active' : '' }}">
                                 <i class="bi bi-file-earmark-plus-fill"></i> Data Tambahan
                             </a>
                         </div>
@@ -452,6 +556,32 @@
                         </a>
                     @endif
 
+                    {{-- ========================================= --}}
+                    {{-- MENU PEWAWANCARA (ROLE: PEWAWANCARA) --}}
+                    {{-- ========================================= --}}
+                    @if (Auth::check() && Auth::user()->role === 'pewawancara')
+                        <div class="nav-section-title">Menu Utama</div>
+
+                        {{-- Dashboard: Fokus ke Antrian & Input Nilai --}}
+                        <a href="{{ route('dashboard.pewawancara') }}"
+                            class="nav-linkx {{ request()->routeIs('dashboard.pewawancara') ? 'active' : '' }}">
+                            <i class="bi bi-grid-fill"></i> <span class="link-text">Dashboard & Tugas</span>
+                        </a>
+
+                        {{-- Halaman Terpisah: Riwayat --}}
+                        <a href="{{ route('pewawancara.riwayat') }}"
+                            class="nav-linkx {{ request()->routeIs('pewawancara.riwayat') ? 'active' : '' }}">
+                            <i class="bi bi-clock-history"></i> <span class="link-text">Riwayat Penilaian</span>
+                        </a>
+
+                        <div class="nav-section-title">Lainnya</div>
+                        {{-- Bisa ditambahkan pengaturan akun jika perlu --}}
+                        <a href="#"
+                            class="nav-linkx {{ request()->routeIs('#') ? 'active' : '' }}">
+                            <i class="bi bi-gear-fill"></i>
+                            <span class="link-text">Pengaturan</span>
+                        </a>
+                    @endif
 
                     {{-- ========================================= --}}
                     {{-- MENU ADMIN (ROLE: ADMIN) --}}
@@ -480,12 +610,13 @@
                             <span class="link-text">Data Perawat</span>
                         </a>
 
-                        <a href="{{ route('admin.lisensi.index') }}" class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
-                                <i class="bi bi-file-earmark-fill"></i> Dokumen Lisensi
-                            </a>
+                        <a href="{{ route('admin.lisensi.index') }}"
+                            class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
+                            <i class="bi bi-file-earmark-fill"></i> Dokumen Lisensi
+                        </a>
 
-                         {{-- APPROVAL PENGAJUAN & WAWANCARA (MODUL 8) --}}
-                         <a href="{{ route('admin.pengajuan.index') }}"
+                        {{-- APPROVAL PENGAJUAN & WAWANCARA (MODUL 8) --}}
+                        <a href="{{ route('admin.pengajuan.index') }}"
                             class="nav-linkx {{ request()->routeIs('admin.pengajuan.*') || request()->routeIs('admin.pengajuan_wawancara.*') ? 'active' : '' }}">
                             <i class="bi bi-check-square-fill"></i>
                             <span class="link-text">Approval Pengajuan</span>

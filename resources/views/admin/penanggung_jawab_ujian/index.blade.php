@@ -122,10 +122,10 @@
 
 @section('content')
 
-    <div class="content-card">
+    <div class="content-card"> {{-- Pastikan class ini ada css nya atau ganti 'card card-body' --}}
+
         {{-- Header Tools --}}
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
-
             {{-- Search Bar --}}
             <form action="" method="GET" class="d-flex gap-2">
                 <input type="text" name="search" value="{{ request('search') }}"
@@ -145,10 +145,10 @@
 
         <div class="table-responsive">
             <table class="table table-custom table-hover mb-0">
-                <thead>
+                <thead class="bg-light">
                     <tr>
                         <th width="5%" class="text-center">No</th>
-                        <th>Nama & Identitas</th>
+                        <th>Nama & Akun Login</th> {{-- Judul diubah --}}
                         <th>Tipe Petugas</th>
                         <th>Jabatan</th>
                         <th>Kontak</th>
@@ -158,8 +158,8 @@
                 <tbody>
                     @forelse($data as $key => $item)
                         <tr>
-                            <td class="text-center text-muted">{{ $loop->iteration }}</td>
-                            <td>
+                            <td class="text-center text-muted align-middle">{{ $loop->iteration }}</td>
+                            <td class="align-middle">
                                 <div class="d-flex align-items-center">
                                     {{-- Logic Avatar Inisial --}}
                                     @php
@@ -170,40 +170,45 @@
                                             ->take(2)
                                             ->join('');
                                     @endphp
-                                    <div class="avatar-initial">
+                                    <div class="avatar-initial rounded-circle bg-light text-primary d-flex align-items-center justify-content-center fw-bold me-3"
+                                        style="width: 40px; height: 40px; font-size: 14px; border: 1px solid #e2e8f0;">
                                         {{ $initials }}
                                     </div>
                                     <div>
                                         <div class="fw-bold text-dark">{{ $item->nama }}</div>
-                                        <div class="text-muted small" style="font-size: 11px;">NIP/ID:
-                                            {{ $item->nip ?? '-' }}</div>
+                                        {{-- Menampilkan Email Login disini --}}
+                                        <div class="text-muted small" style="font-size: 11px;">
+                                            <i class="bi bi-envelope me-1"></i> {{ $item->user->email ?? 'Belum ada akun' }}
+                                        </div>
                                     </div>
                                 </div>
                             </td>
 
-                            <td>
+                            <td class="align-middle">
                                 @if ($item->type == 'pewawancara')
-                                    <span class="badge-soft badge-soft-primary">
-                                        <i class="bi bi-mic"></i> Pewawancara
+                                    <span
+                                        class="badge bg-soft-primary text-primary border border-primary-subtle rounded-pill px-3">
+                                        <i class="bi bi-mic me-1"></i> Pewawancara
                                     </span>
                                 @elseif($item->type == 'ujian')
-                                    <span class="badge-soft badge-soft-warning">
-                                        <i class="bi bi-eye"></i> Pengawas Ujian
+                                    <span
+                                        class="badge bg-soft-warning text-warning border border-warning-subtle rounded-pill px-3">
+                                        <i class="bi bi-eye me-1"></i> Pengawas Ujian
                                     </span>
                                 @else
-                                    <span class="badge-soft badge-soft-secondary">-</span>
+                                    <span class="badge bg-secondary">-</span>
                                 @endif
                             </td>
 
-                            <td>
-                                <span class="text-dark">{{ $item->jabatan }}</span>
+                            <td class="align-middle">
+                                <span class="text-dark small fw-medium">{{ $item->jabatan }}</span>
                             </td>
 
-                            <td>
+                            <td class="align-middle">
                                 @if ($item->no_hp)
                                     <a href="https://wa.me/{{ preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $item->no_hp)) }}"
                                         target="_blank"
-                                        class="text-decoration-none text-muted small d-flex align-items-center gap-1 hover-text-primary">
+                                        class="text-decoration-none text-muted small d-flex align-items-center gap-1 hover-text-success">
                                         <i class="bi bi-whatsapp text-success"></i> {{ $item->no_hp }}
                                     </a>
                                 @else
@@ -211,20 +216,22 @@
                                 @endif
                             </td>
 
-                            <td class="text-center">
+                            <td class="text-center align-middle">
                                 <div class="d-flex justify-content-center gap-1">
                                     {{-- Edit --}}
                                     <a href="{{ route('admin.penanggung-jawab.edit', $item->id) }}"
-                                        class="btn btn-icon btn-outline-primary" data-bs-toggle="tooltip" title="Edit Data">
+                                        class="btn btn-sm btn-light border text-primary" data-bs-toggle="tooltip"
+                                        title="Edit Data">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
                                     {{-- Delete --}}
                                     <form action="{{ route('admin.penanggung-jawab.destroy', $item->id) }}" method="POST"
-                                        class="d-inline delete-form">
+                                        class="d-inline delete-form"
+                                        onsubmit="return confirm('Hapus data dan akun login ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-icon btn-outline-danger"
+                                        <button type="submit" class="btn btn-sm btn-light border text-danger"
                                             data-bs-toggle="tooltip" title="Hapus Data">
                                             <i class="bi bi-trash"></i>
                                         </button>
@@ -236,7 +243,7 @@
                         <tr>
                             <td colspan="6" class="text-center py-5">
                                 <div class="text-muted mb-2">
-                                    <i class="bi bi-person-badge display-6 opacity-25"></i>
+                                    <i class="bi bi-person-slash display-6 opacity-25"></i>
                                 </div>
                                 <span class="text-muted small">Belum ada data penanggung jawab.</span>
                             </td>
@@ -246,9 +253,9 @@
             </table>
         </div>
 
-        {{-- Pagination (Optional, jika pakai paginate) --}}
-        <div class="mt-4">
-            {{ $data->withQueryString()->links('vendor.pagination.diksera') }}
+        {{-- Pagination --}}
+        <div class="mt-4 d-flex justify-content-end">
+            {{ $data->withQueryString()->links() }}
         </div>
     </div>
 @endsection
