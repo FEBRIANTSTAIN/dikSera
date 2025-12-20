@@ -15,90 +15,63 @@ class PewawancaraController extends Controller
         $user = Auth::user();
         $pewawancara = $user->penanggungJawab;
 
-        if (!$pewawancara) {
-            abort(403);
-        }
+        if (!$pewawancara) abort(403);
 
-        // ===== LIST PRIORITAS =====
+        // Ambil data untuk statistik
+        $totalAntrian = JadwalWawancara::where('penanggung_jawab_id', $pewawancara->id)
+            ->where('status', 'approved')->count();
+
+        $hariIni = JadwalWawancara::where('penanggung_jawab_id', $pewawancara->id)
+            ->where('status', 'approved')
+            ->whereDate('waktu_wawancara', now())->count();
+
+        $selesai = JadwalWawancara::where('penanggung_jawab_id', $pewawancara->id)
+            ->where('status', 'completed')->count();
+
+        // Data untuk Kalender (Hanya ID dan Tanggal)
+        $jadwalKalender = JadwalWawancara::with('pengajuan.user')
+            ->where('penanggung_jawab_id', $pewawancara->id)
+            ->where('status', 'approved')
+            ->get()
+            ->map(fn($j) => [
+                'title' => $j->pengajuan->user->name,
+                'start' => $j->waktu_wawancara->toIso8601String(),
+                'url'   => route('pewawancara.penilaian', $j->id) // Link ke penilaian
+            ]);
+
+        return view('dashboard.pewawancara', compact('pewawancara', 'totalAntrian', 'hariIni', 'selesai', 'jadwalKalender'));
+    }
+
+    // Halaman Khusus List Antrian
+    public function antrian()
+    {
+        $user = Auth::user();
+        $pewawancara = $user->penanggungJawab;
+
         $antrian = JadwalWawancara::with(['pengajuan.user'])
             ->where('penanggung_jawab_id', $pewawancara->id)
             ->where('status', 'approved')
-            ->orderByRaw("
-            CASE
-                WHEN DATE(waktu_wawancara) < CURDATE() THEN 1
-                WHEN DATE(waktu_wawancara) = CURDATE() THEN 2
-                ELSE 3
-            END
-        ")
             ->orderBy('waktu_wawancara', 'asc')
-            ->get();
+            ->paginate(10); // Pakai pagination biar rapi
 
-        // ===== KALENDER =====
-        $events = $antrian->map(fn($j) => [
-            'title' => $j->pengajuan->user->name,
-            'start' => $j->waktu_wawancara->toIso8601String(),
-            'url'   => route('pewawancara.penilaian', $j->id)
-        ]);
-
-        // ===== RIWAYAT SINGKAT =====
-        $riwayat = JadwalWawancara::with('pengajuan.user')
-            ->where('penanggung_jawab_id', $pewawancara->id)
-            ->where('status', 'completed')
-            ->latest()
-            ->limit(5)
-            ->get();
-
-        return view('dashboard.pewawancara', compact(
-            'pewawancara',
-            'antrian',
-            'events',
-            'riwayat'
-        ));
+        return view('pewawancara.antrian', compact('antrian'));
     }
 
-    public function quickStore(Request $request, $id)
-    {
-        $jadwal = JadwalWawancara::findOrFail($id);
-
-        $request->validate([
-            'kompetensi' => 'required|integer|min:0|max:100',
-            'sikap' => 'required|integer|min:0|max:100',
-            'pengetahuan' => 'required|integer|min:0|max:100',
-            'keputusan' => 'required|in:lulus,tidak_lulus',
-        ]);
-
-        DB::transaction(function () use ($request, $jadwal) {
-            WawancaraPenilaian::create([
-                'jadwal_wawancara_id' => $jadwal->id,
-                'skor_kompetensi' => $request->kompetensi,
-                'skor_sikap' => $request->sikap,
-                'skor_pengetahuan' => $request->pengetahuan,
-                'keputusan' => $request->keputusan,
-            ]);
-
-            $jadwal->update(['status' => 'completed']);
-        });
-
-        return response()->json(['success' => true]);
-    }
-
-
-    // MEMPERBAIKI ERROR undefined variable pewawancara
     public function showPenilaian($id)
     {
         $user = Auth::user();
         $pewawancara = $user->penanggungJawab;
 
-        $jadwal = JadwalWawancara::with(['pengajuan.user', 'pengajuan.lisensiLama'])
-            ->where('penanggung_jawab_id', $pewawancara->id) // Security check: Pastikan milik pewawancara ini
-            ->findOrFail($id);
+        $jadwal = JadwalWawancara::with(['pengajuan.user', 'pengajuan.lisensiLama'])->findOrFail($id);
 
+        // Validasi: Hanya bisa menilai jika status approved
         if ($jadwal->status !== 'approved') {
-            return redirect()->route('pewawancara.dashboard')
-                ->with('error', 'Sesi wawancara ini sudah selesai atau tidak valid.');
+            // FIX: Route name diperbaiki
+            return redirect()->route('dashboard.pewawancara')
+                ->with('error', 'Sesi wawancara tidak valid atau sudah selesai.');
         }
 
-        return view('pewawancara.penilaian', compact('jadwal', 'pewawancara'));
+        return view('pewawancara.penilaian', compact('jadwal'));
     }
 
     public function storePenilaian(Request $request, $id)
@@ -106,29 +79,32 @@ class PewawancaraController extends Controller
         $jadwal = JadwalWawancara::findOrFail($id);
 
         $request->validate([
-            'skor_kompetensi' => 'required|integer|min:0|max:100',
-            'skor_sikap' => 'required|integer|min:0|max:100',
+            'skor_kompetensi'  => 'required|integer|min:0|max:100',
+            'skor_sikap'       => 'required|integer|min:0|max:100',
             'skor_pengetahuan' => 'required|integer|min:0|max:100',
-            'keputusan' => 'required|in:lulus,tidak_lulus',
-            'catatan' => 'nullable|string'
+            'keputusan'        => 'required|in:lulus,tidak_lulus',
+            'catatan'          => 'nullable|string'
         ]);
 
         DB::beginTransaction();
         try {
             WawancaraPenilaian::create([
                 'jadwal_wawancara_id' => $jadwal->id,
-                'skor_kompetensi' => $request->skor_kompetensi,
-                'skor_sikap' => $request->skor_sikap,
-                'skor_pengetahuan' => $request->skor_pengetahuan,
+                'skor_kompetensi'     => $request->skor_kompetensi,
+                'skor_sikap'          => $request->skor_sikap,
+                'skor_pengetahuan'    => $request->skor_pengetahuan,
                 'catatan_pewawancara' => $request->catatan,
-                'keputusan' => $request->keputusan
+                'keputusan'           => $request->keputusan
             ]);
 
+            // Update status jadwal menjadi selesai
             $jadwal->update(['status' => 'completed']);
 
+            // Update status pengajuan utama
             if ($request->keputusan == 'lulus') {
                 $jadwal->pengajuan->update(['status' => 'completed']);
 
+                // Jika perpanjangan lisensi, update tanggal
                 if ($jadwal->pengajuan->lisensiLama) {
                     $jadwal->pengajuan->lisensiLama->update([
                         'tgl_terbit'  => now(),
@@ -140,7 +116,8 @@ class PewawancaraController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('pewawancara.dashboard')->with('success', 'Penilaian disimpan. Tugas selesai.');
+            // FIX: Route name diperbaiki sesuai web.php
+            return redirect()->route('pewawancara.antrian')->with('success', 'Penilaian disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -152,12 +129,12 @@ class PewawancaraController extends Controller
         $user = Auth::user();
         $pewawancara = $user->penanggungJawab;
 
-        $riwayat = JadwalWawancara::with(['pengajuan.user', 'penilaian', 'pengajuan.lisensiLama'])
+        $riwayat = JadwalWawancara::with(['pengajuan.user', 'penilaian'])
             ->where('penanggung_jawab_id', $pewawancara->id)
             ->whereIn('status', ['completed', 'rejected'])
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
 
-        return view('pewawancara.riwayat', compact('riwayat'));
+        return view('pewawancara.riwayat', compact('riwayat', 'pewawancara'));
     }
 }

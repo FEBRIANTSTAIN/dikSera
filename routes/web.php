@@ -24,6 +24,7 @@ use App\Http\Controllers\PewawancaraController;
 | PUBLIC ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
@@ -43,7 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/pewawancara', [PewawancaraController::class, 'index'])->name('dashboard.pewawancara');
 
     // === GROUP ADMIN ===
-    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+    Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/perawat', [AdminPerawatController::class, 'index'])->name('perawat.index');
         Route::get('/perawat/{id}', [AdminPerawatController::class, 'show'])->name('perawat.show');
         Route::get('/perawat/{id}/edit', [AdminPerawatController::class, 'edit'])->name('perawat.edit');
@@ -113,7 +114,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // === GROUP PERAWAT ===
-    Route::prefix('perawat')->name('perawat.')->middleware('role:perawat')->group(function () {
+    Route::prefix('perawat')->name('perawat.')->group(function () {
         Route::get('/drh', [PerawatDrhController::class, 'index'])->name('drh');
         Route::get('/drh/identitas', [PerawatDrhController::class, 'editIdentitas'])->name('identitas.edit');
         Route::post('/drh/identitas', [PerawatDrhController::class, 'updateIdentitas'])->name('identitas.update');
@@ -154,12 +155,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dokumen/lisensi/{id}/generate', [PerawatDrhController::class, 'generateLisensi'])->name('lisensi.generate');
     });
 
-    // === GROUP PEWAWANCARA ===
-    Route::prefix('pewawancara')->name('pewawancara.')->middleware('role:pewawancara')->group(function () {
+
+    Route::prefix('pewawancara')->name('pewawancara.')->group(function () {
         Route::get('/dashboard', [PewawancaraController::class, 'index'])->name('dashboard');
-        Route::get('/riwayat', [PewawancaraController::class, 'riwayat'])->name('riwayat');
+        Route::get('/antrian', [PewawancaraController::class, 'antrian'])->name('antrian');
         Route::get('/penilaian/{id}', [PewawancaraController::class, 'showPenilaian'])->name('penilaian');
-        Route::post('/penilaian/{id}', [PewawancaraController::class, 'storePenilaian'])->name('store_nilai');
+        Route::post('/penilaian/{id}', [PewawancaraController::class, 'storePenilaian'])->name('penilaian.store');
+        Route::get('/riwayat', [PewawancaraController::class, 'riwayat'])->name('riwayat');
     });
 
     Route::post('/webhook', [TelegramController::class, 'webhook'])->name('webhook');

@@ -11,7 +11,6 @@
             --text-gray: #64748b;
             --bg-body: #f8fafc;
             --border-color: #e2e8f0;
-            /* Colors for Decision */
             --success-bg: #ecfdf5;
             --success-border: #10b981;
             --success-text: #047857;
@@ -26,7 +25,6 @@
             color: var(--text-dark);
         }
 
-        /* --- Header --- */
         .page-header {
             margin-bottom: 24px;
             display: flex;
@@ -41,7 +39,6 @@
             margin: 0;
         }
 
-        /* --- Main Card --- */
         .form-card {
             background: #fff;
             border-radius: 16px;
@@ -52,7 +49,6 @@
             margin: 0 auto;
         }
 
-        /* --- Ticket Header Info --- */
         .ticket-header {
             background: #f1f5f9;
             padding: 24px 32px;
@@ -95,7 +91,6 @@
             color: var(--text-dark);
         }
 
-        /* --- Form Sections --- */
         .form-body {
             padding: 32px;
         }
@@ -116,7 +111,6 @@
             color: var(--primary-color);
         }
 
-        /* --- Score Inputs --- */
         .score-card {
             background: #fff;
             border: 1px solid var(--border-color);
@@ -169,7 +163,6 @@
             font-weight: 500;
         }
 
-        /* --- Decision Cards (Radio) --- */
         .decision-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -220,13 +213,11 @@
             opacity: 0.8;
         }
 
-        /* Hover */
         .decision-box:hover {
             background: #f8fafc;
             border-color: #cbd5e1;
         }
 
-        /* Checked Lulus */
         .decision-item input[value="lulus"]:checked+.decision-box {
             background: var(--success-bg);
             border-color: var(--success-border);
@@ -234,7 +225,6 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
 
-        /* Checked Tidak Lulus */
         .decision-item input[value="tidak_lulus"]:checked+.decision-box {
             background: var(--danger-bg);
             border-color: var(--danger-border);
@@ -246,7 +236,6 @@
             transform: scale(1.2);
         }
 
-        /* --- Submit --- */
         .btn-save {
             background: var(--primary-color);
             color: #fff;
@@ -265,7 +254,6 @@
             box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
         }
 
-        /* --- Average Badge --- */
         .avg-badge {
             background: #334155;
             color: #fff;
@@ -280,24 +268,29 @@
 @section('content')
     <div class="container py-5">
 
-        {{-- HEADER --}}
         <div class="page-header">
             <div>
                 <h1 class="page-title">Penilaian Wawancara</h1>
                 <p class="text-muted small mb-0 mt-1">Input skor kompetensi dan hasil akhir seleksi wawancara.</p>
             </div>
-            <a href="{{ route('admin.pengajuan.index') }}" class="btn btn-light border fw-bold shadow-sm"
+            <a href="{{ route('dashboard.pewawancara') }}" class="btn btn-light border fw-bold shadow-sm"
                 style="border-radius: 8px;">
                 <i class="bi bi-arrow-left me-1"></i> Kembali
             </a>
         </div>
 
-        <form action="{{ route('admin.pengajuan_wawancara.store_penilaian', $jadwal->id) }}" method="POST">
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        <form action="{{ route('pewawancara.penilaian.store', $jadwal->id) }}" method="POST">
             @csrf
 
             <div class="form-card">
 
-                {{-- 1. INFO HEADER (TICKET STYLE) --}}
                 <div class="ticket-header">
                     <div class="info-block border-end border-light pe-4">
                         <div class="info-icon text-primary"><i class="bi bi-person-badge"></i></div>
@@ -307,17 +300,16 @@
                         </div>
                     </div>
                     <div class="info-block ps-4">
-                        <div class="info-icon text-info"><i class="bi bi-person-video2"></i></div>
+                        <div class="info-icon text-info"><i class="bi bi-calendar-event"></i></div>
                         <div>
-                            <div class="info-label">Pewawancara</div>
-                            <div class="info-value">{{ $jadwal->pewawancara->nama }}</div>
+                            <div class="info-label">Jadwal Wawancara</div>
+                            <div class="info-value">{{ $jadwal->waktu_wawancara->format('d M Y, H:i') }}</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-body">
 
-                    {{-- 2. INPUT NILAI --}}
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="section-header mb-0 border-0 pb-0">
                             <i class="bi bi-calculator section-icon"></i> A. Poin Penilaian
@@ -328,66 +320,76 @@
                     </div>
 
                     <div class="row g-4 mb-5">
-                        {{-- Kompetensi --}}
                         <div class="col-md-4">
                             <div class="score-card">
                                 <label class="score-label">Kompetensi Teknis</label>
                                 <div class="score-input-wrapper">
-                                    <input type="number" name="skor_kompetensi" class="score-input calc-input"
-                                        min="0" max="100" placeholder="0" required>
+                                    <input type="number" name="skor_kompetensi"
+                                        class="score-input calc-input @error('skor_kompetensi') is-invalid @enderror"
+                                        min="0" max="100" placeholder="0" required
+                                        value="{{ old('skor_kompetensi') }}">
                                     <span class="score-suffix">/100</span>
                                 </div>
+                                @error('skor_kompetensi')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
-                        {{-- Sikap --}}
                         <div class="col-md-4">
                             <div class="score-card">
                                 <label class="score-label">Sikap & Etika</label>
                                 <div class="score-input-wrapper">
-                                    <input type="number" name="skor_sikap" class="score-input calc-input" min="0"
-                                        max="100" placeholder="0" required>
+                                    <input type="number" name="skor_sikap"
+                                        class="score-input calc-input @error('skor_sikap') is-invalid @enderror"
+                                        min="0" max="100" placeholder="0" required
+                                        value="{{ old('skor_sikap') }}">
                                     <span class="score-suffix">/100</span>
                                 </div>
+                                @error('skor_sikap')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
-                        {{-- Pengetahuan --}}
                         <div class="col-md-4">
                             <div class="score-card">
                                 <label class="score-label">Pengetahuan Umum</label>
                                 <div class="score-input-wrapper">
-                                    <input type="number" name="skor_pengetahuan" class="score-input calc-input"
-                                        min="0" max="100" placeholder="0" required>
+                                    <input type="number" name="skor_pengetahuan"
+                                        class="score-input calc-input @error('skor_pengetahuan') is-invalid @enderror"
+                                        min="0" max="100" placeholder="0" required
+                                        value="{{ old('skor_pengetahuan') }}">
                                     <span class="score-suffix">/100</span>
                                 </div>
+                                @error('skor_pengetahuan')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
-                        {{-- Catatan --}}
                         <div class="col-12">
                             <label class="score-label ms-1">Catatan Tambahan (Opsional)</label>
                             <textarea name="catatan" class="form-control" rows="3"
                                 placeholder="Tuliskan catatan mengenai kelebihan atau kekurangan peserta..."
-                                style="background: #f8fafc; border-color: #cbd5e1;"></textarea>
+                                style="background: #f8fafc; border-color: #cbd5e1;">{{ old('catatan') }}</textarea>
                         </div>
                     </div>
 
-                    {{-- 3. KEPUTUSAN --}}
                     <div class="section-header">
                         <i class="bi bi-gavel section-icon"></i> B. Keputusan Akhir
                     </div>
 
                     <div class="decision-grid mb-5">
-                        {{-- LULUS --}}
                         <div class="decision-item">
-                            <input type="radio" name="keputusan" value="lulus" id="dec_lulus" required>
+                            <input type="radio" name="keputusan" value="lulus" id="dec_lulus" required
+                                {{ old('keputusan') == 'lulus' ? 'checked' : '' }}>
                             <label for="dec_lulus" class="decision-box">
                                 <i class="bi bi-check-circle-fill"></i>
                                 <div class="decision-title">LULUS</div>
                                 <div class="decision-desc">Direkomendasikan Lulus</div>
                             </label>
                         </div>
-                        {{-- TIDAK LULUS --}}
                         <div class="decision-item">
-                            <input type="radio" name="keputusan" value="tidak_lulus" id="dec_fail" required>
+                            <input type="radio" name="keputusan" value="tidak_lulus" id="dec_fail" required
+                                {{ old('keputusan') == 'tidak_lulus' ? 'checked' : '' }}>
                             <label for="dec_fail" class="decision-box">
                                 <i class="bi bi-x-circle-fill"></i>
                                 <div class="decision-title">TIDAK LULUS</div>
@@ -395,10 +397,13 @@
                             </label>
                         </div>
                     </div>
+                    @error('keputusan')
+                        <small class="text-danger d-block mb-3">{{ $message }}</small>
+                    @enderror
 
-                    {{-- SUBMIT --}}
                     <div class="text-end">
-                        <button type="submit" class="btn-save">
+                        <button type="submit" class="btn-save"
+                            onclick="return confirm('Yakin simpan penilaian ini? Data tidak dapat diubah.')">
                             <i class="bi bi-save2 me-2"></i> Simpan Penilaian
                         </button>
                     </div>
@@ -411,13 +416,10 @@
 
 @push('scripts')
     <script>
-        // Simple Script to Calculate Average Realtime (UX Enhancement)
         document.addEventListener('DOMContentLoaded', function() {
             const inputs = document.querySelectorAll('.calc-input');
             const avgDisplay = document.getElementById('avgDisplay');
             const avgScore = document.getElementById('avgScore');
-            const radioLulus = document.getElementById('dec_lulus');
-            const radioFail = document.getElementById('dec_fail');
 
             function calculateAvg() {
                 let total = 0;
@@ -431,13 +433,9 @@
                 });
 
                 if (filled > 0) {
-                    const avg = (total / 3).toFixed(1); // Bagi 3 karena ada 3 komponen
+                    const avg = (total / 3).toFixed(1);
                     avgScore.innerText = avg;
                     avgDisplay.style.display = 'inline-block';
-
-                    // Auto suggest decision (Optional UX)
-                    // if (avg >= 70) radioLulus.checked = true;
-                    // else radioFail.checked = true;
                 } else {
                     avgDisplay.style.display = 'none';
                 }

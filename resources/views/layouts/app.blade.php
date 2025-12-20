@@ -568,6 +568,10 @@
                             <i class="bi bi-grid-fill"></i> <span class="link-text">Dashboard & Tugas</span>
                         </a>
 
+                        <a href="{{ route('pewawancara.antrian') }}" class="nav-linkx {{ request()->routeIs('pewawancara.antrian') ? 'active' : '' }}">
+                            <i class="bi bi-list-ul"></i> <span class="link-text">Antrian Wawancara</span>
+                        </a>
+
                         {{-- Halaman Terpisah: Riwayat --}}
                         <a href="{{ route('pewawancara.riwayat') }}"
                             class="nav-linkx {{ request()->routeIs('pewawancara.riwayat') ? 'active' : '' }}">
