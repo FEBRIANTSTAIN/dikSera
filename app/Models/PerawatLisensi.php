@@ -20,7 +20,11 @@ class PerawatLisensi extends Model
         'tgl_expired',
         'file_path',
         'kelayakan',
-        'metode_perpanjangan', 
+        'metode_perpanjangan',
+        'bidang',
+        'kfk',
+        'tgl_mulai',
+        'tgl_diselenggarakan',
     ];
 
     public function user()

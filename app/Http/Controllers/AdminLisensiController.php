@@ -28,14 +28,17 @@ class AdminLisensiController extends Controller
 
     public function lisensiStore(Request $request)
     {
-        // 1. Validasi (Hapus 'nomor' dari sini)
+
         $request->validate([
             'user_ids'            => 'required|array',
             'user_ids.*'          => 'exists:users,id',
             'metode_perpanjangan' => 'required|in:pg_only,pg_interview',
             'nama'                => 'required|string|max:100',
             'lembaga'             => 'required|string|max:100',
-            // 'nomor' dihapus karena auto-generate
+            'bidang'              => 'required|string|max:100',
+            'kfk'                 => 'required|in:PK 1,PK 1.5,PK 2,PK 2.5,PK 3,PK 3.5,PK 4,PK 4.5,PK 5',
+            'tgl_mulai'           => 'required|date',
+            'tgl_diselenggarakan' => 'required|date',
             'tgl_terbit'          => 'required|date',
             'tgl_expired'         => 'required|date',
         ]);
@@ -76,7 +79,9 @@ class AdminLisensiController extends Controller
         ->select(
             'users.id',
             'users.name',
-            'perawat_pekerjaans.unit_kerja'
+            'perawat_pekerjaans.unit_kerja',
+
+
         )
         ->orderBy('users.name', 'asc')
         ->get();
@@ -85,20 +90,22 @@ class AdminLisensiController extends Controller
 }
 
     public function lisensiUpdate(Request $request, $id)
-    {
-        $lisensi = PerawatLisensi::findOrFail($id);
+{
+    $lisensi = PerawatLisensi::findOrFail($id);
 
-        // Untuk update, nomor boleh diubah manual jika perlu, atau biarkan validasi string biasa
-        $request->validate([
-            'user_id'     => 'required|exists:users,id',
-            'nama'        => 'required|string|max:100',
-            'lembaga'     => 'required|string|max:100',
-            'nomor'       => 'required|string|max:100', // Update tetap butuh nomor (edit manual)
-            'tgl_terbit'  => 'required|date',
-            'tgl_expired' => 'required|date',
-            'dokumen'     => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
-        ]);
-
+    $request->validate([
+        'user_id'             => 'required|exists:users,id',
+        'nama'                => 'required|string|max:100',
+        'lembaga'             => 'required|string|max:100',
+        'nomor'               => 'required|string|max:100',
+        'tgl_terbit'          => 'required|date',
+        'tgl_expired'         => 'required|date',
+        'dokumen'             => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
+        'bidang'              => 'required|string|max:100',
+        'kfk'                 => 'required|in:PK 1,PK 1.5,PK 2,PK 2.5,PK 3,PK 3.5,PK 4,PK 4.5,PK 5',
+        'tgl_mulai'           => 'required|date',
+        'tgl_diselenggarakan' => 'required|date',
+    ]);
         $data = $request->except(['dokumen', '_token', '_method']);
         $data['user_id'] = $request->user_id;
 

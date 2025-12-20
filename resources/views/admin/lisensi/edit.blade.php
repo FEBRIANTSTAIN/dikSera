@@ -259,6 +259,73 @@
                             <div class="col-12">
                                 <hr class="border-light m-0">
                             </div>
+                            <div class="col-12">
+                                <hr class="border-light m-0">
+                            </div>
+
+                            {{-- BAGIAN BARU EDIT: Detail Bidang & KFK --}}
+                            <div class="col-md-6">
+                                <label class="form-label">Bidang Keahlian <span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-briefcase"></i></span>
+                                    <input type="text" name="bidang" class="form-control"
+                                        value="{{ old('bidang', $data->bidang) }}" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Jenjang KFK (PK) <span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-bar-chart-steps"></i></span>
+                                    <select name="kfk" class="form-select" required>
+                                        <option value="">Pilih Jenjang KFK...</option>
+                                        @php
+                                            $kfks = [
+                                                'PK 1',
+                                                'PK 1.5',
+                                                'PK 2',
+                                                'PK 2.5',
+                                                'PK 3',
+                                                'PK 3.5',
+                                                'PK 4',
+                                                'PK 4.5',
+                                                'PK 5',
+                                            ];
+                                        @endphp
+                                        @foreach ($kfks as $kfk)
+                                            <option value="{{ $kfk }}"
+                                                {{ old('kfk', $data->kfk) == $kfk ? 'selected' : '' }}>
+                                                {{ $kfk }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- BAGIAN BARU EDIT: Tanggal Pelaksanaan --}}
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal Mulai <span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                    <input type="date" name="tgl_mulai" class="form-control"
+                                        value="{{ old('tgl_mulai', $data->tgl_mulai) }}" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal Selesai Diselenggarakan <span
+                                        class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                                    <input type="date" name="tgl_diselenggarakan" class="form-control"
+                                        value="{{ old('tgl_diselenggarakan', $data->tgl_diselenggarakan) }}" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="border-light m-0">
+                            </div>
+
 
                             {{-- 3. Identitas Lisensi --}}
                             <div class="col-md-6">

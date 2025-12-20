@@ -19,7 +19,11 @@ class PerawatPekerjaan extends Model
         'tahun_mulai',
         'tahun_selesai',
         'keterangan',
-         'dokumen_path',
+        'dokumen_path',
+        'bidang',
+        'kfk',
+        'tgl_mulai',
+        'tgl_diselenggarakan',
     ];
 
     /**

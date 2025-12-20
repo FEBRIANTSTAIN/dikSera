@@ -99,6 +99,12 @@
             color: #075985;
         }
 
+        .badge-purple {
+            background: #f3e8ff;
+            color: #6b21a8;
+            border: 1px solid #e9d5ff;
+        }
+
         /* --- Action Buttons --- */
         .btn-icon {
             width: 32px;
@@ -154,7 +160,7 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
         <div>
             <h4 class="fw-bold mb-1">Data Lisensi Perawat</h4>
-            <p class="text-muted small mb-0">Monitor masa berlaku dan dokumen lisensi seluruh perawat.</p>
+            <p class="text-muted small mb-0">Monitor kompetensi, masa berlaku, dan dokumen lisensi.</p>
         </div>
 
         <div class="d-flex gap-2">
@@ -174,13 +180,13 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <form action="" method="GET" class="d-flex gap-2">
                 <input type="text" name="search" value="{{ request('search') }}" class="form-control search-input"
-                    placeholder="Cari nama perawat atau nomor lisensi..." style="width: 300px;">
+                    placeholder="Cari nama, nomor, atau bidang..." style="width: 300px;">
                 <button class="btn btn-light border" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
             </form>
 
-            {{-- Filter Status (Opsional, UI Only) --}}
+            {{-- Filter Status --}}
             <div class="d-flex gap-2">
                 <select class="form-select form-select-sm" style="border-radius: 8px; width: 150px;">
                     <option value="">Semua Status</option>
@@ -197,8 +203,8 @@
                     <tr>
                         <th width="5%" class="text-center">No</th>
                         <th>Pemilik Lisensi</th>
-                        <th>Detail Lisensi</th>
-                        <th>Metode Perpanjangan</th>
+                        <th width="25%">Detail & Kompetensi</th> {{-- Kolom diperlebar --}}
+                        <th width="20%">Pelaksanaan</th>
                         <th>Masa Berlaku</th>
                         <th class="text-center">File</th>
                         <th class="text-center" width="100">Aksi</th>
@@ -230,29 +236,57 @@
                                 </div>
                             </td>
 
-                            {{-- Kolom 2: Info Lisensi --}}
+                            {{-- Kolom 2: Info Lisensi, Bidang & KFK --}}
                             <td>
                                 <div class="fw-bold text-dark mb-1">{{ $item->nama }}</div>
-                                <div class="text-muted small d-flex flex-column">
-                                    <span><i class="bi bi-building me-1"></i> {{ $item->lembaga }}</span>
-                                    <span class="text-primary mt-1" style="font-size: 11px;">No: {{ $item->nomor }}</span>
+                                <div class="d-flex flex-column gap-1">
+                                    <span class="text-muted small">
+                                        <i class="bi bi-building me-1"></i> {{ $item->lembaga }}
+                                    </span>
+                                    <span class="text-primary small" style="font-size: 11px;">
+                                        No: {{ $item->nomor }}
+                                    </span>
+
+                                    {{-- NEW: Bidang & KFK --}}
+                                    <div class="d-flex align-items-center gap-2 mt-1">
+                                        <span class="badge-soft badge-purple" data-bs-toggle="tooltip" title="Jenjang KFK">
+                                            {{ $item->kfk }}
+                                        </span>
+                                        <span class="text-dark small fw-semibold" style="font-size: 11px;">
+                                            {{ $item->bidang }}
+                                        </span>
+                                    </div>
                                 </div>
                             </td>
 
-                            {{-- Kolom 3: Metode --}}
+                            {{-- Kolom 3: Metode & Tanggal Pelaksanaan --}}
                             <td>
-                                @if ($item->metode_perpanjangan == 'pg_only')
-                                    <span class="badge-soft badge-info">
-                                        <i class="bi bi-check-square"></i> Hanya PG
-                                    </span>
-                                @else
-                                    <span class="badge-soft badge-info">
-                                        <i class="bi bi-mic"></i> PG + Wawancara
-                                    </span>
-                                @endif
+                                <div class="mb-2">
+                                    @if ($item->metode_perpanjangan == 'pg_only')
+                                        <span class="badge-soft badge-info">
+                                            <i class="bi bi-check-square"></i> Hanya PG
+                                        </span>
+                                    @else
+                                        <span class="badge-soft badge-info">
+                                            <i class="bi bi-mic"></i> PG + Wawancara
+                                        </span>
+                                    @endif
+                                </div>
+
+                                {{-- NEW: Tanggal Mulai - Selesai --}}
+                                <div class="text-muted small d-flex flex-column" style="font-size: 11px;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-calendar3 text-secondary"></i>
+                                        <span>
+                                            {{ \Carbon\Carbon::parse($item->tgl_mulai)->format('d M') }}
+                                            s/d
+                                            {{ \Carbon\Carbon::parse($item->tgl_selesai)->format('d M Y') }}
+                                        </span>
+                                    </div>
+                                </div>
                             </td>
 
-                            {{-- Kolom 4: Status & Tanggal --}}
+                            {{-- Kolom 4: Status & Tanggal Expired --}}
                             <td>
                                 @php
                                     $expired = \Carbon\Carbon::parse($item->tgl_expired);
