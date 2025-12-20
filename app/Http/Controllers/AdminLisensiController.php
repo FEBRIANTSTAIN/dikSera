@@ -10,11 +10,21 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminLisensiController extends Controller
 {
-    public function lisensiCreate()
-    {
-        $users = User::where('role', 'perawat')->orderBy('name', 'asc')->get();
-        return view('admin.lisensi.create', compact('users'));
-    }
+   public function lisensiCreate()
+{
+    $users = User::where('role', 'perawat')
+        ->leftJoin('perawat_pekerjaans', 'users.id', '=', 'perawat_pekerjaans.user_id')
+        ->select(
+            'users.id',
+            'users.name',
+            'users.email',
+            'perawat_pekerjaans.unit_kerja'
+        )
+        ->orderBy('users.name', 'asc')
+        ->get();
+
+    return view('admin.lisensi.create', compact('users'));
+}
 
     public function lisensiStore(Request $request)
     {
@@ -30,30 +40,17 @@ class AdminLisensiController extends Controller
             'tgl_expired'         => 'required|date',
         ]);
 
-        // Ambil data umum
+
         $commonData = $request->except(['_token', 'user_ids']);
-
-        // Cari ID terakhir untuk penomoran awal
-        // Jika belum ada data, mulai dari 0
         $lastId = PerawatLisensi::max('id') ?? 0;
-
         $count = 0;
         foreach ($request->user_ids as $index => $userId) {
-
-            // LOGIKA NOMOR OTOMATIS BERURUTAN
-            // Urutan = ID Terakhir + 1 + Index Loop saat ini
             $urutan = $lastId + 1 + $count;
-
-            // Format: NAMA-TAHUN-URUTAN (Contoh: STR-2025-0001)
-            // strtoupper untuk huruf besar, sprintf untuk padding 0 (0001)
             $nomorOtomatis = strtoupper($request->nama) . '-' . date('Y') . '-' . sprintf('%04d', $urutan);
-
-            // Gabungkan data
             $data = array_merge($commonData, [
                 'user_id' => $userId,
-                'nomor'   => $nomorOtomatis // Masukkan nomor otomatis ke sini
+                'nomor'   => $nomorOtomatis
             ]);
-
             PerawatLisensi::create($data);
             $count++;
         }
@@ -71,12 +68,21 @@ class AdminLisensiController extends Controller
         return view('admin.lisensi.index', compact('data'));
     }
 
-    public function lisensiEdit($id)
-    {
-        $data = PerawatLisensi::findOrFail($id);
-        $users = User::where('role', 'perawat')->orderBy('name', 'asc')->get();
-        return view('admin.lisensi.edit', compact('data', 'users'));
-    }
+   public function lisensiEdit($id)
+{
+    $data = PerawatLisensi::findOrFail($id);
+    $users = User::where('role', 'perawat')
+        ->leftJoin('perawat_pekerjaans', 'users.id', '=', 'perawat_pekerjaans.user_id')
+        ->select(
+            'users.id',
+            'users.name',
+            'perawat_pekerjaans.unit_kerja'
+        )
+        ->orderBy('users.name', 'asc')
+        ->get();
+
+    return view('admin.lisensi.edit', compact('data', 'users'));
+}
 
     public function lisensiUpdate(Request $request, $id)
     {
@@ -117,4 +123,6 @@ class AdminLisensiController extends Controller
         $data->delete();
         return redirect()->route('admin.lisensi.index')->with('swal', ['icon'=>'success', 'title'=>'Berhasil', 'text'=>'Lisensi dihapus.']);
     }
+
+
 }

@@ -214,7 +214,10 @@
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}"
                                             {{ old('user_id', $data->user_id) == $user->id ? 'selected' : '' }}>
-                                            {{ $user->name }} ({{ $user->email }})
+
+                                            {{-- GANTI INI: Dari Email ke Unit Kerja --}}
+                                            {{ $user->name }} ({{ $user->unit_kerja ?? 'Unit Tidak Ada' }})
+
                                         </option>
                                     @endforeach
                                 </select>

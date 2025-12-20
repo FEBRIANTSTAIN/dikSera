@@ -208,8 +208,9 @@
                             {{-- Pilih Perawat (Multi Select) --}}
                             <div class="col-12">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="form-label mb-0">Pilih Perawat (Bisa Banyak) <span class="required-star">*</span></label>
-                                    
+                                    <label class="form-label mb-0">Pilih Perawat (Bisa Banyak) <span
+                                            class="required-star">*</span></label>
+
                                     {{-- Tombol Aksi --}}
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-outline-primary" id="btn-select-all">
@@ -224,113 +225,114 @@
                                 <div class="mb-1">
                                     <select name="user_ids[]" id="choice-users" class="form-select" multiple required>
                                         {{-- Option kosong untuk placeholder --}}
-                                        <option value="">Cari Nama Perawat...</option> 
+                                        <option value="">Cari Nama Perawat...</option>
                                         @foreach ($users as $user)
                                             <option value="{{ $user->id }}"
                                                 {{ collect(old('user_ids'))->contains($user->id) ? 'selected' : '' }}>
-                                                {{ $user->name }} ({{ $user->email }})
+                                                {{ $user->name }} ({{ $user->unit_kerja ?? 'Unit Tidak Ada' }})
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-text">Nomor lisensi akan digenerate otomatis berurutan untuk setiap perawat yang dipilih.</div>
-                            </div>
+                            <div class="form-text">Nomor lisensi akan digenerate otomatis berurutan untuk setiap perawat
+                                yang dipilih.</div>
+                        </div>
 
-                            {{-- 2. Aturan Perpanjangan --}}
-                            <div class="col-12">
-                                <div class="metode-wrapper">
-                                    <div class="d-flex gap-3 align-items-center">
-                                        <i class="bi bi-sliders text-primary fs-5"></i>
-                                        <div class="flex-grow-1">
-                                            <div class="row align-items-center">
-                                                <div class="col-md-7">
-                                                    <label class="form-label text-dark mb-0">Metode Perpanjangan <span
-                                                            class="required-star">*</span></label>
-                                                    <div class="text-muted" style="font-size: 11px;">Pilih cara evaluasi
-                                                        untuk lisensi ini.</div>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <select name="metode_perpanjangan"
-                                                        class="form-select border-primary fw-bold text-dark form-select-sm"
-                                                        required>
-                                                        <option value="pg_only"
-                                                            {{ old('metode_perpanjangan') == 'pg_only' ? 'selected' : '' }}>
-                                                            Hanya Ujian Tulis
-                                                        </option>
-                                                        <option value="pg_interview"
-                                                            {{ old('metode_perpanjangan') == 'pg_interview' ? 'selected' : '' }}>
-                                                            Ujian Tulis + Wawancara
-                                                        </option>
-                                                    </select>
-                                                </div>
+                        {{-- 2. Aturan Perpanjangan --}}
+                        <div class="col-12">
+                            <div class="metode-wrapper">
+                                <div class="d-flex gap-3 align-items-center">
+                                    <i class="bi bi-sliders text-primary fs-5"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-7">
+                                                <label class="form-label text-dark mb-0">Metode Perpanjangan <span
+                                                        class="required-star">*</span></label>
+                                                <div class="text-muted" style="font-size: 11px;">Pilih cara evaluasi
+                                                    untuk lisensi ini.</div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <select name="metode_perpanjangan"
+                                                    class="form-select border-primary fw-bold text-dark form-select-sm"
+                                                    required>
+                                                    <option value="pg_only"
+                                                        {{ old('metode_perpanjangan') == 'pg_only' ? 'selected' : '' }}>
+                                                        Hanya Ujian Tulis
+                                                    </option>
+                                                    <option value="pg_interview"
+                                                        {{ old('metode_perpanjangan') == 'pg_interview' ? 'selected' : '' }}>
+                                                        Ujian Tulis + Wawancara
+                                                    </option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-12">
-                                <hr class="border-light m-0">
-                            </div>
-
-                            {{-- 3. Identitas Lisensi --}}
-                            <div class="col-md-6">
-                                <label class="form-label">Nama Lisensi <span class="required-star">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-card-heading"></i></span>
-                                    <input type="text" name="nama" class="form-control" value="{{ old('nama') }}"
-                                        placeholder="Contoh: STR, SIP" required>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Lembaga Penerbit <span class="required-star">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-building"></i></span>
-                                    <input type="text" name="lembaga" class="form-control" value="{{ old('lembaga') }}"
-                                        placeholder="Contoh: Kemenkes RI" required>
-                                </div>
-                            </div>
-
-                            {{-- 4. Tanggal --}}
-                            <div class="col-md-6">
-                                <label class="form-label">Tanggal Terbit <span class="required-star">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
-                                    <input type="date" name="tgl_terbit" class="form-control"
-                                        value="{{ old('tgl_terbit') }}" required>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Tanggal Expired <span class="required-star">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-calendar-x"></i></span>
-                                    <input type="date" name="tgl_expired" class="form-control"
-                                        value="{{ old('tgl_expired') }}" required>
-                                </div>
-                            </div>
-
                         </div>
 
-                        {{-- Submit Button --}}
-                        <div class="mt-4 pt-2">
-                            <button type="submit" class="btn-submit">
-                                <i class="bi bi-save2 me-1"></i> Simpan Data Lisensi
-                            </button>
+                        <div class="col-12">
+                            <hr class="border-light m-0">
                         </div>
 
-                    </form>
+                        {{-- 3. Identitas Lisensi --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Nama Lisensi <span class="required-star">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-card-heading"></i></span>
+                                <input type="text" name="nama" class="form-control" value="{{ old('nama') }}"
+                                    placeholder="Contoh: STR, SIP" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Lembaga Penerbit <span class="required-star">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                <input type="text" name="lembaga" class="form-control" value="{{ old('lembaga') }}"
+                                    placeholder="Contoh: Kemenkes RI" required>
+                            </div>
+                        </div>
+
+                        {{-- 4. Tanggal --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Tanggal Terbit <span class="required-star">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                                <input type="date" name="tgl_terbit" class="form-control"
+                                    value="{{ old('tgl_terbit') }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Tanggal Expired <span class="required-star">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-calendar-x"></i></span>
+                                <input type="date" name="tgl_expired" class="form-control"
+                                    value="{{ old('tgl_expired') }}" required>
+                            </div>
+                        </div>
+
                 </div>
+
+                {{-- Submit Button --}}
+                <div class="mt-4 pt-2">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-save2 me-1"></i> Simpan Data Lisensi
+                    </button>
+                </div>
+
+                </form>
             </div>
         </div>
+    </div>
     </div>
 @endsection
 
 @push('scripts')
     {{-- Load JS Choices --}}
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // 1. Ambil Element
@@ -355,11 +357,11 @@
             // 4. LOGIKA TOMBOL PILIH SEMUA
             btnSelectAll.addEventListener('click', function(e) {
                 e.preventDefault(); // Mencegah form submit tidak sengaja
-                
+
                 // Trik: Hapus dulu semua (biar bersih), baru masukkan semua
-                choices.removeActiveItems(); 
-                choices.setChoiceByValue(allUserIds); 
-                
+                choices.removeActiveItems();
+                choices.setChoiceByValue(allUserIds);
+
                 // Debugging (Cek di Console browser jika masih gagal)
                 console.log('Mencoba memilih ID:', allUserIds);
             });
