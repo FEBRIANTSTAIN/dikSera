@@ -388,6 +388,7 @@ class PerawatDrhController extends Controller
 
         $request->validate([
             'nama_instansi' => 'required|string|max:150',
+            'unit_kerja'    => 'required|string|max:150',
             'jabatan'       => 'required|string|max:150',
             'tahun_mulai'   => 'nullable|string|max:4',
             'tahun_selesai' => 'nullable|string|max:4',
@@ -425,6 +426,7 @@ class PerawatDrhController extends Controller
 
         $request->validate([
             'nama_instansi' => 'required|string|max:150',
+            'unit_kerja'    => 'required|string|max:150',
             'jabatan'       => 'required|string|max:150',
             'tahun_mulai'   => 'nullable|string|max:4',
             'tahun_selesai' => 'nullable|string|max:4',
