@@ -36,6 +36,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function penanggungJawab()
+    {
+        return $this->hasOne(PenanggungJawabUjian::class);
+    }
+
     public function profile()
     {
         return $this->hasOne(PerawatProfile::class, 'user_id');

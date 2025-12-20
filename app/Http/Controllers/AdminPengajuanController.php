@@ -39,7 +39,7 @@ class AdminPengajuanController extends Controller
                 $query->whereDoesntHave('user.examResult');
             }
         }
-        $pengajuan = $query->latest()->paginate(10)->withQueryString();
+        $pengajuan = $query->latest()->paginate(10);
 
         return view('admin.pengajuan.index', compact('pengajuan', 'listSertifikat'));
     }
