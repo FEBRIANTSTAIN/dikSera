@@ -14,7 +14,6 @@
             --bg-light: #f8fafc;
             --border-color: #e2e8f0;
             --input-height: 38px;
-            /* Tinggi input compact */
         }
 
         body {
@@ -22,9 +21,7 @@
             font-family: 'Inter', sans-serif;
             color: var(--text-dark);
             font-size: 13.5px;
-            /* Font compact */
             padding-bottom: 100px;
-            /* Space untuk floating bar */
         }
 
         /* --- Page Header --- */
@@ -68,7 +65,6 @@
             display: block;
         }
 
-        /* Input & Choices Alignment */
         .form-control {
             height: var(--input-height);
             border-radius: 6px;
@@ -76,6 +72,7 @@
             border-color: #cbd5e1;
         }
 
+        /* --- Choices JS Fix --- */
         .choices__inner {
             min-height: var(--input-height) !important;
             padding: 2px 8px !important;
@@ -182,7 +179,13 @@
             border: 1px solid #fee2e2;
         }
 
-        /* Action Buttons (Individual Row) */
+        .st-purple {
+            background: #f3e8ff;
+            color: #7e22ce;
+            border: 1px solid #e9d5ff;
+        }
+
+        /* Action Buttons */
         .btn-icon {
             width: 28px;
             height: 28px;
@@ -231,19 +234,30 @@
             border-color: #991b1b;
         }
 
-        .btn-act-input {
-            background: #e0f2fe;
-            color: #0369a1;
-            border: 1px solid #7dd3fc;
+        .btn-act-blue {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
         }
 
-        .btn-act-input:hover {
-            background: #0369a1;
+        .btn-act-blue:hover {
+            background: #1e40af;
             color: white;
-            border-color: #0369a1;
         }
 
-        /* --- Floating Bulk Action Bar --- */
+        /* Style tombol copy */
+        .btn-act-copy {
+            background: #ffedd5;
+            color: #9a3412;
+            border: 1px solid #fed7aa;
+        }
+
+        .btn-act-copy:hover {
+            background: #9a3412;
+            color: white;
+        }
+
+        /* Floating Bulk Action Bar */
         .bulk-action-bar {
             position: fixed;
             bottom: 30px;
@@ -285,7 +299,6 @@
                 <h1 class="page-title">Approval Perpanjangan</h1>
                 <p class="page-subtitle">Manajemen validasi lisensi dan sertifikat perawat.</p>
             </div>
-            {{-- Statistik Sederhana --}}
             <div class="d-none d-md-flex gap-3">
                 <div class="px-3 py-1 bg-white border rounded-3 d-flex align-items-center gap-2 shadow-sm">
                     <i class="bi bi-hourglass-split text-warning"></i>
@@ -317,8 +330,8 @@
                             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu</option>
                             <option value="method_selected" {{ request('status') == 'method_selected' ? 'selected' : '' }}>
                                 Sedang Ujian</option>
-                            <option value="exam_passed" {{ request('status') == 'exam_passed' ? 'selected' : '' }}>Lulus
-                                Ujian</option>
+                            <option value="exam_passed" {{ request('status') == 'exam_passed' ? 'selected' : '' }}>Lulus /
+                                Siap Wawancara</option>
                             <option value="interview_scheduled"
                                 {{ request('status') == 'interview_scheduled' ? 'selected' : '' }}>Jadwal Wawancara</option>
                             <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai
@@ -381,7 +394,6 @@
                         @forelse($pengajuan as $item)
                             <tr>
                                 <td class="text-center">
-                                    {{-- Checkbox hanya muncul jika status memungkinkan bulk action --}}
                                     @if (in_array($item->status, ['pending', 'method_selected', 'interview_scheduled']))
                                         <input type="checkbox" name="ids[]" value="{{ $item->id }}"
                                             class="form-check-input check-item" style="cursor: pointer;">
@@ -390,7 +402,7 @@
                                     @endif
                                 </td>
 
-                                {{-- Kolom Perawat (Avatar) --}}
+                                {{-- Kolom Perawat --}}
                                 <td>
                                     <div class="d-flex align-items-center">
                                         @php
@@ -410,6 +422,7 @@
 
                                 <td><span class="text-dark">{{ $item->lisensiLama->nama ?? '-' }}</span></td>
 
+                                {{-- Kolom Status --}}
                                 <td>
                                     @if ($item->status == 'pending')
                                         <span class="status-badge st-pending"><i class="bi bi-clock"></i> Menunggu</span>
@@ -417,8 +430,10 @@
                                         <span class="status-badge st-info"><i class="bi bi-pencil-square"></i> Sedang
                                             Ujian</span>
                                     @elseif($item->status == 'exam_passed')
-                                        <span class="status-badge st-info"><i class="bi bi-check-circle"></i> Lulus
-                                            Ujian</span>
+                                        <span class="status-badge st-info">
+                                            <i class="bi bi-check-circle"></i>
+                                            {{ $item->metode == 'interview_only' ? 'Siap Wawancara' : 'Lulus Ujian' }}
+                                        </span>
                                     @elseif($item->status == 'interview_scheduled')
                                         <span class="status-badge st-info"><i class="bi bi-calendar-event"></i>
                                             Wawancara</span>
@@ -429,24 +444,31 @@
                                     @endif
                                 </td>
 
+                                {{-- Kolom Metode --}}
                                 <td>
                                     <span class="text-muted small">
-                                        {{ $item->metode == 'pg_only' ? 'Hanya PG' : ($item->metode ? 'PG + Wawancara' : '-') }}
+                                        @if ($item->metode == 'pg_only')
+                                            Hanya PG
+                                        @elseif($item->metode == 'interview_only')
+                                            <span class="status-badge st-purple" style="font-size: 10px;">Hanya
+                                                Wawancara</span>
+                                        @elseif($item->metode == 'pg_interview')
+                                            PG + Wawancara
+                                        @else
+                                            -
+                                        @endif
                                     </span>
                                 </td>
 
                                 <td class="text-center">
-                                    {{-- INDIVIDUAL ACTIONS GROUP --}}
                                     <div class="d-flex justify-content-center gap-1">
-                                        {{-- 1. Tombol Detail (Selalu Ada) --}}
-                                        <a href="{{ route('admin.pengajuan.show', $item->id) }}" class="btn-icon btn-view"
-                                            title="Detail">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
 
-                                        {{-- 2. Logika Berdasarkan Status --}}
+                                        {{-- 2. AKSI APPROVAL AWAL (Status: pending) --}}
                                         @if ($item->status == 'pending')
-                                            {{-- Case: Verifikasi Awal --}}
+                                            {{-- Tombol Detail --}}
+                                            <a href="{{ route('admin.pengajuan.show', $item->id) }}"
+                                                class="btn-icon btn-view" title="Detail"><i class="bi bi-eye"></i></a>
+
                                             <form action="{{ route('admin.pengajuan.approve', $item->id) }}"
                                                 method="POST">
                                                 @csrf
@@ -455,32 +477,43 @@
                                                     <i class="bi bi-check-lg"></i>
                                                 </button>
                                             </form>
-                                        @elseif ($item->status == 'method_selected' && $item->user->examResult)
-                                            {{-- Case: Verifikasi Nilai Ujian --}}
+
+                                            {{-- 3. AKSI APPROVE NILAI UJIAN (HANYA JIKA BUKAN INTERVIEW ONLY) --}}
+                                        @elseif ($item->status == 'method_selected' && $item->user->examResult && $item->metode != 'interview_only')
+                                            <a href="{{ route('admin.pengajuan.show', $item->id) }}"
+                                                class="btn-icon btn-view" title="Detail"><i class="bi bi-eye"></i></a>
+
                                             <a href="{{ route('admin.pengajuan.approve_score', $item->id) }}"
                                                 class="btn-icon btn-act-check"
                                                 onclick="return confirm('Verifikasi Nilai?')" title="Acc Nilai">
                                                 <i class="bi bi-check-all"></i>
                                             </a>
+
+                                            {{-- 4. AKSI JADWAL WAWANCARA (BERLAKU UNTUK PG+INTERVIEW & INTERVIEW ONLY) --}}
                                         @elseif ($item->status == 'interview_scheduled' && $item->jadwalWawancara)
                                             @php $jadwal = $item->jadwalWawancara; @endphp
 
                                             @if ($jadwal->status == 'pending')
-                                                {{-- Case: Admin Menyetujui Jadwal Wawancara --}}
+                                                {{-- Tombol Detail --}}
+                                                <a href="{{ route('admin.pengajuan.show', $item->id) }}"
+                                                    class="btn-icon btn-view" title="Detail"><i
+                                                        class="bi bi-eye"></i></a>
+
+                                                {{-- Acc Jadwal (Kirim ke Pewawancara) --}}
                                                 <a href="{{ route('admin.pengajuan_wawancara.approve', $jadwal->id) }}"
                                                     class="btn-icon btn-act-check"
-                                                    onclick="return confirm('Setujui Jadwal?')" title="Acc Jadwal">
+                                                    onclick="return confirm('Setujui Jadwal? Data akan dikirim ke Pewawancara.')"
+                                                    title="Acc Jadwal">
                                                     <i class="bi bi-calendar-check"></i>
                                                 </a>
-
-                                                {{-- Modal Trigger Reject --}}
+                                                {{-- Reject Jadwal --}}
                                                 <button type="button" class="btn-icon btn-act-x" data-bs-toggle="modal"
                                                     data-bs-target="#rejectModal{{ $jadwal->id }}"
                                                     title="Tolak Jadwal">
                                                     <i class="bi bi-x-lg"></i>
                                                 </button>
 
-                                                {{-- Modal Inline Reject --}}
+                                                {{-- Modal Reject Inline --}}
                                                 <div class="modal fade text-start" id="rejectModal{{ $jadwal->id }}"
                                                     tabindex="-1">
                                                     <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -506,14 +539,37 @@
                                                     </div>
                                                 </div>
                                             @elseif($jadwal->status == 'approved')
-                                                {{-- PERBAIKAN DI SINI: --}}
-                                                {{-- Admin tidak input nilai lagi. Tampilkan ikon menunggu/info saja --}}
-                                                <button type="button" class="btn-icon text-secondary" disabled
+                                                {{-- ========================================================= --}}
+                                                {{-- FITUR BARU: TOMBOL COPY LINK UNTUK PEWAWANCARA --}}
+                                                {{-- ========================================================= --}}
+                                                <button type="button" class="btn-icon btn-act-copy"
+                                                    onclick="copyLink('{{ route('pewawancara.penilaian', $jadwal->id) }}')"
+                                                    data-bs-toggle="tooltip"
+                                                    title="Salin Link Penilaian untuk dikirim ke Pewawancara">
+                                                    <i class="bi bi-link-45deg"></i>
+                                                </button>
+
+                                                {{-- Indikator Menunggu --}}
+                                                <button class="btn-icon text-secondary" disabled
                                                     style="cursor: help; opacity: 0.6;"
-                                                    title="Menunggu penilaian Pewawancara">
+                                                    title="Menunggu input nilai dari Pewawancara">
                                                     <i class="bi bi-hourglass-split"></i>
                                                 </button>
                                             @endif
+
+                                            {{-- 5. JIKA SELESAI (Lihat Nilai) --}}
+                                        @elseif($item->status == 'completed')
+                                            <a href="{{ route('admin.pengajuan.show', $item->id) }}"
+                                                class="btn-icon btn-act-blue" title="Lihat Hasil & Nilai">
+                                                <i class="bi bi-file-earmark-bar-graph"></i>
+                                            </a>
+
+                                            {{-- Default: Tombol Detail --}}
+                                        @else
+                                            <a href="{{ route('admin.pengajuan.show', $item->id) }}"
+                                                class="btn-icon btn-view" title="Detail">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
                                         @endif
                                     </div>
                                 </td>
@@ -537,17 +593,14 @@
         </div>
     </div>
 
-    {{-- === FLOATING BULK ACTION BAR (COLLECTIVE ACTION TETAP TERPISAH) === --}}
+    {{-- BULK ACTIONS --}}
     <div class="bulk-action-bar" id="bulkActionBar">
         <div class="d-flex align-items-center gap-2">
             <span class="badge bg-white text-dark rounded-pill px-2 py-1" id="selectedCountBadge">0</span>
             <span class="small fw-bold">Terpilih</span>
         </div>
-
         <div class="bulk-separator"></div>
-
         <div class="d-flex gap-2">
-            {{-- Tombol 1: Pending --}}
             <form id="formBulkApprove" action="{{ route('admin.pengajuan.bulk_approve') }}" method="POST">
                 @csrf <div id="bulkApproveInputs"></div>
                 <button type="button" class="btn btn-success btn-sm fw-bold rounded-pill px-3"
@@ -555,8 +608,6 @@
                     <i class="bi bi-check-lg me-1"></i> Acc Pending
                 </button>
             </form>
-
-            {{-- Tombol 2: Nilai --}}
             <form id="formBulkScore" action="{{ route('admin.pengajuan.bulk_approve_score') }}" method="POST">
                 @csrf <div id="bulkScoreInputs"></div>
                 <button type="button" class="btn btn-warning text-dark btn-sm fw-bold rounded-pill px-3"
@@ -564,8 +615,6 @@
                     <i class="bi bi-check-all me-1"></i> Acc Nilai
                 </button>
             </form>
-
-            {{-- Tombol 3: Jadwal --}}
             <form id="formBulkInterview" action="{{ route('admin.pengajuan.bulk_approve_interview') }}" method="POST">
                 @csrf <div id="bulkInterviewInputs"></div>
                 <button type="button" class="btn btn-info text-white btn-sm fw-bold rounded-pill px-3"
@@ -575,11 +624,12 @@
             </form>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- Tambahkan SweetAlert untuk Notif Copy --}}
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Init Choices
@@ -598,6 +648,12 @@
                 ...config,
                 searchEnabled: false
             });
+
+            // Tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
 
             // Bulk Logic
             const checkAll = document.getElementById('checkAll');
@@ -623,11 +679,26 @@
             checkItems.forEach(item => item.addEventListener('change', updateBulkBar));
         });
 
+        // FUNGSI COPY LINK BARU
+        function copyLink(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Link Disalin!',
+                    text: 'Kirim link ini ke Pewawancara.',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast: true,
+                    position: 'top-end'
+                });
+            }).catch(err => {
+                console.error('Gagal menyalin: ', err);
+            });
+        }
+
         function submitBulk(formId, msg) {
             if (!confirm(msg)) return;
             const form = document.getElementById(formId);
-
-            // Logic container
             let containerId = 'bulkApproveInputs';
             if (formId === 'formBulkScore') containerId = 'bulkScoreInputs';
             if (formId === 'formBulkInterview') containerId = 'bulkInterviewInputs';

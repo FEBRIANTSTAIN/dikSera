@@ -32,7 +32,7 @@ class AdminLisensiController extends Controller
         $request->validate([
             'user_ids'            => 'required|array',
             'user_ids.*'          => 'exists:users,id',
-            'metode_perpanjangan' => 'required|in:pg_only,pg_interview',
+            'metode_perpanjangan' => 'required|in:pg_only,pg_interview,interview_only',
             'nama'                => 'required|string|max:100',
             'lembaga'             => 'required|string|max:100',
             'bidang'              => 'required|string|max:100',
@@ -98,6 +98,7 @@ class AdminLisensiController extends Controller
         'nama'                => 'required|string|max:100',
         'lembaga'             => 'required|string|max:100',
         'nomor'               => 'required|string|max:100',
+        'metode_perpanjangan' => 'required|in:pg_only,pg_interview,interview_only',
         'tgl_terbit'          => 'required|date',
         'tgl_expired'         => 'required|date',
         'dokumen'             => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',

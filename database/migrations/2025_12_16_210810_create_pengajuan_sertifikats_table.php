@@ -13,7 +13,7 @@ class CreatePengajuanSertifikatsTable extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('lisensi_lama_id')->nullable()->constrained('perawat_lisensis')->onDelete('set null');
             $table->string('status')->default('pending');
-            $table->enum('metode', ['pg_only', 'pg_interview'])->nullable();
+            $table->enum('metode', ['pg_only', 'pg_interview', 'interview_only'])->nullable();
             $table->foreignId('penanggung_jawab_id')->nullable()->constrained('penanggung_jawab_ujians'); // Pembimbing
             $table->date('tgl_wawancara')->nullable();
             $table->string('lokasi_wawancara')->nullable();

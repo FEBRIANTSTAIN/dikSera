@@ -45,19 +45,28 @@ class AdminPengajuanController extends Controller
     }
 
     public function approve(Request $request, $id)
-    {
-        $pengajuan = PengajuanSertifikat::findOrFail($id);
-        if (!$pengajuan->metode) {
-             $pengajuan->metode = 'pg_only';
-        }
+{
+    $pengajuan = PengajuanSertifikat::findOrFail($id);
+
+    if (!$pengajuan->metode) {
+         $pengajuan->metode = 'pg_only';
+    }
+
+    if ($pengajuan->metode == 'interview_only') {
+        $pengajuan->update([
+            'status' => 'exam_passed',
+        ]);
+        $msg = "Pengajuan disetujui. Metode: Hanya Wawancara. Peserta dapat langsung mengajukan jadwal.";
+    } else {
         $pengajuan->update([
             'status' => 'method_selected',
         ]);
-
         $jenis = $pengajuan->metode == 'pg_only' ? 'Pilihan Ganda' : 'Pilihan Ganda + Wawancara';
-
-        return back()->with('success', "Pengajuan disetujui. Metode otomatis: $jenis. Perawat dapat segera ujian.");
+        $msg = "Pengajuan disetujui. Metode otomatis: $jenis. Perawat dapat segera ujian.";
     }
+
+    return back()->with('success', $msg);
+}
 
     public function reject($id)
     {
@@ -125,31 +134,29 @@ class AdminPengajuanController extends Controller
         return back()->with('success', 'Proses perpanjangan selesai sepenuhnya & Lisensi diperbarui.');
     }
 
-    public function bulkApprove(Request $request)
-    {
-        $request->validate([
-            'ids' => 'required|array',
-            'ids.*' => 'exists:pengajuan_sertifikats,id'
-        ]);
+   public function bulkApprove(Request $request)
+{
+    // ... validasi ...
+    $ids = $request->ids;
+    $pengajuans = PengajuanSertifikat::whereIn('id', $ids)->where('status', 'pending')->get();
+    $count = 0;
 
-        $ids = $request->ids;
-
-        $pengajuans = PengajuanSertifikat::whereIn('id', $ids)
-                        ->where('status', 'pending')
-                        ->get();
-
-        $count = 0;
-
-        foreach ($pengajuans as $pengajuan) {
-            if (!$pengajuan->metode) {
-                 $pengajuan->metode = 'pg_only';
-            }
-            $pengajuan->update(['status' => 'method_selected']);
-            $count++;
+    foreach ($pengajuans as $pengajuan) {
+        if (!$pengajuan->metode) {
+             $pengajuan->metode = 'pg_only';
         }
 
-        return back()->with('success', "Berhasil menyetujui $count pengajuan terpilih.");
+        // --- LOGIKA BARU ---
+        if ($pengajuan->metode == 'interview_only') {
+            $pengajuan->update(['status' => 'exam_passed']);
+        } else {
+            $pengajuan->update(['status' => 'method_selected']);
+        }
+        $count++;
     }
+
+    return back()->with('success', "Berhasil menyetujui $count pengajuan terpilih.");
+}
 
     // --- PERBAIKAN 2: Bulk Approve Score ---
     public function bulkApproveScore(Request $request)

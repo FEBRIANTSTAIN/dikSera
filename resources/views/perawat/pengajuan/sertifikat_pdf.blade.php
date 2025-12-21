@@ -2,263 +2,254 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Sertifikat Kompetensi - {{ $pengajuan->user->name }}</title>
+    <title>Sertifikat {{ $lisensi->nomor }}</title>
     <style>
-        /* Mengatur Ukuran Kertas A4 Landscape */
-        @page {
-            size: A4 landscape;
-            margin: 0;
-        }
+        @page { margin: 0; size: 297mm 210mm; }
+        body { margin: 0; padding: 0; font-family: 'Helvetica', 'Arial', sans-serif; background: #fff; }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Times New Roman', Times, serif;
-            background-color: #fff;
-            color: #333;
-            -webkit-print-color-adjust: exact;
-        }
+        .main-layout { width: 100%; height: 100%; border-collapse: collapse; }
 
-        /* --- Container Utama dengan Border Ornamen --- */
-        .border-pattern {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            bottom: 15px;
-            border: 2px solid #2563eb; /* Primary Blue */
-            padding: 5px;
-        }
-
-        .inner-border {
-            border: 5px double #b45309; /* Gold Color */
-            height: 100%;
+        /* --- SIDEBAR (Kiri) --- */
+        .td-sidebar {
+            width: 28%;
+            background-color: #1565c0;
+            color: white;
+            vertical-align: top;
+            text-align: center;
+            padding: 40px 10px;
             position: relative;
+        }
+
+        .circle-decor {
+            position: absolute; top: -50px; left: -50px;
+            width: 150px; height: 150px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .side-logo { width: 100px; height: auto; margin-bottom: 20px; }
+
+        .side-title {
+            font-size: 9pt; text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px; margin: 0 auto 40px auto;
+            width: 80%; line-height: 1.4;
+        }
+
+        /* Frame Foto */
+        .photo-frame {
+            width: 120px; height: 160px;
+            border: 2px solid rgba(255,255,255,0.6);
+            border-radius: 8px;
+            margin: 0 auto 40px auto;
             background: #fff;
-            /* Watermark Pattern (Opsional/CSS Only) */
-            background-image: radial-gradient(#2563eb 0.5px, transparent 0.5px), radial-gradient(#2563eb 0.5px, #fff 0.5px);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Agar gambar mengisi penuh frame */
+        .photo-frame img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        /* Tampilan jika foto kosong */
+        .no-photo {
+            width: 100%; height: 100%;
+            display: flex; /* Flex tidak jalan sempurna di DomPDF untuk alignment, tapi ok untuk display */
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            color: #1565c0;
+            font-weight: bold; font-size: 8pt;
+            padding-top: 70px; /* Hack vertical align manual karena flexbox limit di PDF */
+            box-sizing: border-box;
+        }
+
+        .badge-box {
+            width: 90px; height: 90px;
+            border: 2px solid #fff;
+            border-radius: 10px;
+            margin: 0 auto;
+            background-color: rgba(13, 71, 161, 0.5);
+            text-align: center;
+            padding-top: 15px; box-sizing: border-box;
+        }
+        .badge-level { font-size: 8pt; display: block; margin-bottom: 5px; color: #bbdefb; }
+        .badge-value { font-size: 22pt; font-weight: bold; display: block; line-height: 1; }
+
+        /* --- CONTENT (Kanan) --- */
+        .td-content {
+            width: 72%;
+            vertical-align: top;
+            padding: 40px 50px;
+            position: relative;
             background-color: #fff;
         }
 
-        /* Layer putih di atas pattern agar teks terbaca jelas */
-        .content-layer {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.94);
-            padding: 40px;
-            text-align: center;
+        .watermark {
+            position: absolute; right: -20px; bottom: -20px;
+            width: 400px; opacity: 0.05; z-index: 0;
         }
 
-        /* --- Tipografi --- */
-        .header-system {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            letter-spacing: 2px;
-            color: #64748b;
-            text-transform: uppercase;
-            margin-bottom: 5px;
+        .header-table { width: 100%; margin-bottom: 20px; position: relative; z-index: 2; }
+        .header-left h2 { margin: 0; font-size: 14pt; color: #1565c0; text-transform: uppercase; }
+        .header-left p { margin: 5px 0 0 0; font-size: 8pt; color: #546e7a; }
+        .header-right { text-align: right; vertical-align: top; }
+
+        .cert-number {
+            font-family: 'Courier New', monospace; font-size: 10pt;
+            color: #1565c0; background: #e3f2fd;
+            padding: 5px 10px; border-radius: 4px; display: inline-block;
         }
 
-        .header-title {
-            font-family: Arial, sans-serif;
-            font-size: 28px;
-            font-weight: 800;
-            color: #1e3a8a; /* Dark Blue */
-            text-transform: uppercase;
-            margin-top: 0;
-            margin-bottom: 30px;
+        .main-title {
+            font-size: 30pt; font-weight: 800; color: #0d47a1;
+            margin: 10px 0 0 0; text-transform: uppercase; position: relative; z-index: 2;
+        }
+        .main-title span { color: #2196f3; }
+        .subtitle {
+            font-size: 11pt; color: #1976d2; margin-bottom: 25px; position: relative; z-index: 2;
         }
 
-        .cert-type {
-            font-family: 'Times New Roman', serif;
-            font-size: 48px;
-            font-weight: normal;
-            color: #b45309; /* Gold */
-            margin: 0;
-            font-style: italic;
-            line-height: 1;
+        .candidate-box {
+            border-left: 5px solid #2979ff; padding-left: 15px; margin-bottom: 25px; position: relative; z-index: 2;
+        }
+        .candidate-name { font-size: 22pt; font-weight: bold; color: #01579b; margin: 0; text-transform: uppercase; }
+        .candidate-id { font-size: 11pt; color: #0277bd; margin-top: 5px; }
+
+        .desc-box {
+            background-color: #f1f8ff; border: 1px solid #bbdefb; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; color: #37474f; font-size: 10pt; line-height: 1.5;
+            position: relative; z-index: 2;
+        }
+        .highlight { color: #01579b; font-weight: bold; text-decoration: underline; }
+
+        .event-info {
+            margin-top: 15px; padding-top: 10px; border-top: 1px dashed #90caf9;
+            font-size: 9pt; color: #455a64;
         }
 
-        .presented-to {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            color: #4b5563;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .footer-table { width: 100%; margin-top: 30px; position: relative; z-index: 2; }
+        .footer-spacer { width: 55%; }
+        .footer-sig { width: 45%; text-align: center; }
 
-        .recipient-name {
-            font-size: 38px;
-            font-weight: 700;
-            color: #111827;
-            border-bottom: 2px solid #e5e7eb;
-            display: inline-block;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            min-width: 400px;
-            text-transform: uppercase;
-        }
-
-        .description {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #374151;
-            margin-bottom: 10px;
-            max-width: 80%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .license-name {
-            font-size: 22px;
-            font-weight: bold;
-            color: #2563eb;
-            margin: 10px 0 25px 0;
-        }
-
-        /* --- Footer & Signatures --- */
-        .footer-table {
-            width: 100%;
-            margin-top: 50px;
-            border-collapse: collapse;
-        }
-
-        .sign-col {
-            width: 40%;
-            vertical-align: bottom;
-            text-align: center;
-        }
-
-        .stamp-col {
-            width: 20%;
-            vertical-align: bottom;
-            text-align: center;
-        }
-
-        .sign-line {
-            border-bottom: 1px solid #000;
-            width: 200px;
-            margin: 0 auto 10px auto;
-            height: 60px; /* Space for signature image */
-        }
-
-        .sign-name {
-            font-weight: bold;
-            font-size: 16px;
-            text-transform: uppercase;
-        }
-
-        .sign-title {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        /* --- Badge / Seal --- */
-        .seal-box {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid #b45309;
-            color: #b45309;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 10px;
-            text-transform: uppercase;
-            margin: 0 auto;
-            opacity: 0.8;
-        }
-
-        /* --- Meta Info --- */
-        .meta-info {
-            margin-top: 40px;
-            font-size: 10px;
-            color: #9ca3af;
-            font-family: Arial, sans-serif;
-            border-top: 1px solid #f3f4f6;
-            padding-top: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
+        .sig-place-date { font-size: 10pt; color: #1565c0; margin-bottom: 5px; }
+        .sig-title { font-weight: bold; font-size: 10pt; color: #0d47a1; margin-bottom: 50px; }
+        .sig-name { font-weight: bold; color: #0d47a1; border-top: 2px solid #1565c0; padding-top: 5px; display: inline-block; min-width: 200px; }
+        .sig-nip { font-size: 9pt; color: #1976d2; margin-top: 2px; }
     </style>
 </head>
 <body>
 
-    <div class="border-pattern">
-        <div class="inner-border">
-            <div class="content-layer">
+    <table class="main-layout">
+        <tr>
+            <td class="td-sidebar">
+                <div class="circle-decor"></div>
 
-                <div class="header-system">Diksera Hospital System</div>
-                <h1 class="header-title">Rumah Sakit Umum Diksera</h1>
+                <img src="https://rsudslg.kedirikab.go.id/asset_compro/img/logo/Logo.png" class="side-logo" alt="Logo">
 
-                <h2 class="cert-type">Sertifikat Kelulusan</h2>
-                <div class="presented-to">Dokumen ini diberikan kepada:</div>
-
-                <div class="recipient-name">{{ $pengajuan->user->name }}</div>
-
-                <div class="description">
-                    Atas keberhasilannya menyelesaikan seluruh rangkaian evaluasi kompetensi keperawatan<br>
-                    dan dinyatakan <strong>KOMPETEN</strong> untuk perpanjangan lisensi:
+                <div class="side-title">
+                    PEMERINTAH KABUPATEN KEDIRI<br>
+                    DINAS KESEHATAN<br>
+                    UOBK RSUD SLG
                 </div>
 
-                <div class="license-name">
-                    {{ $pengajuan->lisensiLama->nama }} &mdash; {{ $pengajuan->lisensiLama->lembaga }}
-                </div>
+                <div class="photo-frame">
+                    @php
+                        $fotoTampil = false;
+                        $pathFoto = '';
 
-                <div class="description" style="font-size: 14px; color: #6b7280;">
-                    Metode Evaluasi:
-                    @if($pengajuan->metode == 'pg_only')
-                        Ujian Tulis (Computer Based Test)
+                        // Cek apakah profile ada dan kolom foto_3x4 terisi
+                        if(isset($profile) && !empty($profile->foto_3x4)) {
+                            // Cek path storage
+                            $storagePath = storage_path('app/public/' . $profile->foto_3x4);
+
+                            if(file_exists($storagePath)) {
+                                $pathFoto = $storagePath;
+                                $fotoTampil = true;
+                            }
+                        }
+                    @endphp
+
+                    @if($fotoTampil)
+                        <img src="{{ $pathFoto }}" alt="Foto 3x4">
                     @else
-                        Ujian Tulis & Wawancara Klinis
+                        <div class="no-photo">FOTO 3x4</div>
                     @endif
+                </div>
+                <div class="badge-box">
+                    <span class="badge-level">LEVEL</span>
+                    <span class="badge-value">{{ $lisensi->kfk ?? 'PK -' }}</span>
+                </div>
+            </td>
+
+            <td class="td-content">
+                <img src="https://rsudslg.kedirikab.go.id/asset_compro/img/logo/Logo.png" class="watermark" alt="Watermark">
+
+                <table class="header-table">
+                    <tr>
+                        <td class="header-left">
+                            <h2>SERTIFIKASI PROFESI</h2>
+                            <p>Jl. Galuh Candra Kirana Ds. Tugurejo Kec. Ngasem<br>website: rsudslg.kedirikab.go.id</p>
+                        </td>
+                        <td class="header-right">
+                            <span class="cert-number">NO: {{ $lisensi->nomor }}</span>
+                        </td>
+                    </tr>
+                </table>
+
+                <h1 class="main-title">SERTIFIKAT <span>KOMPETENSI</span></h1>
+                <div class="subtitle">Diberikan sebagai pengakuan kompetensi kepada:</div>
+
+                <div class="candidate-box">
+                    {{-- Prioritas Nama: dari Profile -> User --}}
+                    <div class="candidate-name">
+                        {{ strtoupper($profile->nama_lengkap ?? $user->name) }}
+                    </div>
+
+                    {{-- Prioritas ID: NIRP -> NIP -> Kosong --}}
+                    <div class="candidate-id">
+                        @if(!empty($profile->nirp))
+                            NIRP. {{ $profile->nirp }}
+                        @elseif(!empty($profile->nip))
+                            NIP. {{ $profile->nip }}
+                        @else
+                            -
+                        @endif
+                    </div>
+                </div>
+                <div class="desc-box">
+                    Telah dinyatakan <strong>LULUS</strong> Uji Kompetensi Perawat Klinik.<br>
+                    Kompetensi: <span class="highlight">{{ strtoupper($lisensi->nama) }}</span><br>
+                    Area Klinik / Bidang: <span class="highlight">{{ strtoupper($lisensi->bidang) }}</span>
+
+                    <div class="event-info">
+                        Diselenggarakan: {{ \Carbon\Carbon::parse($lisensi->tgl_mulai)->isoFormat('D MMMM Y') }}
+                        s/d {{ \Carbon\Carbon::parse($lisensi->tgl_diselenggarakan)->isoFormat('D MMMM Y') }}<br>
+                        Berlaku hingga: <strong>{{ \Carbon\Carbon::parse($lisensi->tgl_expired)->isoFormat('D MMMM Y') }}</strong>
+                    </div>
                 </div>
 
                 <table class="footer-table">
                     <tr>
-                        <td class="sign-col">
-                            <div class="sign-line">
-                                </div>
-                            <div class="sign-name">Dr. Budi Santoso, MARS</div>
-                            <div class="sign-title">Direktur Utama</div>
-                        </td>
-
-                        <td class="stamp-col">
-                            <div class="seal-box">
-                                <div style="text-align:center; padding-top: 25px;">
-                                    OFFICIAL<br>SEAL
-                                </div>
+                        <td class="footer-spacer"></td>
+                        <td class="footer-sig">
+                            <div class="sig-place-date">
+                                Kediri, {{ \Carbon\Carbon::parse($lisensi->tgl_terbit)->isoFormat('D MMMM Y') }}
                             </div>
-                        </td>
+                            <div class="sig-title">DIREKTUR UOBK RSUD SLG</div>
 
-                        <td class="sign-col">
-                            <div class="sign-line">
+                            <div style="height: 50px;">
                                 </div>
-                            <div class="sign-name">Ns. Siti Aminah, S.Kep</div>
-                            <div class="sign-title">Ketua Komite Keperawatan</div>
+
+                            <div class="sig-name">dr. TONY WIDYANTO, Sp.OG (K)</div>
+                            <div class="sig-nip">NIP. 19750714 200212 1 006</div>
                         </td>
                     </tr>
                 </table>
 
-                <table style="width: 100%; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
-                    <tr>
-                        <td style="text-align: left; font-size: 10px; color: #999; font-family: Arial;">
-                            ID Dokumen: <strong>{{ $pengajuan->id }}/DKS-CERT/{{ date('Y') }}</strong>
-                        </td>
-                        <td style="text-align: right; font-size: 10px; color: #999; font-family: Arial;">
-                            Diterbitkan: {{ \Carbon\Carbon::parse($pengajuan->updated_at)->isoFormat('D MMMM Y') }}
-                        </td>
-                    </tr>
-                </table>
-
-            </div>
-        </div>
-    </div>
+            </td>
+        </tr>
+    </table>
 
 </body>
 </html>

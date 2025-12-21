@@ -22,7 +22,7 @@ class CreatePerawatLisensisTable extends Migration
             $table->date('tgl_terbit');
             $table->date('tgl_expired');
             $table->string('file_path')->nullable();
-            $table->enum('metode_perpanjangan', ['pg_only', 'pg_interview'])->default('pg_only');
+            $table->enum('metode_perpanjangan', ['pg_only', 'pg_interview', 'interview_only'])->default('pg_only');
 
             $table->timestamps();
         });

@@ -14,7 +14,7 @@ class PerawatProfile extends Model
         // Identitas Utama
         'nik',
         'nip',
-        'nirp',              
+        'nirp',
         'nama_lengkap',
 
         // Biodata

@@ -12,6 +12,10 @@ use App\Models\PerawatStr;
 use App\Models\PerawatLisensi;
 use App\Models\PerawatDataTambahan;
 use App\Models\ExamResult;
+use App\Models\PenanggungJawabUjian;
+use App\Models\PerawatPendidikan;
+use App\Models\PerawatPekerjaan;
+use App\Models\PerawatPelatihan;
 
 class User extends Authenticatable
 {
@@ -41,7 +45,11 @@ class User extends Authenticatable
         return $this->hasOne(PenanggungJawabUjian::class);
     }
 
-    public function profile()
+    public function Perawatprofile()
+    {
+        return $this->hasOne(PerawatProfile::class, 'user_id');
+    }
+     public function profile()
     {
         return $this->hasOne(PerawatProfile::class, 'user_id');
     }
@@ -96,5 +104,11 @@ class User extends Authenticatable
     public function examResult()
     {
         return $this->hasOne(ExamResult::class, 'user_id')->latest();
+    }
+
+    public function pendidikanTerakhir()
+    {
+        return $this->hasOne(PerawatPendidikan::class, 'user_id')
+                    ->orderBy('tahun_lulus', 'desc');
     }
 }

@@ -266,14 +266,19 @@
                                         <span class="badge-soft badge-info">
                                             <i class="bi bi-check-square"></i> Hanya PG
                                         </span>
-                                    @else
+                                    @elseif($item->metode_perpanjangan == 'pg_interview')
                                         <span class="badge-soft badge-info">
                                             <i class="bi bi-mic"></i> PG + Wawancara
+                                        </span>
+                                        {{-- TAMBAHAN BARU --}}
+                                    @elseif($item->metode_perpanjangan == 'interview_only')
+                                        <span class="badge-soft badge-purple">
+                                            <i class="bi bi-person-video2"></i> Hanya Wawancara
                                         </span>
                                     @endif
                                 </div>
 
-                                {{-- NEW: Tanggal Mulai - Selesai --}}
+                                {{-- Tanggal Mulai - Selesai --}}
                                 <div class="text-muted small d-flex flex-column" style="font-size: 11px;">
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="bi bi-calendar3 text-secondary"></i>

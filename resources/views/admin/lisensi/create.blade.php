@@ -205,7 +205,45 @@
                         @csrf
 
                         <div class="row g-3">
-                            {{-- Pilih Perawat (Multi Select) --}}
+
+                            {{-- 1. Aturan Perpanjangan (PINDAH KE ATAS) --}}
+                            <div class="col-12">
+                                <div class="metode-wrapper">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <i class="bi bi-sliders text-primary fs-5"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-7">
+                                                    <label class="form-label text-dark mb-0">Metode Perpanjangan <span
+                                                            class="required-star">*</span></label>
+                                                    <div class="text-muted" style="font-size: 11px;">Pilih cara evaluasi
+                                                        untuk lisensi ini.</div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <select name="metode_perpanjangan"
+                                                        class="form-select border-primary fw-bold text-dark form-select-sm"
+                                                        required>
+                                                        <option value="pg_only"
+                                                            {{ old('metode_perpanjangan') == 'pg_only' ? 'selected' : '' }}>
+                                                            Hanya Ujian Tulis
+                                                        </option>
+                                                        <option value="pg_interview"
+                                                            {{ old('metode_perpanjangan') == 'pg_interview' ? 'selected' : '' }}>
+                                                            Ujian Tulis + Wawancara
+                                                        </option>
+                                                        <option value="interview_only"
+                                                            {{ old('metode_perpanjangan') == 'interview_only' ? 'selected' : '' }}>
+                                                            Hanya Wawancara
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- 2. Pilih Perawat (Multi Select) (PINDAH KE BAWAH METODE) --}}
                             <div class="col-12">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <label class="form-label mb-0">Pilih Perawat (Bisa Banyak) <span
@@ -237,45 +275,6 @@
                                 <div class="form-text">Nomor lisensi akan digenerate otomatis berurutan untuk setiap perawat
                                     yang dipilih.</div>
                             </div>
-
-                            {{-- 2. Aturan Perpanjangan --}}
-                            <div class="col-12">
-                                <div class="metode-wrapper">
-                                    <div class="d-flex gap-3 align-items-center">
-                                        <i class="bi bi-sliders text-primary fs-5"></i>
-                                        <div class="flex-grow-1">
-                                            <div class="row align-items-center">
-                                                <div class="col-md-7">
-                                                    <label class="form-label text-dark mb-0">Metode Perpanjangan <span
-                                                            class="required-star">*</span></label>
-                                                    <div class="text-muted" style="font-size: 11px;">Pilih cara evaluasi
-                                                        untuk lisensi ini.</div>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <select name="metode_perpanjangan"
-                                                        class="form-select border-primary fw-bold text-dark form-select-sm"
-                                                        required>
-                                                        <option value="pg_only"
-                                                            {{ old('metode_perpanjangan') == 'pg_only' ? 'selected' : '' }}>
-                                                            Hanya Ujian Tulis
-                                                        </option>
-                                                        <option value="pg_interview"
-                                                            {{ old('metode_perpanjangan') == 'pg_interview' ? 'selected' : '' }}>
-                                                            Ujian Tulis + Wawancara
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <hr class="border-light m-0">
-                            </div>
-
-                            {{-- ... Bagian Select User & Metode diatas ... --}}
 
                             <div class="col-12">
                                 <hr class="border-light m-0">
