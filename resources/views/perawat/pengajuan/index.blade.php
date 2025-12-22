@@ -537,9 +537,16 @@
                                         Proses evaluasi telah selesai dan lisensi Anda telah aktif kembali. Silakan unduh
                                         bukti kelulusan digital Anda di bawah ini.
                                     </p>
+
                                     <a href="{{ route('perawat.pengajuan.sertifikat', $item->id) }}"
                                         class="btn btn-success fw-bold px-4 py-2 shadow-sm" target="_blank">
-                                        <i class="bi bi-file-earmark-pdf-fill me-2"></i> Unduh Sertifikat (PDF)
+                                        <i class="bi bi-file-earmark-pdf-fill me-2"></i>
+                                        {{-- LOGIKA UBAH TEKS TOMBOL --}}
+                                        @if($item->metode == 'interview_only')
+                                            Unduh Dokumen SK
+                                        @else
+                                            Unduh Sertifikat (PDF)
+                                        @endif
                                     </a>
                                 </div>
                             @endif
