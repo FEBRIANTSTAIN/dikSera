@@ -254,8 +254,8 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="mt-4 d-flex justify-content-end">
-            {{ $data->withQueryString()->links() }}
+        <div class="mt-4">
+            {{ $data->withQueryString()->links('vendor.pagination.diksera') }}
         </div>
     </div>
 @endsection

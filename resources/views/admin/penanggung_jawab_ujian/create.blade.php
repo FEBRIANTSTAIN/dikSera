@@ -57,26 +57,67 @@
             <form action="{{ route('admin.penanggung-jawab.store') }}" method="POST">
                 @csrf
                 <div class="content-card">
+                    {{-- AREA PESAN ERROR (Wajib ada biar gak bingung kalau gagal) --}}
+                    @if ($errors->any())
+                        <div class="alert alert-danger mb-4">
+                            <ul class="mb-0 ps-3">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <h5 class="mb-4 fw-bold text-dark border-bottom pb-3">Tambah Penanggung Jawab</h5>
-                    <div class="form-group">
-                        <label>Nama Lengkap</label>
-                        <input type="text" name="nama" class="form-control" required>
+
+                    {{-- NAMA --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Nama Lengkap</label>
+                        <input type="text" name="nama" class="form-control form-control-custom"
+                            value="{{ old('nama') }}" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Email (Untuk Login)</label>
-                        <input type="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password Awal</label>
-                        <input type="text" name="password" class="form-control" placeholder="Contoh: rahasia123"
-                            required>
+                    {{-- EMAIL --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Email (Untuk Login)</label>
+                        <input type="email" name="email" class="form-control form-control-custom"
+                            value="{{ old('email') }}" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>No HP</label>
-                        <input type="text" name="no_hp" class="form-control">
+                    {{-- TYPE (YANG TADINYA KURANG) --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Tipe Penanggung Jawab</label>
+                        <select name="type" class="form-control form-control-custom" required>
+                            <option value="">Pilih Tipe</option>
+                            <option value="pewawancara" {{ old('type') == 'pewawancara' ? 'selected' : '' }}>Pewawancara
+                            </option>
+                            <option value="ujian" {{ old('type') == 'ujian' ? 'selected' : '' }}>Ujian</option>
+                        </select>
+                        <small class="text-muted" style="font-size: 11px;">*Wajib dipilih sesuai sistem</small>
                     </div>
+
+                    {{-- JABATAN --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Jabatan</label>
+                        <input type="text" name="jabatan" class="form-control form-control-custom"
+                            value="{{ old('jabatan') }}">
+                    </div>
+
+                    {{-- PASSWORD --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Password Awal</label>
+                        <input type="text" name="password" class="form-control form-control-custom"
+                            placeholder="Contoh: rahasia123" required>
+                    </div>
+
+                    {{-- NO HP --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">No HP</label>
+                        <input type="text" name="no_hp" class="form-control form-control-custom"
+                            value="{{ old('no_hp') }}">
+                    </div>
+
+                    {{-- TOMBOL --}}
                     <div class="d-flex justify-content-end gap-2 pt-3 border-top mt-4">
                         <button type="reset" class="btn btn-light px-4" style="border-radius: 8px;">Reset</button>
                         <button type="submit" class="btn btn-primary px-4 shadow-sm"

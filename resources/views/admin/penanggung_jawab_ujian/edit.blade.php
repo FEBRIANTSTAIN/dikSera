@@ -34,7 +34,6 @@
             margin-bottom: 6px;
         }
 
-        /* Tambahan agar select terlihat rapi */
         select.form-control-custom {
             appearance: auto;
             cursor: pointer;
@@ -42,11 +41,11 @@
     </style>
 @endpush
 
-
 @section('content')
     <div class="row justify-content-center">
-        <div class="col-lg-8"> {{-- Sedikit diperlebar agar muat 2 kolom form --}}
+        <div class="col-lg-6">
 
+            {{-- Tombol Kembali --}}
             <div class="d-flex justify-content-end mb-3">
                 <a href="{{ route('admin.penanggung-jawab.index') }}" class="btn btn-sm btn-outline-secondary px-3"
                     style="border-radius: 8px;">
@@ -56,115 +55,84 @@
 
             <form action="{{ route('admin.penanggung-jawab.update', $item->id) }}" method="POST">
                 @csrf
-                @method('PUT')
+                @method('PUT') {{-- Wajib untuk Edit --}}
 
-                <div class="card border-0 shadow-sm" style="border-radius: 12px;">
-                    <div class="card-body p-4">
-                        <h5 class="mb-4 fw-bold text-dark border-bottom pb-3">Edit Penanggung Jawab</h5>
-
-                        {{-- SECTION 1: DATA AKUN LOGIN --}}
-                        <div class="alert alert-light border-start border-4 border-primary shadow-sm mb-4">
-                            <small class="fw-bold d-block mb-1 text-primary"><i class="bi bi-shield-lock me-1"></i>
-                                Informasi Login Akun</small>
-                            <span class="text-muted small">Email dan Password ini digunakan penanggung jawab untuk login ke
-                                dashboard.</span>
+                <div class="content-card">
+                    {{-- AREA PESAN ERROR --}}
+                    @if ($errors->any())
+                        <div class="alert alert-danger mb-4">
+                            <ul class="mb-0 ps-3">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
+                    @endif
 
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label small text-muted text-uppercase fw-bold">Email Login <span
-                                        class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0 text-muted">
-                                        <i class="bi bi-envelope"></i>
-                                    </span>
-                                    {{-- Mengambil email dari relasi User --}}
-                                    <input type="email" name="email"
-                                        value="{{ old('email', $item->user->email ?? '') }}"
-                                        class="form-control border-start-0 ps-0" required>
-                                </div>
-                            </div>
+                    <h5 class="mb-4 fw-bold text-dark border-bottom pb-3">Edit Penanggung Jawab</h5>
 
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label small text-muted text-uppercase fw-bold">Password Baru</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0 text-muted">
-                                        <i class="bi bi-key"></i>
-                                    </span>
-                                    <input type="password" name="password" class="form-control border-start-0 ps-0"
-                                        placeholder="Isi hanya jika ingin ganti password">
-                                </div>
-                                <small class="text-muted" style="font-size: 10px;">*Kosongkan jika password tidak
-                                    diubah.</small>
-                            </div>
-                        </div>
+                    {{-- NAMA --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Nama Lengkap</label>
+                        <input type="text" name="nama" class="form-control form-control-custom"
+                            value="{{ old('nama', $item->nama) }}" required>
+                    </div>
 
-                        <hr class="text-muted my-2 opacity-25">
+                    {{-- EMAIL --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Email (Untuk Login)</label>
+                        <input type="email" name="email" class="form-control form-control-custom"
+                            value="{{ old('email', $item->user->email ?? '') }}" required>
+                    </div>
 
-                        {{-- SECTION 2: DATA PROFIL --}}
-                        <div class="mt-4">
-                            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-person-lines-fill me-2"></i>Data Profil</h6>
+                    {{-- TYPE --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Tipe Penanggung Jawab</label>
+                        <select name="type" class="form-control form-control-custom" required>
+                            <option value="">Pilih Tipe</option>
+                            <option value="pewawancara" {{ old('type', $item->type) == 'pewawancara' ? 'selected' : '' }}>
+                                Pewawancara</option>
+                            <option value="ujian" {{ old('type', $item->type) == 'ujian' ? 'selected' : '' }}>Ujian
+                            </option>
+                        </select>
+                        <small class="text-muted" style="font-size: 11px;">*Wajib dipilih sesuai sistem</small>
+                    </div>
 
-                            <div class="mb-4">
-                                <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0 text-muted"
-                                        style="border-color: #e2e8f0;"><i class="bi bi-person"></i></span>
-                                    <input type="text" name="nama" value="{{ old('nama', $item->nama) }}"
-                                        class="form-control form-control-custom border-start-0 ps-0" required>
-                                </div>
-                            </div>
+                    {{-- JABATAN --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Jabatan</label>
+                        <select name="jabatan" class="form-control form-control-custom" required>
+                            <option value="">Pilih Jabatan</option>
+                            <option value="Pewawancara"
+                                {{ old('jabatan', $item->jabatan) == 'Pewawancara' ? 'selected' : '' }}>Pewawancara</option>
+                            <option value="PJ" {{ old('jabatan', $item->jabatan) == 'PJ' ? 'selected' : '' }}>PJ
+                            </option>
+                        </select>
+                    </div>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">Tipe Penanggung Jawab <span
-                                            class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0 text-muted"
-                                            style="border-color: #e2e8f0;"><i class="bi bi-person-badge"></i></span>
-                                        <select name="type" class="form-control form-control-custom border-start-0 ps-0"
-                                            required>
-                                            <option value="">-- Pilih Tipe --</option>
-                                            <option value="pewawancara"
-                                                {{ old('type', $item->type) == 'pewawancara' ? 'selected' : '' }}>
-                                                Pewawancara
-                                            </option>
-                                            <option value="ujian"
-                                                {{ old('type', $item->type) == 'ujian' ? 'selected' : '' }}>
-                                                Pengawas Ujian
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
+                    {{-- PASSWORD (OPSIONAL UNTUK EDIT) --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">Password Baru</label>
+                        <input type="text" name="password" class="form-control form-control-custom"
+                            placeholder="Kosongkan jika password tidak diubah">
+                        <small class="text-muted" style="font-size: 11px;">*Isi hanya jika ingin mengganti password</small>
+                    </div>
 
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">Jabatan <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0 text-muted"
-                                            style="border-color: #e2e8f0;"><i class="bi bi-briefcase"></i></span>
-                                        <input type="text" name="jabatan" value="{{ old('jabatan', $item->jabatan) }}"
-                                            class="form-control form-control-custom border-start-0 ps-0" required>
-                                    </div>
-                                </div>
-                            </div>
+                    {{-- NO HP --}}
+                    <div class="form-group mb-3">
+                        <label class="form-label">No HP</label>
+                        <input type="text" name="no_hp" class="form-control form-control-custom"
+                            value="{{ old('no_hp', $item->no_hp) }}">
+                    </div>
 
-                            <div class="mb-4">
-                                <label class="form-label">No. WhatsApp / HP <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0 text-muted"
-                                        style="border-color: #e2e8f0;"><i class="bi bi-whatsapp"></i></span>
-                                    <input type="text" name="no_hp" value="{{ old('no_hp', $item->no_hp) }}"
-                                        class="form-control form-control-custom border-start-0 ps-0" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2 pt-3 border-top mt-4">
-                            <button type="submit" class="btn btn-primary px-4 shadow-sm"
-                                style="border-radius: 8px; background-color: #0d6efd; border-color: #0d6efd;">
-                                <i class="bi bi-save me-1"></i> Simpan Perubahan
-                            </button>
-                        </div>
+                    {{-- TOMBOL --}}
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top mt-4">
+                        <a href="{{ route('admin.penanggung-jawab.index') }}" class="btn btn-light px-4"
+                            style="border-radius: 8px;">Batal</a>
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm"
+                            style="border-radius: 8px; background-color: #0d6efd; border-color: #0d6efd;">
+                            <i class="bi bi-save me-1"></i> Simpan Perubahan
+                        </button>
                     </div>
                 </div>
             </form>
