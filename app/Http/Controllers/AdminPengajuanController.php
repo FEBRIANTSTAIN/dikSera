@@ -100,15 +100,15 @@ class AdminPengajuanController extends Controller
              return back()->with('success', "Nilai (Skor: {$examResult->total_nilai}) disetujui & Status Ujian diubah LULUS. Proses selesai.");
          } else if ($pengajuan->metode == 'interview_only') {
              $pengajuan->update(['status' => 'completed']);
-             // Update semua lisensi user ke expired baru (3 tahun dari sekarang)
              $user = $pengajuan->user;
-             $newTerbit = now();
-             $newExpired = now()->addYears(3);
+             $lisensi = $pengajuan->lisensiLama;
+             $newTerbit = $lisensi && $lisensi->tgl_terbit ? $lisensi->tgl_terbit : now();
+             $newExpired = \Carbon\Carbon::parse($newTerbit)->addYears(3);
              $user->lisensis()->update([
                  'tgl_terbit' => $newTerbit,
                  'tgl_expired' => $newExpired
              ]);
-             return back()->with('success', "Nilai wawancara disetujui. Semua lisensi diperpanjang hingga $newExpired->format('d-m-Y').");
+             return back()->with('success', "Nilai wawancara disetujui. Semua lisensi diperpanjang hingga " . $newExpired->format('d-m-Y'));
          } else {
              $pengajuan->update(['status' => 'exam_passed']);
              return back()->with('success', "Nilai (Skor: {$examResult->total_nilai}) disetujui & Status Ujian diubah LULUS. Menunggu jadwal wawancara.");
@@ -134,10 +134,10 @@ class AdminPengajuanController extends Controller
         $pengajuan->update(['status' => 'completed']);
 
         if ($pengajuan->metode == 'interview_only') {
-            // Update semua lisensi user ke expired baru (3 tahun dari sekarang)
             $user = $pengajuan->user;
-            $newTerbit = now();
-            $newExpired = now()->addYears(3);
+            $lisensi = $pengajuan->lisensiLama;
+            $newTerbit = $lisensi && $lisensi->tgl_terbit ? $lisensi->tgl_terbit : now();
+            $newExpired = \Carbon\Carbon::parse($newTerbit)->addYears(3);
             $user->lisensis()->update([
                 'tgl_terbit' => $newTerbit,
                 'tgl_expired' => $newExpired
@@ -210,8 +210,9 @@ class AdminPengajuanController extends Controller
                 } else if ($pengajuan->metode == 'interview_only') {
                     $pengajuan->update(['status' => 'completed']);
                     $user = $pengajuan->user;
-                    $newTerbit = now();
-                    $newExpired = now()->addYears(3);
+                    $lisensi = $pengajuan->lisensiLama;
+                    $newTerbit = $lisensi && $lisensi->tgl_terbit ? $lisensi->tgl_terbit : now();
+                    $newExpired = \Carbon\Carbon::parse($newTerbit)->addYears(3);
                     $user->lisensis()->update([
                         'tgl_terbit' => $newTerbit,
                         'tgl_expired' => $newExpired
