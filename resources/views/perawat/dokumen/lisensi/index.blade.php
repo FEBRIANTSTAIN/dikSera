@@ -312,30 +312,13 @@
                                 <td class="text-center">
                                     <div class="d-flex flex-column gap-2 align-items-center">
 
-                                        {{-- 1. Tombol Generate/Update (Hanya muncul jika file lama/belum ada) --}}
-                                        @if ($showUpdateBtn)
-                                            {{-- Kasus: Lisensi sudah diperpanjang di DB, tapi file PDF belum di-update --}}
-                                            <a href="{{ route('perawat.lisensi.generate', $item->id) }}"
-                                                class="btn btn-sm btn-outline-success fw-bold"
-                                                title="Generate PDF Terbaru">
-                                                <i class="bi bi-arrow-clockwise"></i> Update PDF
-                                            </a>
-                                        @elseif (!$item->file_path)
-                                            {{-- Kasus: File belum pernah dibuat sama sekali --}}
-                                            <a href="{{ route('perawat.lisensi.generate', $item->id) }}"
-                                                class="btn btn-sm btn-outline-primary" title="Generate Dokumen">
-                                                <i class="bi bi-printer"></i> Generate
-                                            </a>
-                                        @endif
 
-                                        {{-- 2. Tombol Lihat File (Muncul jika file ada) --}}
-                                        @if ($item->file_path)
-                                            <a href="{{ Storage::url($item->file_path) }}" target="_blank"
-                                                class="action-btn" title="Lihat File"
-                                                style="color: var(--primary-blue);">
-                                                <i class="bi bi-file-earmark-pdf-fill"></i>
-                                            </a>
-                                        @endif
+                                        {{-- Tombol Generate/Update PDF: Selalu tampil agar isi dokumen selalu up to date --}}
+                                        <a href="{{ route('perawat.lisensi.generate', $item->id) }}"
+                                            class="btn btn-sm btn-outline-primary fw-bold"
+                                            title="Generate/Update PDF">
+                                            <i class="bi bi-printer"></i> Generate
+                                        </a>
 
                                     </div>
                                 </td>
