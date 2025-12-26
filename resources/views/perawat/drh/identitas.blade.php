@@ -59,16 +59,16 @@
                                         @php
                                             $typeList = [
                                                 // --- BIDAN ---
-                                                'Bidan Pra PK',
-                                                'Bidan PK 1',
-                                                'Bidan PK 1.5',
-                                                'Bidan PK 2',
-                                                'Bidan PK 2.5',
-                                                'Bidan PK 3',
-                                                'Bidan PK 3.5',
-                                                'Bidan PK 4',
-                                                'Bidan PK 4.5',
-                                                'Bidan PK 5',
+                                                'Bidan Pra BK',
+                                                'Bidan BK 1',
+                                                'Bidan BK 1.5',
+                                                'Bidan BK 2',
+                                                'Bidan BK 2.5',
+                                                'Bidan BK 3',
+                                                'Bidan BK 3.5',
+                                                'Bidan BK 4',
+                                                'Bidan BK 4.5',
+                                                'Bidan BK 5',
 
                                                 // --- PERAWAT UMUM ---
                                                 'Perawat Pra PK',
