@@ -528,9 +528,6 @@
                         </div>
 
                         {{-- STATUS PENGAJUAN (MODUL 8 & RENEWAL) --}}
-
-
-                        {{-- STATUS PENGAJUAN (MODUL 8 & RENEWAL) --}}
                         <a href="{{ route('perawat.pengajuan.index') }}"
                             class="nav-linkx {{ request()->routeIs('perawat.pengajuan.*') ? 'active' : '' }}">
                             <i class="bi bi-file-earmark-arrow-up-fill"></i>
@@ -539,19 +536,20 @@
 
                         {{-- UJIAN & EVALUASI (MODUL 7) --}}
                         <a href="{{ route('perawat.ujian.index') }}"
-                            class="nav-linkx {{ request()->routeIs('perawat.ujian.*') ? 'active' : '' }}">
+                            class="nav-linkx {{ request()->routeIs('perawat.ujian.*') ? 'active' : '' }} nav-with-badge">
                             <i class="bi bi-clipboard-check-fill"></i>
                             <span class="link-text">Ujian & Evaluasi</span>
 
-                            <a href="{{ route('perawat.lisensi.index') }}"
-                                class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
-                                <i class="bi bi-file-earmark-arrow-up-fill"></i>
-                                <span class="link-text">Kredensialing</span>
-                            </a>
-
+                            {{-- Logika ini sudah benar --}}
                             @if (isset($ujianActiveCount) && $ujianActiveCount > 0)
                                 <span class="badge-notification">{{ $ujianActiveCount }}</span>
                             @endif
+                        </a>
+
+                        <a href="{{ route('perawat.lisensi.index') }}"
+                            class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
+                            <i class="bi bi-file-earmark-arrow-up-fill"></i>
+                            <span class="link-text">Kredensialing</span>
                         </a>
 
                         <div class="nav-section-title">Lainnya</div>
