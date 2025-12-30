@@ -329,7 +329,7 @@
                                     @if ($diff < 0)
                                         <span class="badge-soft badge-danger w-fit"><i class="bi bi-x-circle"></i>
                                             Expired</span>
-                                    @elseif($diff < 90)
+                                    @elseif($diff < 180)
                                         <span class="badge-soft badge-warning w-fit"><i
                                                 class="bi bi-exclamation-triangle"></i> Segera Habis</span>
                                     @else

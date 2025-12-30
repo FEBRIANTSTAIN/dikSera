@@ -348,7 +348,7 @@
                         </div>
                         <div class="brand-info">
                             <div class="brand-name">DIKSERA</div>
-                            <div class="brand-caption">Digitalisasi Kompetensi, <br> Sertifikasi & Evaluasi Perawat
+                            <div class="brand-caption">Digitalisasi Kompetensi, <br> Sertifikasi & Evaluasi Keperawatan
                             </div>
                         </div>
                     </div>
@@ -368,7 +368,7 @@
                         {{-- DROPDOWN: PELENGKAPAN DATA (MODUL 3) --}}
                         <div class="nav-linkx nav-dropdown" data-dropdown="#submenu-master">
                             <i class="bi bi-folder-fill"></i>
-                            <span class="link-text">Pelengkapan Data</span>
+                            <span class="link-text">Profil</span>
                             <i class="bi bi-chevron-down dropdown-icon"></i>
                         </div>
 
@@ -399,7 +399,6 @@
                         {{-- DROPDOWN: DOKUMEN (MODUL 4) --}}
                         @php
                             $isDokumenActive =
-                                request()->routeIs('perawat.lisensi.*') ||
                                 request()->routeIs('perawat.str.*') ||
                                 request()->routeIs('perawat.sip.*') ||
                                 request()->routeIs('perawat.tambahan.*');
@@ -413,9 +412,7 @@
 
                         <div id="submenu-dokumen" class="nav-submenu {{ $isDokumenActive ? 'show' : '' }}">
 
-                            <a href="{{ route('perawat.lisensi.index') }}" class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
-                                <i class="bi bi-file-earmark-text-fill"></i> Kredensialing
-                            </a>
+
                             <a href="{{ route('perawat.str.index') }}" class="nav-linkx {{ request()->routeIs('perawat.str.*') ? 'active' : '' }}">
                                 <i class="bi bi-file-earmark-text-fill"></i> Dokumen STR
                             </a>
@@ -426,6 +423,9 @@
                                 <i class="bi bi-file-earmark-plus-fill"></i> Data Tambahan
                             </a>
                         </div>
+
+                        {{-- STATUS PENGAJUAN (MODUL 8 & RENEWAL) --}}
+
 
                         {{-- STATUS PENGAJUAN (MODUL 8 & RENEWAL) --}}
                         <a href="{{ route('perawat.pengajuan.index') }}"
@@ -440,6 +440,12 @@
                             <i class="bi bi-clipboard-check-fill"></i>
                             <span class="link-text">Ujian & Evaluasi</span>
 
+                         <a href="{{ route('perawat.lisensi.index') }}"
+                            class="nav-linkx {{ request()->routeIs('perawat.lisensi.*') ? 'active' : '' }}">
+                            <i class="bi bi-file-earmark-arrow-up-fill"></i>
+                            <span class="link-text">Kredensialing</span>
+                        </a>
+                        
                             @if (isset($ujianActiveCount) && $ujianActiveCount > 0)
                                 <span class="badge-notification">{{ $ujianActiveCount }}</span>
                             @endif

@@ -18,7 +18,6 @@ use App\Http\Controllers\PengajuanSertifikatController;
 use App\Http\Controllers\AdminPengajuanWawancaraController;
 use App\Http\Controllers\AdminLisensiController;
 use App\Http\Controllers\PerawatLisensiController;
-// Controller Baru dari Kode 2
 use App\Http\Controllers\PewawancaraController;
 
 /*
@@ -80,27 +79,27 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{id}', [AdminLisensiController::class, 'lisensiDestroy'])->defaults('metode', 'interview_only')->name('destroy');
         });
 
-        // APPROVAL PENGAJUAN
+        // === APPROVAL PENGAJUAN ===
         Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('pengajuan.index');
 
-        Route::get('/pengajuan/{id}/reject', [AdminPengajuanController::class, 'reject'])->name('pengajuan.reject');
-        Route::get('/pengajuan/{id}/approve-score', [AdminPengajuanController::class, 'approveExamScore'])->name('pengajuan.approve_score');
-
-        // POST method untuk approve (Form submit)
-        Route::post('/pengajuan/{id}/approve', [AdminPengajuanController::class, 'approve'])->name('pengajuan.approve');
-
-        Route::get('/pengajuan/{id}/complete', [AdminPengajuanController::class, 'completeProcess'])->name('pengajuan.complete');
-        Route::get('/pengajuan/{id}', [AdminPengajuanController::class, 'show'])->name('pengajuan.show');
+        // [PENTING] BULK ACTIONS harus di atas route {id}
+        Route::delete('/pengajuan/bulk-destroy', [AdminPengajuanController::class, 'bulkDestroy'])->name('pengajuan.bulk_destroy');
         Route::post('/pengajuan/bulk-approve', [AdminPengajuanController::class, 'bulkApprove'])->name('pengajuan.bulk_approve');
         Route::post('/pengajuan/bulk-approve-score', [AdminPengajuanController::class, 'bulkApproveScore'])->name('pengajuan.bulk_approve_score');
         Route::post('/pengajuan/bulk-approve-interview', [AdminPengajuanController::class, 'bulkApproveInterview'])->name('pengajuan.bulk_approve_interview');
+
+        // Single Actions
+        Route::delete('/pengajuan/{id}', [AdminPengajuanController::class, 'destroy'])->name('pengajuan.destroy');
+        Route::get('/pengajuan/{id}/reject', [AdminPengajuanController::class, 'reject'])->name('pengajuan.reject');
+        Route::get('/pengajuan/{id}/approve-score', [AdminPengajuanController::class, 'approveExamScore'])->name('pengajuan.approve_score');
+        Route::post('/pengajuan/{id}/approve', [AdminPengajuanController::class, 'approve'])->name('pengajuan.approve');
+        Route::get('/pengajuan/{id}/complete', [AdminPengajuanController::class, 'completeProcess'])->name('pengajuan.complete');
+        Route::get('/pengajuan/{id}', [AdminPengajuanController::class, 'show'])->name('pengajuan.show');
 
         // PENGAJUAN WAWANCARA (Admin Actions)
         Route::prefix('pengajuan-wawancara')->name('pengajuan_wawancara.')->group(function () {
             Route::get('/{id}/approve', [AdminPengajuanWawancaraController::class, 'approveJadwal'])->name('approve');
             Route::post('/{id}/reject', [AdminPengajuanWawancaraController::class, 'rejectJadwal'])->name('reject');
-            // Route penilaian ini tetap ada di admin jika admin juga butuh menilai,
-            // tapi fitur utamanya sekarang ada di group 'pewawancara' di bawah.
             Route::get('/{id}/penilaian', [AdminPengajuanWawancaraController::class, 'showPenilaian'])->name('penilaian');
             Route::post('/{id}/penilaian', [AdminPengajuanWawancaraController::class, 'storePenilaian'])->name('store_penilaian');
         });
@@ -222,8 +221,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/perawat/lisensi', [PerawatLisensiController::class, 'lisensiStore'])
             ->name('lisensi.store');
 
-
-        // === DOKUMEN: STR ===
+        // === DOKUMEN: STR (FIXED) ===
         Route::get('/dokumen/str', [PerawatDrhController::class, 'strIndex'])->name('str.index');
         Route::get('/dokumen/str/create', [PerawatDrhController::class, 'strCreate'])->name('str.create');
         Route::post('/dokumen/str', [PerawatDrhController::class, 'strStore'])->name('str.store');

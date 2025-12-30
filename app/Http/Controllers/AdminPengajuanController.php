@@ -86,7 +86,11 @@ class AdminPengajuanController extends Controller
             if (!$examResult) {
                 return back()->with('error', 'Peserta belum mengerjakan ujian! Tidak ada nilai untuk disetujui.');
             }
-            // Update status lulus hanya jika ada exam result
+            // Cek jika exam terakhir masih remidi
+            if ($examResult->remidi ?? ($examResult->total_nilai < 75)) {
+                return back()->with('error', 'Nilai peserta masih remidi (<75). Tidak bisa di-approve sebelum lulus.');
+            }
+            // Update status lulus hanya jika ada exam result dan sudah tidak remidi
             $examResult->update(['lulus' => 1]);
         }
 
@@ -293,5 +297,33 @@ class AdminPengajuanController extends Controller
         }
 
         return back()->with('success', $msg);
+    }
+
+    public function destroy($id)
+    {
+        $pengajuan = PengajuanSertifikat::findOrFail($id);
+
+        // Hapus data
+        $pengajuan->delete();
+
+        return back()->with('success', 'Data pengajuan berhasil dihapus permanen.');
+    }
+
+    /**
+     * Menghapus banyak data sekaligus (Bulk Delete).
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:pengajuan_sertifikats,id'
+        ]);
+
+        $ids = $request->ids;
+
+        // Hapus data berdasarkan array ID
+        $count = PengajuanSertifikat::whereIn('id', $ids)->delete();
+
+        return back()->with('success', "Berhasil menghapus $count data pengajuan secara permanen.");
     }
 }

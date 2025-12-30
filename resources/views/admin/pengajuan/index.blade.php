@@ -466,6 +466,7 @@
                                                 </button>
                                             </form>
 
+
                                             {{-- 3. AKSI APPROVE NILAI UJIAN (HANYA JIKA BUKAN INTERVIEW ONLY) --}}
                                         @elseif ($item->status == 'method_selected' && $item->user->examResult && $item->metode != 'interview_only')
                                             <a href="{{ route('admin.pengajuan.show', $item->id) }}"
@@ -547,10 +548,24 @@
 
                                             {{-- 5. JIKA SELESAI (Lihat Nilai) --}}
                                         @elseif($item->status == 'completed')
+                                            {{-- Lihat Nilai --}}
                                             <a href="{{ route('admin.pengajuan.show', $item->id) }}"
                                                 class="btn-icon btn-act-blue" title="Lihat Hasil & Nilai">
                                                 <i class="bi bi-file-earmark-bar-graph"></i>
                                             </a>
+
+                                            {{-- === TAMBAHAN: TOMBOL DELETE (KETIKA SELESAI) === --}}
+                                            <form action="{{ route('admin.pengajuan.destroy', $item->id) }}"
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn-icon btn-act-x"
+                                                    onclick="return confirm('Hapus riwayat pengajuan ini permanen?')"
+                                                    title="Hapus Data">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                            {{-- ============================================== --}}
 
                                             {{-- 6. JIKA DITOLAK (REJECTED) --}}
                                         @elseif($item->status == 'rejected')
