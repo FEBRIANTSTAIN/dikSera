@@ -99,13 +99,13 @@ class PewawancaraController extends Controller
 
         // Cek status jadwal (Admin tetap bisa lihat meski status completed, opsional)
         if ($jadwal->status !== 'approved' && $jadwal->status !== 'completed') {
-             // Jika status completed, admin mungkin mau lihat hasilnya, tapi form penilaian biasanya untuk 'approved'
-             // Kita biarkan 'approved' saja untuk penilaian aktif.
-             if($user->role === 'admin' && $jadwal->status === 'completed'){
-                 // Admin boleh lihat yg completed (opsional, tapi kode di bawah mengarah ke view form)
-             } else {
-                 return redirect()->back()->with('error', 'Sesi wawancara tidak valid/sudah selesai.');
-             }
+            // Jika status completed, admin mungkin mau lihat hasilnya, tapi form penilaian biasanya untuk 'approved'
+            // Kita biarkan 'approved' saja untuk penilaian aktif.
+            if ($user->role === 'admin' && $jadwal->status === 'completed') {
+                // Admin boleh lihat yg completed (opsional, tapi kode di bawah mengarah ke view form)
+            } else {
+                return redirect()->back()->with('error', 'Sesi wawancara tidak valid/sudah selesai.');
+            }
         }
 
         return view('pewawancara.penilaian', compact('jadwal'));
@@ -157,7 +157,8 @@ class PewawancaraController extends Controller
                     ]);
                 }
             } else {
-                $jadwal->pengajuan->update(['status' => 'rejected']);
+                // Jika tidak lulus pada tahap wawancara, tandai pengajuan supaya user bisa ajukan ulang
+                $jadwal->pengajuan->update(['status' => 'interview_failed']);
             }
 
             DB::commit();
@@ -168,7 +169,6 @@ class PewawancaraController extends Controller
             } else {
                 return redirect()->route('pewawancara.antrian')->with('success', 'Penilaian berhasil disimpan.');
             }
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -181,14 +181,14 @@ class PewawancaraController extends Controller
 
         // Admin bisa lihat semua riwayat
         if ($user->role === 'admin') {
-             $riwayat = JadwalWawancara::with(['pengajuan.user', 'penilaian', 'pewawancara'])
+            $riwayat = JadwalWawancara::with(['pengajuan.user', 'penilaian', 'pewawancara'])
                 ->whereIn('status', ['completed', 'rejected'])
                 ->orderBy('updated_at', 'desc')
                 ->paginate(10);
-             // View perlu disesuaikan jika ingin admin melihat nama pewawancara,
-             // tapi untuk saat ini pakai view yg sama gpp.
-             // Kita perlu pass variable $pewawancara fake atau null agar view tidak error
-             return view('pewawancara.riwayat', ['riwayat' => $riwayat, 'pewawancara' => null]);
+            // View perlu disesuaikan jika ingin admin melihat nama pewawancara,
+            // tapi untuk saat ini pakai view yg sama gpp.
+            // Kita perlu pass variable $pewawancara fake atau null agar view tidak error
+            return view('pewawancara.riwayat', ['riwayat' => $riwayat, 'pewawancara' => null]);
         }
 
         $pewawancara = $user->penanggungJawab;

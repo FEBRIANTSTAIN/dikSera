@@ -401,6 +401,9 @@
                                 @elseif($item->status == 'rejected')
                                     <span class="status-badge badge-danger"><i class="bi bi-x-circle-fill"></i>
                                         Ditolak</span>
+                                @elseif($item->status == 'interview_failed')
+                                    <span class="status-badge badge-danger"><i class="bi bi-x-circle-fill"></i>
+                                        Gagal Wawancara</span>
                                 @endif
                             </div>
                         </div>
@@ -440,7 +443,8 @@
 
                             {{-- FORM: PENGAJUAN JADWAL (PERBAIKAN UTAMA DI SINI) --}}
                             {{-- Logika sebelumnya hanya mengecek 'pg_interview'. Sekarang kita tambah 'interview_only' --}}
-                            @if ($item->status == 'exam_passed' && in_array($item->metode, ['pg_interview', 'interview_only']))
+                            @if (in_array($item->status, ['exam_passed', 'interview_failed']) &&
+                                    in_array($item->metode, ['pg_interview', 'interview_only']))
                                 <div class="action-container">
                                     <span class="section-label"><i class="bi bi-calendar-plus me-1"></i> Ajukan Jadwal
                                         Wawancara</span>
@@ -452,6 +456,24 @@
                                             <div>
                                                 <strong>Pengajuan Jadwal Ditolak:</strong>
                                                 <p class="mb-0 mt-1">"{{ $lastJadwal->catatan_admin }}"</p>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if ($item->status == 'interview_failed' && $lastJadwal && $lastJadwal->penilaian)
+                                        <div class="alert-modern red mb-4">
+                                            <i class="bi bi-x-octagon-fill fs-5"></i>
+                                            <div>
+                                                <strong>Hasil Wawancara:</strong>
+                                                <p class="mb-0 mt-1">Keputusan:
+                                                    <strong>{{ ucfirst(str_replace('_', ' ', $lastJadwal->penilaian->keputusan)) }}</strong>
+                                                </p>
+                                                @if (!empty($lastJadwal->penilaian->catatan_pewawancara))
+                                                    <p class="mb-0 mt-1">Catatan:
+                                                        "{{ $lastJadwal->penilaian->catatan_pewawancara }}"</p>
+                                                @endif
+                                                <p class="mb-0 mt-2">Silakan ajukan ulang jadwal wawancara melalui form di
+                                                    bawah.</p>
                                             </div>
                                         </div>
                                     @endif
@@ -509,7 +531,8 @@
                                     <div class="row g-4 mt-1">
                                         <div class="col-sm-4">
                                             <small class="text-muted d-block mb-1">Pewawancara</small>
-                                            <div class="fw-semibold text-dark">{{ $jadwal->pewawancara->nama ?? '-' }}</div>
+                                            <div class="fw-semibold text-dark">{{ $jadwal->pewawancara->nama ?? '-' }}
+                                            </div>
                                         </div>
                                         <div class="col-sm-4">
                                             <small class="text-muted d-block mb-1">Waktu Pelaksanaan</small>
@@ -542,7 +565,7 @@
                                         class="btn btn-success fw-bold px-4 py-2 shadow-sm" target="_blank">
                                         <i class="bi bi-file-earmark-pdf-fill me-2"></i>
                                         {{-- LOGIKA UBAH TEKS TOMBOL --}}
-                                        @if($item->metode == 'interview_only')
+                                        @if ($item->metode == 'interview_only')
                                             Unduh Dokumen SK
                                         @else
                                             Unduh Sertifikat (PDF)
