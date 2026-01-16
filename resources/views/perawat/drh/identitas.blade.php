@@ -53,9 +53,9 @@
                                         placeholder="Contoh: Ns. Siti Aminah, S.Kep">
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Tipe Perawat <span class="text-danger">*</span></label>
+                                    <label class="form-label">Jenjang Klinis/KFK <span class="text-danger">*</span></label>
                                     <select name="type_perawat[]" id="type-perawat" class="form-select" multiple>
-                                        <option value="" disabled>Pilih Tipe Perawat...</option>
+                                        <option value="" disabled>Pilih Jenjang Klinis/KFK...</option>
                                         @php
                                             $typeList = [
                                                 // --- BIDAN ---
@@ -267,12 +267,12 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <label class="form-label">Aliran Kepercayaan <small
                                             class="text-muted">(Opsional)</small></label>
                                     <input type="text" name="aliran_kepercayaan" class="form-control"
                                         value="{{ old('aliran_kepercayaan', $profile->aliran_kepercayaan ?? '') }}">
-                                </div>
+                                </div> --}}
                                 <div class="col-md-12">
                                     <label class="form-label">Hobi / Kegemaran</label>
                                     <input type="text" name="hobby" class="form-control"

@@ -971,7 +971,6 @@ class PerawatDrhController extends Controller
 
         $request->validate([
             'nama'        => 'required|string|max:100', // Validasi Baru
-            'lembaga'     => 'required|string|max:100', // Validasi Baru
             'nomor'       => 'required|string|max:100',
             'tgl_terbit'  => 'required|date',
             'tgl_expired' => 'required|date',
@@ -1005,7 +1004,6 @@ class PerawatDrhController extends Controller
 
         $request->validate([
             'nama'        => 'required|string|max:100', // Validasi Baru
-            'lembaga'     => 'required|string|max:100', // Validasi Baru
             'nomor'       => 'required|string|max:100',
             'tgl_terbit'  => 'required|date',
             'tgl_expired' => 'required|date',
@@ -1061,7 +1059,6 @@ class PerawatDrhController extends Controller
 
         $request->validate([
             'nama'        => 'required|string|max:100', // Validasi Baru
-            'lembaga'     => 'required|string|max:100', // Validasi Baru
             'nomor'       => 'required|string|max:100',
             'tgl_terbit'  => 'required|date',
             'tgl_expired' => 'required|date',
@@ -1094,7 +1091,6 @@ class PerawatDrhController extends Controller
 
         $request->validate([
             'nama'        => 'required|string|max:100', // Validasi Baru
-            'lembaga'     => 'required|string|max:100', // Validasi Baru
             'nomor'       => 'required|string|max:100',
             'tgl_terbit'  => 'required|date',
             'tgl_expired' => 'required|date',

@@ -158,10 +158,6 @@
                             <label class="form-label">Nama SIP <span class="required-star">*</span></label>
                             <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama') }}" placeholder="Contoh: SIP-I, SIP-II" required>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Lembaga Penerbit <span class="required-star">*</span></label>
-                            <input type="text" name="lembaga" class="form-control @error('lembaga') is-invalid @enderror" value="{{ old('lembaga') }}" placeholder="Contoh: DPMPTSP, Dinkes" required>
-                        </div>
 
                         {{-- Nomor SIP --}}
                         <div class="col-12">

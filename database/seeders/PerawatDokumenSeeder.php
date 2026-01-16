@@ -25,7 +25,6 @@ class PerawatDokumenSeeder extends Seeder
         DB::table('perawat_strs')->insert([
             'user_id'     => $user_id,
             'nama'        => 'STR Perawat',
-            'lembaga'     => 'KTKI',
             'nomor'       => $faker->numerify('1502#######'),
             'tgl_terbit'  => $faker->date('Y-m-d', '-1 years'),
             'tgl_expired' => $faker->date('Y-m-d', '+4 years'),
@@ -39,7 +38,6 @@ class PerawatDokumenSeeder extends Seeder
         DB::table('perawat_sips')->insert([
             'user_id'     => $user_id,
             'nama'        => 'SIP Perawat',
-            'lembaga'     => 'Dinkes Kediri',
             'nomor'       => $faker->numerify('503/SIP/2025'),
             'tgl_terbit'  => $faker->date('Y-m-d', '-1 years'),
             'tgl_expired' => $faker->date('Y-m-d', '+4 years'),

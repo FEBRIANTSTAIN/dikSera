@@ -12,7 +12,6 @@ class PerawatDataTambahan extends Model
     protected $table = 'perawat_data_tambahans';
     protected $fillable = [
         'user_id',
-        'jenis',
         'nomor',
         'nama',
         'lembaga',

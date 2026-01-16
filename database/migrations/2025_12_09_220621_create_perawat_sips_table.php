@@ -17,7 +17,6 @@ class CreatePerawatSipsTable extends Migration
         $table->id();
         $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         $table->string('nama');
-        $table->string('lembaga');
         $table->string('nomor');
         $table->date('tgl_terbit');
         $table->date('tgl_expired');

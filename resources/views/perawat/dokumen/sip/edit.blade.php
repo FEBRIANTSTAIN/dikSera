@@ -180,10 +180,6 @@
                             <label class="form-label">Nama SIP <span class="required-star">*</span></label>
                             <input type="text" name="nama" class="form-control" value="{{ old('nama', $data->nama) }}" required placeholder="Contoh: SIP-I">
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Lembaga Penerbit <span class="required-star">*</span></label>
-                            <input type="text" name="lembaga" class="form-control" value="{{ old('lembaga', $data->lembaga) }}" required placeholder="Contoh: DPMPTSP">
-                        </div>
 
                         {{-- Nomor --}}
                         <div class="col-12">

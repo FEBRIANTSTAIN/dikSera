@@ -247,14 +247,6 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
 
-                            {{-- NEW: Nama & Lembaga --}}
-                            <td>
-                                <span class="data-title">{{ $item->nama }}</span>
-                                <span class="text-muted" style="font-size: 0.8rem;">
-                                    <i class="bi bi-building"></i> {{ $item->lembaga }}
-                                </span>
-                            </td>
-
                             {{-- Nomor --}}
                             <td><span class="data-title">{{ $item->nomor }}</span></td>
 
