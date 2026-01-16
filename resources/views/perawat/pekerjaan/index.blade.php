@@ -234,9 +234,11 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th width="35%">Instansi & Jabatan</th>
-                            <th width="20%">Periode</th>
-                            <th width="25%">Keterangan</th>
+                            {{-- Saya pecah jadi 2 kolom agar Pangkat punya tempat sendiri --}}
+                            <th width="25%">Instansi & Unit</th>
+                            <th width="20%">Jabatan & Pangkat</th> {{-- Kolom Baru --}}
+                            <th width="15%">Periode</th>
+                            <th width="20%">Keterangan</th>
                             <th width="10%">Dokumen</th>
                             <th width="10%" class="text-end">Aksi</th>
                         </tr>
@@ -244,27 +246,34 @@
                     <tbody>
                         @forelse($pekerjaan as $row)
                             <tr>
-                                {{-- Instansi & Jabatan digabung agar rapi --}}
+                                {{-- Kolom 1: Instansi & Unit Kerja --}}
                                 <td>
-                                    {{-- Nama Instansi --}}
                                     <span class="data-title">{{ $row->nama_instansi }}</span>
+                                    <div class="d-flex align-items-center gap-1 mt-1 text-primary">
+                                        <i class="bi bi-building"></i>
+                                        <span class="fw-medium" style="font-size: 0.85rem;">{{ $row->unit_kerja }}</span>
+                                    </div>
+                                </td>
 
-                                    {{-- Unit Kerja & Jabatan --}}
-                                    <div class="d-flex flex-column gap-1 mt-1">
-                                        {{-- Unit Kerja --}}
-                                        <span class="data-sub text-primary" style="font-size: 0.8rem;">
-                                            <i class="bi bi-building"></i> {{ $row->unit_kerja }}
+                                {{-- Kolom 2: Jabatan & Pangkat (BARU) --}}
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        <span class="fw-bold text-dark" style="font-size: 0.95rem;">
+                                            {{ $row->jabatan }}
                                         </span>
-                                        {{-- Jabatan --}}
-                                        <span class="data-sub">
-                                            <i class="bi bi-briefcase"></i> {{ $row->jabatan }}
-                                        </span>
+
+                                        @if($row->pangkat)
+                                            <span class="badge-soft text-start" style="width: fit-content;">
+                                                <i class="bi bi-star-fill me-1" style="font-size: 10px;"></i>
+                                                {{ $row->pangkat }}
+                                            </span>
+                                        @endif
                                     </div>
                                 </td>
 
                                 {{-- Periode --}}
                                 <td>
-                                    <span class="fw-medium text-dark">
+                                    <span class="text-muted fw-medium" style="font-size: 0.9rem;">
                                         {{ $row->tahun_mulai }} -
                                         {{ $row->tahun_selesai ? $row->tahun_selesai : 'Sekarang' }}
                                     </span>
@@ -272,7 +281,11 @@
 
                                 {{-- Keterangan --}}
                                 <td>
-                                    {{ $row->keterangan ?? '-' }}
+                                    @if($row->keterangan)
+                                        <span class="text-gray" style="font-size: 0.9rem;">{{ $row->keterangan }}</span>
+                                    @else
+                                        <span class="text-muted small">-</span>
+                                    @endif
                                 </td>
 
                                 {{-- Dokumen --}}
@@ -308,7 +321,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-5">
+                                <td colspan="6" class="text-center py-5">
                                     <div class="text-muted" style="opacity: 0.6;">
                                         <i class="bi bi-briefcase fs-1 d-block mb-2"></i>
                                         Belum ada riwayat pekerjaan.

@@ -24,6 +24,8 @@ class PerawatPekerjaan extends Model
         'kfk',
         'tgl_mulai',
         'tgl_diselenggarakan',
+        'pangkat',
+        'status_kepegawaian',
     ];
 
     /**

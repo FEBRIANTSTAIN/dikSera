@@ -422,6 +422,8 @@ class PerawatDrhController extends Controller
             'tahun_selesai' => 'nullable|string|max:4',
             'keterangan'    => 'nullable|string|max:255',
             'dokumen'       => 'nullable|mimes:pdf,jpg,jpeg,png|max:4096',
+            'pangkat' => 'nullable|string|max:50',
+            'status_kepegawaian' => 'required|string',
         ]);
 
         $data = $request->except(['dokumen', '_token']);
@@ -462,6 +464,8 @@ class PerawatDrhController extends Controller
             'tahun_selesai' => 'nullable|string|max:4',
             'keterangan'    => 'nullable|string|max:255',
             'dokumen'       => 'nullable|mimes:pdf,jpg,jpeg,png|max:4096',
+            'pangkat' => 'nullable|string|max:50',
+            'status_kepegawaian' => 'required|string',
         ]);
 
         $data = $request->except(['dokumen', '_token', '_method']);
